@@ -42,6 +42,20 @@ const config = {
     locales: ['zh-Hans'],
   },
 
+  // SEO：非 Vercel 环境添加 noindex，避免搜索引擎重复惩罚
+  // 所有 SEO 权重集中在 stark1898y.cc，GitHub Pages 仅作为备份/测试站
+  ...(isVercel ? {} : {
+    headTags: [
+      {
+        tagName: 'meta',
+        attributes: {
+          name: 'robots',
+          content: 'noindex, nofollow',
+        },
+      },
+    ],
+  }),
+
   presets: [
     [
       'classic',
@@ -68,6 +82,8 @@ const config = {
         theme: {
           customCss: './src/css/custom.css',
         },
+        // SEO：非 Vercel 环境禁用 sitemap，避免搜索引擎抓取
+        sitemap: isVercel ? {} : false,
       }),
     ],
   ],
