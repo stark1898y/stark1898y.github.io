@@ -89,8 +89,12 @@ const config = {
         theme: {
           customCss: './src/css/custom.css',
         },
-        // SEO：非 Vercel 环境禁用 sitemap，避免搜索引擎抓取
-        sitemap: isVercel ? {} : false,
+        // sitemap 始终启用（Vercel 和本地构建都会生成）
+        // GitHub Pages 通过 noindex 标签避免被搜索引擎索引
+        sitemap: {
+          changefreq: 'weekly',
+          priority: 0.7,
+        },
       }),
     ],
   ],
