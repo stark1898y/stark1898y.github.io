@@ -122,7 +122,7 @@ const config = {
           },
           {to: '/blog', label: '博客', position: 'left'},
           {
-            href: 'https://github.com/stark1898y/stark1898y.github.io',
+            href: 'https://github.com/stark1898y',
             label: 'GitHub',
             position: 'right',
           },
