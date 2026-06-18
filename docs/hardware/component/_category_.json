@@ -1,0 +1,8 @@
+{
+  "label": "常用器件",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "description": "常用器件相关知识，包括蜂鸣器、继电器、MOS 管、NTC 等。"
+  }
+}

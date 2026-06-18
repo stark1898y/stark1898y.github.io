@@ -1,0 +1,8 @@
+{
+  "label": "存储相关",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "存储相关知识，包括 Flash、FlashDB 等。"
+  }
+}

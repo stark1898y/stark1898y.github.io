@@ -1,0 +1,8 @@
+{
+  "label": "接口协议",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "接口协议相关知识，包括 USB、HDMI、RS485、I2C 等。"
+  }
+}

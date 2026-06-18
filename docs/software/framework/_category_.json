@@ -1,0 +1,8 @@
+{
+  "label": "框架与架构",
+  "position": 1,
+  "link": {
+    "type": "generated-index",
+    "description": "软件框架与架构相关知识，包括裸机框架、RTOS 等。"
+  }
+}

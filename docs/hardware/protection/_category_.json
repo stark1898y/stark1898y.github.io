@@ -1,0 +1,8 @@
+{
+  "label": "保护器件",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "保护器件相关知识，包括 TVS、磁珠等。"
+  }
+}

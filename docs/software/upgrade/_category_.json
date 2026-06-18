@@ -1,0 +1,8 @@
+{
+  "label": "升级方案",
+  "position": 5,
+  "link": {
+    "type": "generated-index",
+    "description": "升级方案相关知识，包括 BootLoader、OTA 等。"
+  }
+}
