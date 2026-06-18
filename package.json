@@ -7,7 +7,10 @@
     "start": "docusaurus start",
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
-    "deploy": "docusaurus deploy",
+    
+    "deploy:gh": "cross-env GIT_USER=stark1898y DEPLOYMENT_BRANCH=gh-pages docusaurus deploy",
+    "deploy:vercel": "vercel --prod",
+
     "clear": "docusaurus clear",
     "serve": "docusaurus serve",
     "write-translations": "docusaurus write-translations",
@@ -25,7 +28,8 @@
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "3.10.1",
-    "@docusaurus/types": "3.10.1"
+    "@docusaurus/types": "3.10.1",
+    "cross-env": "^10.1.0"
   },
   "browserslist": {
     "production": [
