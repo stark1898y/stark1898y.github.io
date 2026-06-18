@@ -42,19 +42,26 @@ const config = {
     locales: ['zh-Hans'],
   },
 
-  // SEO：非 Vercel 环境添加 noindex，避免搜索引擎重复惩罚
-  // 所有 SEO 权重集中在 stark1898y.cc，GitHub Pages 仅作为备份/测试站
-  ...(isVercel ? {} : {
-    headTags: [
-      {
-        tagName: 'meta',
-        attributes: {
-          name: 'robots',
-          content: 'noindex, nofollow',
-        },
+  // SEO：全局 headTags 配置
+  headTags: [
+    // Google Search Console 验证标签
+    {
+      tagName: 'meta',
+      attributes: {
+        name: 'google-site-verification',
+        content: '5eeYVfB9QKwQO2A5HcxSw6_Ak8k0bqvNLByYGZN7L70',
       },
-    ],
-  }),
+    },
+    // 非 Vercel 环境添加 noindex，避免搜索引擎重复惩罚
+    // 所有 SEO 权重集中在 stark1898y.cc，GitHub Pages 仅作为备份/测试站
+    ...(!isVercel ? [{
+      tagName: 'meta',
+      attributes: {
+        name: 'robots',
+        content: 'noindex, nofollow',
+      },
+    }] : []),
+  ],
 
   presets: [
     [
