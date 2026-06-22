@@ -26,27 +26,16 @@ npm run build
 npm run serve
 ```
 
-### 部署到 GitHub Pages
-
-```bash
-npm run deploy:gh
-```
-
 ### 部署到 Vercel
 
-通常绑定 GitHub 仓库后会自动部署，手动部署：
+绑定 GitHub 仓库后会自动部署，push 到 main 分支即触发。
 
-```bash
-npm run deploy:vercel
-```
-
-## 双平台部署说明
+## 部署说明
 
 | 场景 | 执行命令 | 预期结果 |
 |------|----------|----------|
 | 日常写文档/改样式 | `npm start` | 浏览器秒开，保存即刷新 |
 | 提交代码后自动上线 | `git push` | Vercel 自动构建，1分钟内生效 |
-| 需要同步更新 GH Pages | `npm run deploy:gh` | 手动推送到 gh-pages 分支 |
 | 本地验证生产构建 | `npm run build && npm run serve` | 模拟真实线上环境 |
 
 ## 项目结构
@@ -62,6 +51,6 @@ npm run deploy:vercel
 └── docusaurus.config.js  # 站点配置
 ```
 
-## License
+## 声明
 
-[MIT](./LICENSE)
+本知识库内容仅供学习参考，欢迎阅读和分享。
