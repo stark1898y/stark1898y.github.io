@@ -4,32 +4,29 @@ import styles from './styles.module.css';
 
 const FeatureList = [
   {
-    title: 'Easy to Use',
+    title: '硬件设计',
     Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        电源、接口、保护器件、常用器件、无线通信等硬件相关知识，涵盖 DCDC、USB、RS485、TVS、MOS 管等。
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
+    title: 'MCU 开发',
     Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        STM32、WCH RISC-V (CH32V)、BLE 蓝牙 (CH592/CH584) 等 MCU 平台的开发经验和技术笔记。
       </>
     ),
   },
   {
-    title: 'Powered by React',
+    title: 'RTOS & 软件',
     Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        RT-Thread、FreeRTOS 实时操作系统，嵌入式软件框架、常用组件、通信协议、OTA 升级等知识。
       </>
     ),
   },
