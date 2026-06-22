@@ -14,12 +14,12 @@ description: 可燃气体 ppm、VOL% 和 LEL 之间的换算
 - 支持多种可燃气体类型
 - 支持自定义气体参数
 
-**开源地址**：[GitHub](https://github.com/SXDT-Embedded/Gas_VOL_ppm_LEL)
+**开源地址**：[GitHub](https://github.com/stark1898y/Gas_VOL_ppm_LEL)
 
 ---
 
 <iframe
-  src="https://sxdt-embedded.github.io/Gas_VOL_ppm_LEL/"
+  src="https://stark1898y.github.io/Gas_VOL_ppm_LEL/"
   style={{
     width: '100%',
     height: '600px',
