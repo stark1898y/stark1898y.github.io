@@ -1,8 +1,9 @@
 ---
-sidebar_position: 2
+sidebar_position: 1
 title: 功耗计算器
 description: 计算嵌入式设备电池续航时间或所需电池容量
 ---
+
 # 功耗计算器
 
 计算嵌入式设备电池续航时间或所需电池容量，支持多种电池类型和工作模式配置。

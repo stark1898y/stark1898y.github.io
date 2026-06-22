@@ -23,7 +23,7 @@ sidebar_position: 1
 
 ### 功耗计算
 
-- **功耗计算器**：[在线工具](./power-calculator.md) - 计算嵌入式设备电池续航时间或所需电池容量，支持多种电池类型和工作模式配置
+- **功耗计算器**：[在线工具](/docs/open-source/power-calculator) - 计算嵌入式设备电池续航时间或所需电池容量，支持多种电池类型和工作模式配置
 - **GitHub 仓库**：[Power-Consumption-Calculator](https://github.com/stark1898y/Power-Consumption-Calculator)
 
 ## 推荐博主
