@@ -116,7 +116,7 @@ const config = {
             title: '文档',
             items: [
               {
-                label: '入门教程',
+                label: '个人知识库',
                 to: '/docs/intro',
               },
             ],
