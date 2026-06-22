@@ -8,9 +8,6 @@ import {themes as prismThemes} from 'prism-react-renderer';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
-// 动态判断部署环境：Vercel 使用自定义域名，GitHub Pages 使用仓库路径
-const isVercel = process.env.VERCEL === '1';
-
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Stark1898y 的个人知识库',
@@ -22,18 +19,11 @@ const config = {
     v4: true, // Improve compatibility with the upcoming Docusaurus v4
   },
 
-  // Set the production url of your site here
-  url: isVercel ? 'https://stark1898y.cc' : 'https://stark1898y.github.io',
-  // Set the /<baseUrl>/ pathname under which your site is served
-  // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: isVercel ? '/' : '/stark1898y.github.io/',
+  // Vercel 部署配置
+  url: 'https://stark1898y.cc',
+  baseUrl: '/',
   trailingSlash: false,
 
-  // GitHub pages deployment config.
-  // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'stark1898y', // Usually your GitHub org/user name.
-  projectName: 'stark1898y.github.io', // Usually your repo name.
-  deploymentBranch: 'gh-pages', 
   onBrokenLinks: 'throw',
 
   // 中文站点设置
@@ -52,15 +42,6 @@ const config = {
         content: '5eeYVfB9QKwQO2A5HcxSw6_Ak8k0bqvNLByYGZN7L70',
       },
     },
-    // 非 Vercel 环境添加 noindex，避免搜索引擎重复惩罚
-    // 所有 SEO 权重集中在 stark1898y.cc，GitHub Pages 仅作为备份/测试站
-    ...(!isVercel ? [{
-      tagName: 'meta',
-      attributes: {
-        name: 'robots',
-        content: 'noindex, nofollow',
-      },
-    }] : []),
   ],
 
   presets: [
