@@ -103,11 +103,6 @@ const config = {
           },
           {to: '/blog', label: '博客', position: 'left'},
           {
-            href: 'https://blog.csdn.net/gg1658608470?spm=1000.2115.3001.10640',
-            label: 'CSDN',
-            position: 'left',
-          },
-          {
             href: 'https://github.com/stark1898y',
             label: 'GitHub',
             position: 'right',
@@ -132,6 +127,10 @@ const config = {
               {
                 label: '博客',
                 to: '/blog',
+              },
+              {
+                label: 'CSDN',
+                href: 'https://blog.csdn.net/gg1658608470?spm=1000.2115.3001.10640',
               },
               {
                 label: 'GitHub',
