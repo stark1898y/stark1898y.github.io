@@ -44,6 +44,16 @@ const config = {
     },
   ],
 
+  themes: [
+    [
+      '@easyops-cn/docusaurus-search-local',
+      {
+        hashed: true,
+        language: ['zh', 'en'],
+      },
+    ],
+  ],
+
   presets: [
     [
       'classic',
