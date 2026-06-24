@@ -64,7 +64,7 @@ export default function OpenSourceShowcase() {
           ))}
         </div>
         <div className={styles.moreLink}>
-          <Link to="/open-source/">
+          <Link to="/open-source/power-calculator/">
             查看全部开源项目 →
           </Link>
         </div>
