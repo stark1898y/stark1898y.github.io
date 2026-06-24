@@ -54,6 +54,21 @@ const config = {
     ],
   ],
 
+  plugins: [
+    [
+      '@docusaurus/plugin-content-docs',
+      /** @type {import('@docusaurus/plugin-content-docs').Options} */
+      ({
+        id: 'open-source',
+        path: 'open-source',
+        routeBasePath: 'open-source',
+        sidebarPath: './sidebars-open-source.js',
+        editUrl:
+          'https://github.com/stark1898y/stark1898y.github.io/tree/main/',
+      }),
+    ],
+  ],
+
   presets: [
     [
       'classic',
@@ -110,6 +125,13 @@ const config = {
             sidebarId: 'tutorialSidebar',
             position: 'left',
             label: '文档',
+          },
+          {
+            type: 'docSidebar',
+            sidebarId: 'openSourceSidebar',
+            docsPluginId: 'open-source',
+            position: 'left',
+            label: '开源项目',
           },
           {to: '/blog', label: '博客', position: 'left'},
           {

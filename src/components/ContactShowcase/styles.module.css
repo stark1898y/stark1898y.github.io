@@ -1,0 +1,83 @@
+.section {
+  padding: 4rem 0;
+}
+
+.sectionTitle {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.sectionDescription {
+  text-align: center;
+  color: var(--ifm-color-emphasis-700);
+  margin-bottom: 3rem;
+}
+
+.card {
+  background: var(--ifm-card-background-color);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 8px;
+  padding: 1.5rem;
+  height: 100%;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.cardIcon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.cardSubtitle {
+  color: var(--ifm-color-emphasis-600);
+  font-size: 0.8rem;
+}
+
+.cardDescription {
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.cardLink {
+  display: inline-block;
+  color: var(--ifm-color-primary);
+  font-weight: 500;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.cardLink:hover {
+  text-decoration: underline;
+}
+
+.qrcodeWrapper {
+  display: flex;
+  justify-content: center;
+  padding: 0.5rem 0;
+}
+
+.qrcode {
+  width: 160px;
+  height: 160px;
+  border-radius: 8px;
+  border: 1px solid var(--ifm-color-emphasis-200);
+}
