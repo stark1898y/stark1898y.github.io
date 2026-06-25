@@ -76,7 +76,7 @@
 }
 
 .qrcode {
-  width: 240px;
+  width: 400px;
   height: auto;
   border-radius: 8px;
   border: 1px solid var(--ifm-color-emphasis-200);

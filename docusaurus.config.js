@@ -157,10 +157,6 @@ const config = {
             title: '更多',
             items: [
               {
-                label: '博客',
-                to: '/blog',
-              },
-              {
                 label: 'CSDN',
                 href: 'https://blog.csdn.net/gg1658608470?spm=1000.2115.3001.10640',
               },
