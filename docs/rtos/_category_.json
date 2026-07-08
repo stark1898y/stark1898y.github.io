@@ -1,0 +1,8 @@
+{
+  "label": "RTOS 系统",
+  "position": 5,
+  "link": {
+    "type": "generated-index",
+    "description": "实时操作系统相关知识，包括 RT-Thread、FreeRTOS 等。"
+  }
+}

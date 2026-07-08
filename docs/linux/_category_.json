@@ -1,0 +1,8 @@
+{
+  "label": "Linux 开发",
+  "position": 7,
+  "link": {
+    "type": "generated-index",
+    "description": "Linux 开发相关知识，包括基础、驱动、交叉编译等。"
+  }
+}

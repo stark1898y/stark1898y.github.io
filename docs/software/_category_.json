@@ -1,0 +1,8 @@
+{
+  "label": "软件开发",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "description": "嵌入式软件开发相关知识，包括框架、组件、存储、协议、升级等。"
+  }
+}

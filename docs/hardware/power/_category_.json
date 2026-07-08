@@ -1,0 +1,8 @@
+{
+  "label": "电源相关",
+  "position": 1,
+  "link": {
+    "type": "generated-index",
+    "description": "电源设计相关知识，包括 DCDC、开关电源、采样电阻等。"
+  }
+}

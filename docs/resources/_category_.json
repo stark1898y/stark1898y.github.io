@@ -1,0 +1,8 @@
+{
+  "label": "学习资源",
+  "position": 9,
+  "link": {
+    "type": "generated-index",
+    "description": "学习资源汇总，包括推荐博主、常用网站、推荐书籍等。"
+  }
+}

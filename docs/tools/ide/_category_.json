@@ -1,0 +1,8 @@
+{
+  "label": "IDE 环境",
+  "position": 1,
+  "link": {
+    "type": "generated-index",
+    "description": "IDE 环境相关知识，包括 Keil MDK、MounRiver Studio、VS Code 等。"
+  }
+}

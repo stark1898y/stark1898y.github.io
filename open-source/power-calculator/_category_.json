@@ -1,0 +1,8 @@
+{
+  "label": "功耗计算器",
+  "position": 1,
+  "link": {
+    "type": "doc",
+    "id": "power-calculator/index"
+  }
+}

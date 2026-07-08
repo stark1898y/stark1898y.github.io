@@ -1,0 +1,8 @@
+{
+  "label": "无线通信",
+  "position": 5,
+  "link": {
+    "type": "generated-index",
+    "description": "无线通信相关知识，包括 433MHz、GNSS 等。"
+  }
+}

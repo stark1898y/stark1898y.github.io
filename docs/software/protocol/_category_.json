@@ -1,0 +1,8 @@
+{
+  "label": "通信协议",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "description": "通信协议相关知识，包括 Modbus、AT 指令、串口等。"
+  }
+}

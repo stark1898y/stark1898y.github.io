@@ -1,0 +1,234 @@
+/* 品牌色 — 嵌入式蓝 */
+:root {
+  --vp-c-brand-1: #3b82f6;
+  --vp-c-brand-2: #60a5fa;
+  --vp-c-brand-3: #2563eb;
+  --vp-c-brand-soft: rgba(59, 130, 246, 0.14);
+}
+
+/* 首页 Hero 优化 */
+.VPHero .name {
+  font-size: 48px;
+  font-weight: 700;
+}
+
+.VPHero .text {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--vp-c-brand);
+}
+
+.VPHero .image-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.VPHero .image-bg {
+  opacity: 0.8;
+}
+
+.VPHero .VPImage {
+  border-radius: 20px;
+}
+
+/* Features 卡片增强 */
+.VPFeature {
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.VPFeature:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border-color: var(--vp-c-brand) !important;
+}
+
+/* 项目展示区域 */
+.project-showcase {
+  max-width: 1152px;
+  margin: 64px auto 0;
+  padding: 0 24px 64px;
+}
+
+.project-showcase h2 {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.project-showcase .subtitle {
+  text-align: center;
+  color: var(--vp-c-text-2);
+  font-size: 16px;
+  margin-bottom: 32px;
+}
+
+.project-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.project-card {
+  background: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.project-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  border-color: var(--vp-c-brand);
+}
+
+.project-card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+}
+
+.project-card .card-body {
+  padding: 20px 24px 24px;
+}
+
+.project-card .card-icon {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.project-card .card-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.project-card .card-desc {
+  font-size: 14px;
+  color: var(--vp-c-text-2);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.project-card .card-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--vp-c-brand);
+}
+
+.project-card .card-link:hover {
+  text-decoration: underline;
+}
+
+/* 更多平台区域 */
+.platform-section {
+  max-width: 1152px;
+  margin: 0 auto;
+  padding: 0 24px 64px;
+}
+
+.platform-section h2 {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.platform-section .subtitle {
+  text-align: center;
+  color: var(--vp-c-text-2);
+  font-size: 16px;
+  margin-bottom: 32px;
+}
+
+.platform-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.platform-card {
+  background: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-border);
+  border-radius: 16px;
+  padding: 28px;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.platform-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  border-color: var(--vp-c-brand);
+}
+
+.platform-card .platform-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.platform-card .platform-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.platform-card .platform-tag {
+  display: inline-block;
+  font-size: 13px;
+  color: var(--vp-c-text-2);
+  margin-bottom: 12px;
+}
+
+.platform-card .platform-desc {
+  font-size: 14px;
+  color: var(--vp-c-text-2);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.platform-card .platform-action {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--vp-c-brand);
+}
+
+.platform-card .platform-action:hover {
+  text-decoration: underline;
+}
+
+/* 不蒜子统计紧贴 footer */
+.VPFooter {
+  padding-bottom: 4px !important;
+}
+
+.busuanzi-counter {
+  margin-top: 0;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .project-grid,
+  .platform-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .VPHero .name {
+    font-size: 36px;
+  }
+
+  .VPHero .text {
+    font-size: 22px;
+  }
+}

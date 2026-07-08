@@ -1,0 +1,8 @@
+{
+  "label": "常用组件",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "常用组件相关知识，包括按键、Shell、日志、定时器等。"
+  }
+}

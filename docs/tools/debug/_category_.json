@@ -1,0 +1,8 @@
+{
+  "label": "调试工具",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "调试工具相关知识，包括 ST-Link、CmBacktrace、perf_counter 等。"
+  }
+}
