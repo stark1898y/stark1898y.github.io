@@ -4,7 +4,7 @@ import Mermaid from './Mermaid.vue'
 import Breadcrumb from './Breadcrumb.vue'
 import BackToTop from './BackToTop.vue'
 import SidebarToggle from './SidebarToggle.vue'
-import Busuanzi from './Busuanzi.vue'
+import VisitorCounter from './VisitorCounter.vue'
 import './style.css'
 
 export default {
@@ -17,7 +17,7 @@ export default {
           'sidebar-nav-before': () => h(SidebarToggle),
         }),
         h(BackToTop),
-        h(Busuanzi),
+        h(VisitorCounter),
       ]),
     ),
 }
