@@ -83,6 +83,10 @@ export default defineConfig({
     // 上次更新时间
     lastUpdated: {
       text: '最后更新于',
+      formatOptions: {
+        dateStyle: 'full',   // 显示完整日期 (如：2026年7月8日)
+        timeStyle: 'short',  // 显示短时间 (如：下午 5:30)
+      },
     },
 
     // 大纲层级

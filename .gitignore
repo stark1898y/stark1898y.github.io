@@ -1,7 +1,7 @@
 # Dependencies
 node_modules/
 
-# VitePress build output
+# VitePress
 .vitepress/dist/
 .vitepress/cache/
 
@@ -29,6 +29,7 @@ npm-debug.log*
 
 # Editor
 *.code-workspace
+*.bak
 
 # Temp files
 *.tmp
