@@ -47,6 +47,7 @@ export default defineConfig({
           { text: '项目概览', link: '/open-source/' },
           { text: '功耗计算器', link: '/open-source/power-calculator/' },
           { text: '气体浓度换算', link: '/open-source/gas-converter/' },
+          { text: '时间戳转换', link: '/open-source/timestamp-converter/' },
         ],
       },
       {
