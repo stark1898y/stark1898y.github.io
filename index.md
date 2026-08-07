@@ -12,6 +12,9 @@ hero:
     - theme: alt
       text: 开源项目
       link: /open-source/
+    - theme: alt
+      text: 开发工具
+      link: /dev-tools/
   image:
     src: /logo.svg
     alt: Stark1898y
@@ -38,8 +41,8 @@ features:
     link: /docs/rtos/comparison
 
   - icon: 🛠️
-    title: 开发工具
-    details: Keil MDK、VS Code 等 IDE 使用技巧与调试工具
+    title: IDE 与调试
+    details: Keil MDK、VS Code 等 IDE 使用技巧与调试工具笔记
     link: /docs/tools/ide/keil-mdk
 
   - icon: 🐧
@@ -83,6 +86,53 @@ features:
       <div class="card-title">气体浓度换算</div>
       <div class="card-desc">可燃气体 %VOL、ppm、%LEL 浓度单位在线换算工具，支持甲烷、氢气、一氧化碳等 8 种常见可燃气体，提供 C / Python / Web 三端实现。</div>
       <span class="card-link">查看详情 →</span>
+    </div>
+  </a>
+
+</div>
+</div>
+
+<div class="project-showcase">
+
+## 在线开发工具
+
+常用开发调试小工具，完全在浏览器本地运行
+
+<div class="project-grid">
+
+  <a class="project-card" href="/dev-tools/timestamp-converter/">
+    <div class="card-body">
+      <div class="card-icon">⏰</div>
+      <div class="card-title">时间戳转换</div>
+      <div class="card-desc">Unix 时间戳（秒/毫秒）与日期时间互转，自动识别精度，支持 38 个常用时区与批量转换。</div>
+      <span class="card-link">查看详情 →</span>
+    </div>
+  </a>
+
+  <a class="project-card" href="/dev-tools/json-formatter/">
+    <div class="card-body">
+      <div class="card-icon">📄</div>
+      <div class="card-title">JSON 格式化</div>
+      <div class="card-desc">粘贴 JSON 即刻美化缩进、语法高亮，支持压缩与校验，错误精准定位到行和列。</div>
+      <span class="card-link">查看详情 →</span>
+    </div>
+  </a>
+
+  <a class="project-card" href="/dev-tools/base64/">
+    <div class="card-body">
+      <div class="card-icon">🔤</div>
+      <div class="card-title">Base64 编解码</div>
+      <div class="card-desc">UTF-8 文本与 Base64 字符串互转，支持文件转 Data URI，输入输出一键交换。</div>
+      <span class="card-link">查看详情 →</span>
+    </div>
+  </a>
+
+  <a class="project-card" href="/dev-tools/">
+    <div class="card-body">
+      <div class="card-icon">🧰</div>
+      <div class="card-title">全部开发工具</div>
+      <div class="card-desc">工具集概览，更多实用开发调试工具持续上新中。</div>
+      <span class="card-link">查看全部 →</span>
     </div>
   </a>
 
