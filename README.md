@@ -65,7 +65,18 @@ my_site/
 │   ├── _category_.json      #   分类配置
 │   ├── power-calculator/    #   功耗计算器
 │   └── gas-converter/       #   气体浓度换算
-├── public/                  # 静态资源（图片、图标等）
+├── dev-tools/               # 在线开发工具分区（VitePress 页面）
+│   ├── index.md             #   工具集概览
+│   ├── _category_.json      #   分类配置
+│   └── timestamp-converter-guide/   #   时间戳教程（独立文档页）
+├── public/                  # 静态资源（图片、图标、工具页等）
+│   ├── dev-tools/           #   工具静态页（一个工具一个文件夹）
+│   │   ├── json-formatter/index.html
+│   │   ├── timestamp-converter/index.html
+│   │   └── base64/index.html
+│   ├── gas-converter.png
+│   ├── power-calc.png
+│   └── logo.svg
 ├── .vitepress/              # VitePress 配置
 │   ├── config.mts           #   站点配置（导航、搜索、页脚等）
 │   ├── sidebar.ts           #   侧边栏自动生成脚本
