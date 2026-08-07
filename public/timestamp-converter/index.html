@@ -67,6 +67,27 @@
   .icon-moon { display: none; }
   [data-theme="dark"] .icon-moon { display: inline; }
 
+  /* ===== Breadcrumb ===== */
+  .breadcrumb { font-size: 12.5px; color: var(--text-2); margin-bottom: 14px; padding-top: 6px; }
+  .breadcrumb a { color: var(--text-2); text-decoration: none; transition: color .2s; }
+  .breadcrumb a:hover { color: var(--primary); }
+  .breadcrumb .sep { margin: 0 6px; color: var(--border); }
+  .breadcrumb .cur { color: var(--primary); font-weight: 600; }
+
+  /* ===== Related tools ===== */
+  .related { margin-top: 24px; }
+  .related-title { font-size: 13px; font-weight: 700; color: var(--text-2); margin-bottom: 12px; }
+  .related-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .related-card {
+    display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    text-decoration: none; color: var(--text); transition: all .2s;
+  }
+  .related-card:hover { border-color: var(--primary); box-shadow: var(--shadow); transform: translateY(-2px); }
+  .rc-icon { font-size: 22px; flex-shrink: 0; }
+  .rc-name { display: block; font-size: 14px; font-weight: 700; }
+  .rc-desc { display: block; font-size: 12px; color: var(--text-2); margin-top: 3px; }
+
   /* ===== Card ===== */
   .card {
     background: var(--card); border: 1px solid var(--border); border-radius: 16px;
@@ -193,10 +214,17 @@
   @media (min-width: 560px) {
     .result-grid { grid-template-columns: 1fr; }
   }
+  @media (max-width: 560px) {
+    .related-grid { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
 <div class="container">
+
+  <div class="breadcrumb">
+    <a href="/">首页</a><span class="sep">/</span><a href="/open-source/">开源项目</a><span class="sep">/</span><span class="cur">时间戳转换</span>
+  </div>
 
   <header>
     <div class="brand">
@@ -316,6 +344,26 @@
       <div class="batch-result" id="batchResult"></div>
     </div>
   </section>
+
+  <div class="related">
+    <div class="related-title">相关工具推荐</div>
+    <div class="related-grid">
+      <a class="related-card" href="/open-source/power-calculator/" target="_blank">
+        <span class="rc-icon">🔋</span>
+        <span>
+          <span class="rc-name">功耗计算器</span>
+          <span class="rc-desc">嵌入式设备电池续航与容量在线估算</span>
+        </span>
+      </a>
+      <a class="related-card" href="/open-source/gas-converter/" target="_blank">
+        <span class="rc-icon">🧪</span>
+        <span>
+          <span class="rc-name">气体浓度换算</span>
+          <span class="rc-desc">%VOL / ppm / %LEL 浓度单位换算</span>
+        </span>
+      </a>
+    </div>
+  </div>
 
   <footer>Unix 时间戳转换器 · 开源免费 · 支持离线使用</footer>
 </div>
