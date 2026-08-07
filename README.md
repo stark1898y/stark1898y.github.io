@@ -154,9 +154,9 @@ npm run preview
 
 ### 部署到 GitHub Pages
 
-推送 `main` 分支后，GitHub Actions 自动构建并部署到 `gh-pages` 分支。
+推送 `main` 分支后，GitHub Actions 自动构建并部署（使用 Pages Actions 环境）。
 
-> 首次部署需要在仓库 Settings > Pages 中将 Source 设为 "Deploy from a branch"，分支选 `gh-pages`。
+> 首次部署需要在仓库 Settings > Pages 中将 Source 设为 "GitHub Actions"。
 
 ## 配置说明
 
