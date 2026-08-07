@@ -2,7 +2,7 @@
 
 > 做后端接口调试、数据库查询、日志分析，几乎绕不开一串 10 位或 13 位的数字——**Unix 时间戳**。它到底代表什么？为什么从 1970 年开始？秒级和毫秒级怎么区分？时区又有什么关系？本文一次性讲清楚，并附上一个开源的在线转换工具。
 >
-> 👉 **在线体验**：[https://www.stark1898y.cc/tools/timestamp-converter/](https://www.stark1898y.cc/tools/timestamp-converter/)
+> 👉 **在线体验**：[https://www.stark1898y.cc/dev-tools/timestamp-converter/](https://www.stark1898y.cc/dev-tools/timestamp-converter/)
 
 ---
 
@@ -103,7 +103,7 @@ JWT Payload 中的 `iat`（签发时间）和 `exp`（过期时间）都是 Unix
 
 ## 六、开源工具介绍
 
-[**Timestamp-Converter 时间戳转换器**](https://www.stark1898y.cc/tools/timestamp-converter/) 是一个零依赖的单文件纯前端工具，主要特性：
+[**Timestamp-Converter 时间戳转换器**](https://www.stark1898y.cc/dev-tools/timestamp-converter/) 是一个零依赖的单文件纯前端工具，主要特性：
 
 - **双向转换**：时间戳 → 日期时间 / 日期时间 → 时间戳
 - **精度自动识别**：10 位秒级、13 位毫秒级，粘贴即转
@@ -113,7 +113,7 @@ JWT Payload 中的 `iat`（签发时间）和 `exp`（过期时间）都是 Unix
 - **批量转换**：多行时间戳/日期一次转换
 - **完全本地处理**：数据不出浏览器，可离线使用，支持深色模式
 
-**开源地址**：[GitHub](https://github.com/stark1898y/stark1898y.github.io/tree/main/public/tools/timestamp-converter)
+**开源地址**：[GitHub](https://github.com/stark1898y/stark1898y.github.io/tree/main/public/dev-tools/timestamp-converter)
 
 ---
 
