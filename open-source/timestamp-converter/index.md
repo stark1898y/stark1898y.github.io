@@ -21,15 +21,13 @@ Unix 时间戳（秒/毫秒）与日期时间**双向互转**的在线工具，�
 - **一键当前时间**：点击「现在」即刻填入当前时间戳/日期时间
 - **完全本地处理**：零依赖单文件，无任何网络请求，支持离线使用
 
-**开源地址**：[GitHub](https://github.com/stark1898y/stark1898y.github.io/tree/main/public/timestamp-converter) | [Gitee（国内）](https://gitee.com/stark1898) | [详细博客文章](./timestamp-converter-guide.md)
+**开源地址**：[GitHub](https://github.com/stark1898y/stark1898y.github.io/tree/main/public/timestamp-converter) | [详细博客文章](./timestamp-converter-guide.md)
 
 ## 界面预览
 
-![网页版界面（浅色）](./images/web.png)
+![网页版界面（浅色，三模块同屏展示）](./images/web.png)
 
 ![网页版界面（深色）](./images/dark.png)
-
-![批量转换](./images/batch.png)
 
 ## 使用说明
 
@@ -70,7 +68,7 @@ Unix 时间戳（秒/毫秒）与日期时间**双向互转**的在线工具，�
 
 <iframe
   src="/timestamp-converter/"
-  style="width: 100%; height: 900px; border: none; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1)"
+  style="width: 100%; height: 2000px; border: none; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1)"
   title="时间戳转换器"
   loading="lazy"
 ></iframe>

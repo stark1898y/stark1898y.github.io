@@ -41,10 +41,20 @@
   .container { max-width: 760px; margin: 0 auto; padding: 24px 16px 60px; }
 
   /* ===== Header ===== */
-  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; padding-top: 12px; }
-  .brand h1 { font-size: 22px; font-weight: 700; letter-spacing: .5px; }
-  .brand .sub { font-size: 13px; color: var(--text-2); margin-top: 4px; }
-  .header-right { display: flex; align-items: center; gap: 12px; }
+  header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; padding-top: 12px; flex-wrap: wrap; }
+  .brand h1 { font-size: 26px; font-weight: 700; letter-spacing: .5px; }
+  .brand .sub { font-size: 13px; color: var(--text-2); margin-top: 6px; line-height: 1.7; }
+  .notice {
+    margin-top: 12px; display: inline-flex; align-items: center; gap: 8px;
+    background: var(--primary-soft); color: var(--primary); border-radius: 10px;
+    padding: 8px 12px; font-size: 12.5px; font-weight: 500;
+  }
+  .links { display: flex; align-items: center; gap: 14px; margin-top: 12px; flex-wrap: wrap; }
+  .links a { font-size: 12.5px; text-decoration: none; color: var(--text-2); transition: color .2s; }
+  .links a:hover { color: var(--primary); }
+  .links .gh { color: var(--text); font-weight: 600; }
+  .links .gh:hover { color: var(--primary); }
+  .header-right { display: flex; align-items: flex-start; gap: 12px; }
   .live-ts { font-size: 12px; color: var(--text-2); text-align: right; line-height: 1.6; }
   .live-ts b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
   .theme-btn {
@@ -56,16 +66,6 @@
   [data-theme="dark"] .icon-sun { display: none; }
   .icon-moon { display: none; }
   [data-theme="dark"] .icon-moon { display: inline; }
-
-  /* ===== Tabs ===== */
-  .tabs { display: flex; gap: 6px; margin: 20px 0 16px; background: var(--card); padding: 6px; border-radius: 14px; border: 1px solid var(--border); }
-  .tab {
-    flex: 1; padding: 10px 8px; text-align: center; border: none; background: transparent;
-    color: var(--text-2); font-size: 14px; font-weight: 600; border-radius: 10px; cursor: pointer;
-    transition: all .2s; font-family: inherit;
-  }
-  .tab:hover { color: var(--text); }
-  .tab.active { background: var(--primary); color: #fff; box-shadow: 0 2px 8px rgba(79,70,229,.35); }
 
   /* ===== Card ===== */
   .card {
@@ -188,13 +188,6 @@
   /* ===== Error ===== */
   .error { color: var(--red); font-size: 12px; margin-top: 8px; display: none; }
 
-  /* ===== Info strip ===== */
-  .info-strip {
-    display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-2);
-    background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; margin-top: 20px;
-  }
-  .info-strip .shield { flex-shrink: 0; }
-
   footer { text-align: center; font-size: 12px; color: var(--text-2); margin-top: 28px; }
 
   @media (min-width: 560px) {
@@ -207,8 +200,13 @@
 
   <header>
     <div class="brand">
-      <h1>时间戳转换器</h1>
-      <div class="sub">Unix 时间戳与日期时间互转 · 多时区 · 批量转换</div>
+      <h1>⏰ 时间戳转换器</h1>
+      <div class="sub">Unix 时间戳（秒/毫秒）与日期时间的在线互转工具 · 自动识别精度 · 支持 38 个常用时区 · 批量转换</div>
+      <div class="notice">🔒 所有转换均在浏览器本地完成，时间数据不会上传到任何服务器</div>
+      <div class="links">
+        <a class="gh" href="https://github.com/stark1898y/stark1898y.github.io/tree/main/public/timestamp-converter" target="_blank">⭐ GitHub 源码</a>
+        <a href="/open-source/timestamp-converter/" target="_blank">← 返回 Stark 知识库</a>
+      </div>
     </div>
     <div class="header-right">
       <div class="live-ts">
@@ -221,13 +219,6 @@
       </button>
     </div>
   </header>
-
-  <!-- Tabs -->
-  <nav class="tabs" id="tabs">
-    <button class="tab active" data-tab="ts2dt">时间戳 → 日期时间</button>
-    <button class="tab" data-tab="dt2ts">日期时间 → 时间戳</button>
-    <button class="tab" data-tab="batch">批量转换</button>
-  </nav>
 
   <!-- Timezone selector (shared) -->
   <div class="tz-wrap">
@@ -244,7 +235,7 @@
     </div>
   </div>
 
-  <!-- Tab 1: 时间戳 → 日期时间 -->
+  <!-- 模块 1: 时间戳 → 日期时间 -->
   <section class="tab-panel" id="tab-ts2dt">
     <div class="card">
       <div class="card-title"><span class="dot"></span>输入时间戳</div>
@@ -274,8 +265,8 @@
     </div>
   </section>
 
-  <!-- Tab 2: 日期时间 → 时间戳 -->
-  <section class="tab-panel" id="tab-dt2ts" style="display:none">
+  <!-- 模块 2: 日期时间 → 时间戳 -->
+  <section class="tab-panel" id="tab-dt2ts">
     <div class="card">
       <div class="card-title"><span class="dot"></span>输入日期时间</div>
       <div class="input-row">
@@ -309,8 +300,8 @@
     </div>
   </section>
 
-  <!-- Tab 3: 批量转换 -->
-  <section class="tab-panel" id="tab-batch" style="display:none">
+  <!-- 模块 3: 批量转换 -->
+  <section class="tab-panel" id="tab-batch">
     <div class="card">
       <div class="card-title"><span class="dot"></span>批量转换</div>
       <div class="batch-mode">
@@ -325,11 +316,6 @@
       <div class="batch-result" id="batchResult"></div>
     </div>
   </section>
-
-  <div class="info-strip">
-    <span class="shield">🔒</span>
-    <span>所有转换均在浏览器本地完成，时间数据不会上传到任何服务器。</span>
-  </div>
 
   <footer>Unix 时间戳转换器 · 开源免费 · 支持离线使用</footer>
 </div>
@@ -561,20 +547,7 @@
     done();
   }
 
-  /* ================= Tab 切换 ================= */
-  var tabs = document.getElementById('tabs');
-  tabs.addEventListener('click', function (e) {
-    var btn = e.target.closest('.tab');
-    if (!btn) return;
-    Array.prototype.forEach.call(tabs.children, function (t) { t.classList.remove('active'); });
-    btn.classList.add('active');
-    var name = btn.getAttribute('data-tab');
-    ['ts2dt', 'dt2ts', 'batch'].forEach(function (n) {
-      document.getElementById('tab-' + n).style.display = n === name ? '' : 'none';
-    });
-  });
-
-  /* ================= Tab1: 时间戳 → 日期时间 ================= */
+  /* ================= 模块1: 时间戳 → 日期时间 ================= */
   var tsInput = document.getElementById('tsInput');
   var tsError = document.getElementById('tsError');
 
@@ -790,7 +763,7 @@
   /* ================= URL 参数支持 =================
      ?ts=1780713460        预填时间戳
      ?dt=2026-06-06%2010:38:29  预填日期时间
-     ?tab=ts2dt|dt2ts|batch 打开指定标签
+     ?batch=...            预填批量转换内容
      ?theme=dark           深色模式
   */
   try {
@@ -799,12 +772,6 @@
     if (urlTs) { tsInput.value = urlTs; refreshTs2Dt(); }
     var urlDt = qs.get('dt');
     if (urlDt) { dtInput.value = urlDt; refreshDt2Ts(); }
-    var urlTab = qs.get('tab');
-    if (urlTab === 'batch') setBatchMode('ts2dt');
-    if (urlTab) {
-      var tabBtn = tabs.querySelector('[data-tab="' + urlTab + '"]');
-      if (tabBtn) tabBtn.click();
-    }
     var urlBatch = qs.get('batch');
     if (urlBatch) {
       document.getElementById('batchInput').value = urlBatch;
