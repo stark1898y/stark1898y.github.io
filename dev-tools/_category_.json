@@ -1,0 +1,8 @@
+{
+  "label": "开发工具",
+  "position": 1,
+  "link": {
+    "type": "generated-index",
+    "description": "常用开发调试工具集合，JSON、Base64、时间戳等，完全本地处理。"
+  }
+}

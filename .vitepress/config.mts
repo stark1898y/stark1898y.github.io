@@ -47,7 +47,16 @@ export default defineConfig({
           { text: '项目概览', link: '/open-source/' },
           { text: '功耗计算器', link: '/open-source/power-calculator/' },
           { text: '气体浓度换算', link: '/open-source/gas-converter/' },
-          { text: '时间戳转换', link: '/open-source/timestamp-converter/' },
+        ],
+      },
+      {
+        text: '开发工具',
+        activeMatch: '/dev-tools/',
+        items: [
+          { text: '工具集概览', link: '/dev-tools/' },
+          { text: '时间戳转换', link: '/dev-tools/timestamp-converter/' },
+          { text: 'JSON 格式化', link: '/dev-tools/json-formatter/' },
+          { text: 'Base64 编解码', link: '/dev-tools/base64/' },
         ],
       },
       {

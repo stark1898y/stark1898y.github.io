@@ -1,0 +1,8 @@
+{
+  "label": "Base64 编解码",
+  "position": 2,
+  "link": {
+    "type": "doc",
+    "id": "dev-tools/base64/index"
+  }
+}

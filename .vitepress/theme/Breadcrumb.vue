@@ -26,6 +26,9 @@ const breadcrumbMap: Record<string, string> = {
   '/docs/resources/': '学习资源',
   '/open-source/power-calculator/': '功耗计算器',
   '/open-source/gas-converter/': '气体浓度换算',
+  '/dev-tools/timestamp-converter/': '时间戳转换',
+  '/dev-tools/json-formatter/': 'JSON 格式化',
+  '/dev-tools/base64/': 'Base64 编解码',
 }
 
 const items = computed(() => {
@@ -41,6 +44,8 @@ const items = computed(() => {
     result.push({ text: '知识库', link: '/docs/intro' })
   } else if (path.startsWith('open-source/')) {
     result.push({ text: '开源项目', link: '/open-source/' })
+  } else if (path.startsWith('dev-tools/')) {
+    result.push({ text: '开发工具', link: '/dev-tools/' })
   }
 
   // 匹配子路径

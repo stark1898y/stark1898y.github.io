@@ -16,6 +16,7 @@ interface SidebarItem {
 
 const DOCS_DIR = path.resolve(__dirname, '../docs')
 const OPEN_SOURCE_DIR = path.resolve(__dirname, '../open-source')
+const DEV_TOOLS_DIR = path.resolve(__dirname, '../dev-tools')
 
 /**
  * 读取 markdown 文件的标题（第一个 # 标题，或 frontmatter 中的 title）
@@ -194,29 +195,30 @@ function generateDocsSidebar(): Record<string, SidebarItem[]> {
 }
 
 /**
- * 生成 open-source/ 侧边栏
+ * 生成分类目录（如 open-source/、dev-tools/）的侧边栏：
+ * 分类首页 + 每个子项目可折叠分组 + 子项目独立侧边栏
  */
-function generateOpenSourceSidebar(): Record<string, SidebarItem[]> {
+function generateSectionSidebar(
+  route: string,
+  dirPath: string,
+  label: string,
+): Record<string, SidebarItem[]> {
   const sidebar: Record<string, SidebarItem[]> = {}
 
-  if (!fs.existsSync(OPEN_SOURCE_DIR)) return sidebar
+  if (!fs.existsSync(dirPath)) return sidebar
 
   const items: SidebarItem[] = []
-  const entries = fs.readdirSync(OPEN_SOURCE_DIR, { withFileTypes: true })
+  const entries = fs.readdirSync(dirPath, { withFileTypes: true })
 
-  // 根目录的 index.md → 概览
-  const topMds = entries.filter(
-    (e) => e.isFile() && e.name === 'index.md',
-  )
   // 子目录
   const subDirs = entries.filter(
     (e) => e.isDirectory() && !e.name.startsWith('_') && !e.name.startsWith('.'),
   )
 
   for (const subDir of subDirs) {
-    const subPath = path.join(OPEN_SOURCE_DIR, subDir.name)
+    const subPath = path.join(dirPath, subDir.name)
     const cat = readCategory(subPath)
-    const children = scanDirFlat(subPath, `/open-source/${subDir.name}`)
+    const children = scanDirFlat(subPath, `${route}/${subDir.name}`)
 
     if (children.length > 0) {
       items.push({
@@ -230,36 +232,36 @@ function generateOpenSourceSidebar(): Record<string, SidebarItem[]> {
   // 按 position 排序
   const positioned = items.map((item, idx) => {
     const dirName = item.items?.[0]?.link?.split('/')[2] ?? ''
-    const subPath = path.join(OPEN_SOURCE_DIR, dirName)
+    const subPath = path.join(dirPath, dirName)
     const cat = readCategory(subPath)
     return { item, position: cat?.position ?? idx + 100 }
   })
   positioned.sort((a, b) => a.position - b.position)
 
-  sidebar['/open-source/'] = [
+  sidebar[`${route}/`] = [
     {
-      text: '开源项目',
-      items: [{ text: '概览', link: '/open-source/' }],
+      text: label,
+      items: [{ text: '概览', link: `${route}/` }],
     },
     ...positioned.map((p) => p.item),
   ]
 
   // 为每个子项目生成独立侧边栏（进入项目后只显示该项目文件）
   for (const subDir of subDirs) {
-    const subPath = path.join(OPEN_SOURCE_DIR, subDir.name)
+    const subPath = path.join(dirPath, subDir.name)
     const cat = readCategory(subPath)
-    const children = scanDirFlat(subPath, `/open-source/${subDir.name}`)
+    const children = scanDirFlat(subPath, `${route}/${subDir.name}`)
     if (children.length > 0) {
-      sidebar[`/open-source/${subDir.name}/`] = [
+      sidebar[`${route}/${subDir.name}/`] = [
         {
           text: cat?.label ?? subDir.name,
-          items: [{ text: '概览', link: `/open-source/${subDir.name}/` }],
+          items: [{ text: '概览', link: `${route}/${subDir.name}/` }],
         },
         {
           text: '相关文档',
           collapsed: false,
           items: children.filter(
-            (c) => c.link !== `/open-source/${subDir.name}/index`,
+            (c) => c.link !== `${route}/${subDir.name}/index`,
           ),
         },
       ]
@@ -270,10 +272,25 @@ function generateOpenSourceSidebar(): Record<string, SidebarItem[]> {
 }
 
 /**
+ * 生成 open-source/ 侧边栏
+ */
+function generateOpenSourceSidebar(): Record<string, SidebarItem[]> {
+  return generateSectionSidebar('/open-source', OPEN_SOURCE_DIR, '开源项目')
+}
+
+/**
+ * 生成 dev-tools/ 侧边栏
+ */
+function generateDevToolsSidebar(): Record<string, SidebarItem[]> {
+  return generateSectionSidebar('/dev-tools', DEV_TOOLS_DIR, '开发工具')
+}
+
+/**
  * 自动生成完整侧边栏配置
  */
 export function generateSidebar(): Record<string, SidebarItem[]> {
   const docsSidebar = generateDocsSidebar()
   const openSourceSidebar = generateOpenSourceSidebar()
-  return { ...docsSidebar, ...openSourceSidebar }
+  const devToolsSidebar = generateDevToolsSidebar()
+  return { ...docsSidebar, ...openSourceSidebar, ...devToolsSidebar }
 }
