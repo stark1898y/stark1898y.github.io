@@ -225,6 +225,20 @@ npm run preview
 rg -n "public/tools|/tools/timestamp|/tools/json|/tools/base64" --glob "*.{md,ts,mts,json,vue,html}"
 ```
 
+### 排查记录
+
+- **2026-08 工具页 `target="_blank"` 误报排查**：曾有一轮浏览器自动化报告「返回开发工具」链接缺失 `target="_blank"`。经三处验证（本地源码、线上原始 HTML `Invoke-WebRequest`、渲染后 DOM 无头 Chrome `--dump-dom`），该属性实际**均存在**，浏览器 agent 读取 click 事件后 DOM 导致误报。**结论：无需修复代码。** 排查方法记录如下：
+
+```powershell
+# 1. 检查本地源码
+Select-String -Path "public\dev-tools\*\index.html" -Pattern "返回开发工具"
+# 2. 检查线上原始 HTML
+$r = Invoke-WebRequest -Uri "https://www.stark1898y.cc/dev-tools/json-formatter/" -UseBasicParsing
+$r.Content.IndexOf('返回开发工具')
+# 3. 检查渲染后 DOM（以无头 Chrome 输出为准，勿依赖浏览器自动化工具的 DOM 快照）
+& "C:\Program Files\Google\Chrome\Application\chrome.exe" --headless=new --dump-dom "https://www.stark1898y.cc/dev-tools/json-formatter/"
+```
+
 ## 命令速查
 
 | 命令 | 作用 |
