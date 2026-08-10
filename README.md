@@ -179,6 +179,52 @@ npm run preview
 | `theme/style.css` | 首页项目卡片、平台卡片等自定义样式 |
 | `theme/Mermaid.vue` | Mermaid 图表客户端渲染组件 |
 
+## 开发工具分区（dev-tools）路径约定
+
+> ⚠️ 这是 2026-08 路径归并后的最终约定，改动工具路径前务必阅读本节，避免再次出现 404。
+
+### 双目录职责划分
+
+开发工具分区由**两个目录配合**组成，构建后按路径合并进 `dist/`：
+
+| 目录 | 职责 | 构建产物 |
+|------|------|----------|
+| `dev-tools/*.md` | VitePress 文档页（概览、教程） | `dist/dev-tools/*.html`（带主题） |
+| `public/dev-tools/<tool>/` | 纯静态工具页（单文件 HTML） | `dist/dev-tools/<tool>/index.html`（原样复制） |
+
+### 路径对照表
+
+| 访问路径 | 实际来源 |
+|----------|----------|
+| `/dev-tools/` | `dev-tools/index.md` |
+| `/dev-tools/timestamp-converter/` | `public/dev-tools/timestamp-converter/index.html` |
+| `/dev-tools/json-formatter/` | `public/dev-tools/json-formatter/index.html` |
+| `/dev-tools/base64/` | `public/dev-tools/base64/index.html` |
+| `/dev-tools/timestamp-converter-guide/` | `dev-tools/timestamp-converter-guide/index.md` |
+
+### 新增一个工具的步骤
+
+1. 在 `public/dev-tools/` 下创建 `<tool>/index.html`，单文件自包含（CSS/JS 内联）
+2. 工具页内保留：面包屑（`首页 / 开发工具 / <工具名>`）、`← 返回开发工具`（`/dev-tools/`）、相关工具卡片、GitHub 源码链接
+3. 在 `dev-tools/index.md` 概览页加入分类与入口链接
+4. 在 `.vitepress/config.mts` 导航的「开发工具」下拉中加一项
+5. 如需要面包屑高亮，在 `.vitepress/theme/Breadcrumb.vue` 的 `breadcrumbMap` 加条目
+6. 运行 `npm run build` 验证，确认 `dist/dev-tools/<tool>/index.html` 输出的是工具 HTML
+
+### 红线规则（避免 404）
+
+- **工具子目录下禁止出现 `.md` 文件**：若 `dev-tools/<tool>/`（源码）与 `public/dev-tools/<tool>/`（静态）同名，VitePress 页面会与静态 HTML 冲突覆盖
+- **工具文档页必须使用不同目录名**：如教程放 `dev-tools/timestamp-converter-guide/`，不能叫 `timestamp-converter/`
+- **`public/tools/` 已废弃**：旧路径 `/tools/<tool>/` 全部迁移到 `/dev-tools/<tool>/`，代码中不得再引用 `/tools/`
+- **删除工具时**：同时清理 `public/dev-tools/<tool>/`、`dev-tools/index.md` 入口、`config.mts` 导航项、`Breadcrumb.vue` 映射
+
+### 旧路径检查方法
+
+```bash
+# 搜索旧路径残留（应无输出或仅剩 /docs/tools/ 知识库页面）
+rg -n "public/tools|/tools/timestamp|/tools/json|/tools/base64" --glob "*.{md,ts,mts,json,vue,html}"
+```
+
 ## 命令速查
 
 | 命令 | 作用 |

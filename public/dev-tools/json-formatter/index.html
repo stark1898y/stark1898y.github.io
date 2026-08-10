@@ -343,6 +343,15 @@
   window.loadSample = loadSample;
   window.clearAll = clearAll;
   window.copyOut = copyOut;
+
+  /* ===== 链接跳转日志（排查路径问题） ===== */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a');
+    if (!a || !a.getAttribute('href')) return;
+    var href = a.getAttribute('href');
+    if (href.indexOf('javascript:') === 0 || href.charAt(0) === '#') return;
+    console.log('[nav] ' + (href.charAt(0) === '/' ? '站内跳转: ' : '外链跳转: ') + href);
+  }, true);
 })();
 </script>
 </body>
