@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="在线 JSON 格式化工具，粘贴即刻美化缩进、语法高亮、错误定位，支持压缩与校验。纯浏览器本地处理。">
-<title>JSON 格式化 - 在线 JSON 美化与校验工具</title>
+<meta name="description" content="在线 JSON 工具集：格式化、压缩、校验、转义、Unicode 互转、树形视图、双 JSON 对比。纯浏览器本地处理，数据不上传。">
+<title>JSON 工具集 - 在线格式化、压缩、转义、视图与对比</title>
 <style>
   :root {
     --bg: #f6f7fb;
@@ -46,7 +46,7 @@
     background: var(--bg); color: var(--text); min-height: 100vh;
     transition: background .3s, color .3s;
   }
-  .container { max-width: 860px; margin: 0 auto; padding: 24px 16px 60px; }
+  .container { max-width: 980px; margin: 0 auto; padding: 24px 16px 60px; }
 
   .breadcrumb { font-size: 12.5px; color: var(--text-2); margin-bottom: 14px; padding-top: 6px; }
   .breadcrumb a { color: var(--text-2); text-decoration: none; transition: color .2s; }
@@ -78,13 +78,26 @@
   .icon-moon { display: none; }
   [data-theme="dark"] .icon-moon { display: inline; }
 
+  /* ===== Tab 导航 ===== */
+  .tabs { display: flex; gap: 4px; margin-bottom: 16px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .tab-btn {
+    padding: 10px 18px; border: none; background: transparent; color: var(--text-2);
+    font-size: 14px; font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent;
+    transition: all .2s; font-family: inherit;
+  }
+  .tab-btn:hover { color: var(--primary); }
+  .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; animation: fadeIn .25s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
   .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
   .card-title { font-size: 14px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
   .card-title .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); }
   .label { font-size: 12px; color: var(--text-2); margin-bottom: 6px; font-weight: 600; }
 
   textarea {
-    width: 100%; min-height: 180px; padding: 12px 14px; border-radius: 10px;
+    width: 100%; min-height: 160px; padding: 12px 14px; border-radius: 10px;
     border: 1px solid var(--border); background: var(--bg); color: var(--text);
     font-size: 13px; line-height: 1.7; resize: vertical; outline: none;
     transition: border-color .2s, box-shadow .2s;
@@ -92,7 +105,7 @@
   }
   textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
   .pre-out {
-    width: 100%; min-height: 180px; max-height: 480px; overflow: auto; padding: 12px 14px;
+    width: 100%; min-height: 160px; max-height: 500px; overflow: auto; padding: 12px 14px;
     border: 1px solid var(--border); border-radius: 10px; background: var(--bg);
     font-family: Consolas, Monaco, "Courier New", monospace; font-size: 13px; line-height: 1.7;
     white-space: pre; word-break: normal;
@@ -127,6 +140,38 @@
   .res-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
   .res-head .stat { font-size: 12px; color: var(--text-2); }
 
+  /* ===== JSON 视图树 ===== */
+  .tree { font-family: Consolas, Monaco, "Courier New", monospace; font-size: 13px; line-height: 1.8; overflow: auto; max-height: 500px; }
+  .t-node { padding-left: 0; }
+  .t-row { cursor: pointer; border-radius: 6px; padding: 1px 6px; transition: background .15s; }
+  .t-row:hover { background: var(--primary-soft); }
+  .t-caret { display: inline-block; width: 14px; color: var(--text-2); font-size: 11px; user-select: none; }
+  .t-caret.open { transform: rotate(90deg); }
+  .t-key { color: var(--tok-key); }
+  .t-colon { color: var(--tok-punc); }
+  .t-str { color: var(--tok-str); }
+  .t-num { color: var(--tok-num); }
+  .t-bool { color: var(--tok-bool); }
+  .t-type { font-size: 11px; color: var(--text-2); margin-left: 6px; opacity: .7; }
+  .t-children { padding-left: 22px; display: none; }
+  .t-children.open { display: block; }
+  .t-empty { color: var(--text-2); font-style: italic; }
+
+  /* ===== JSON 对比 ===== */
+  .cmp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .cmp-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 14px; }
+  .cmp-card .card-title { font-size: 13px; margin-bottom: 8px; }
+  .diff-list { max-height: 420px; overflow: auto; font-family: Consolas, Monaco, "Courier New", monospace; font-size: 12.5px; line-height: 1.9; }
+  .diff-item { padding: 4px 10px; border-radius: 6px; margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+  .diff-item .d-path { color: var(--tok-key); word-break: break-all; }
+  .diff-item .d-val { color: var(--text-2); word-break: break-all; }
+  .diff-add { background: rgba(5,150,105,.1); }
+  .diff-add .d-badge { color: var(--green); font-weight: 700; }
+  .diff-del { background: rgba(220,38,38,.08); }
+  .diff-del .d-badge { color: var(--red); font-weight: 700; }
+  .diff-mod { background: rgba(217,119,6,.1); }
+  .diff-mod .d-badge { color: #d97706; font-weight: 700; }
+
   .related { margin-top: 24px; }
   .related-title { font-size: 13px; font-weight: 700; color: var(--text-2); margin-bottom: 12px; }
   .related-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -141,20 +186,20 @@
   .rc-desc { display: block; font-size: 12px; color: var(--text-2); margin-top: 3px; }
 
   footer { text-align: center; font-size: 12px; color: var(--text-2); margin-top: 28px; }
-  @media (max-width: 560px) { .related-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 640px) { .cmp-grid { grid-template-columns: 1fr; } .related-grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
 <div class="container">
 
   <div class="breadcrumb">
-    <a href="/">首页</a><span class="sep">/</span><a href="/dev-tools/">开发工具</a><span class="sep">/</span><span class="cur">JSON 格式化</span>
+    <a href="/">首页</a><span class="sep">/</span><a href="/dev-tools/">开发工具</a><span class="sep">/</span><span class="cur">JSON 工具集</span>
   </div>
 
   <header>
     <div class="brand">
-      <h1>📄 JSON 格式化</h1>
-      <div class="sub">粘贴 JSON 即刻美化缩进、语法高亮、错误定位 · 支持压缩与校验</div>
+      <h1>📄 JSON 工具集</h1>
+      <div class="sub">格式化 · 压缩 · 转义 · Unicode 互转 · 树形视图 · JSON 对比</div>
       <div class="notice">🔒 所有处理均在浏览器本地完成，数据不会上传到任何服务器</div>
       <div class="links">
         <a class="gh" href="https://github.com/stark1898y/stark1898y.github.io/tree/main/public/dev-tools/json-formatter" target="_blank">⭐ GitHub 源码</a>
@@ -169,31 +214,135 @@
     </div>
   </header>
 
-  <div class="card">
-    <div class="card-title"><span class="dot"></span>输入 JSON</div>
-    <textarea id="jsonInput" placeholder='{"name":"Stark","site":"stark1898y.cc","tags":["embedded","iot"],"projects":3}' spellcheck="false"></textarea>
-    <div class="toolbar">
-      <button class="btn-primary" onclick="doFormat()">格式化</button>
-      <div class="seg" id="indentSeg">
-        <button data-indent="2" class="active">2 空格</button>
-        <button data-indent="4">4 空格</button>
-      </div>
-      <button class="btn-ghost" onclick="doMinify()">压缩</button>
-      <button class="btn-ghost" onclick="loadSample()">示例</button>
-      <button class="btn-ghost" onclick="clearAll()">清空</button>
-    </div>
-    <div class="error" id="errBox"></div>
-    <div class="ok" id="okBox"></div>
+  <div class="tabs" id="tabs">
+    <button class="tab-btn active" data-tab="format">📐 格式化</button>
+    <button class="tab-btn" data-tab="escape">🔤 转义 / Unicode</button>
+    <button class="tab-btn" data-tab="view">🌳 JSON 视图</button>
+    <button class="tab-btn" data-tab="compare">⚖️ JSON 对比</button>
   </div>
 
-  <div class="card" id="resultCard" style="display:none">
-    <div class="res-head">
-      <span class="label" style="margin:0">输出</span>
-      <span class="stat" id="stat"></span>
+  <!-- ============ Tab 1: 格式化 ============ -->
+  <div class="tab-panel active" id="panel-format">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>输入 JSON</div>
+      <textarea id="jsonInput" placeholder='{"name":"Stark","site":"stark1898y.cc","tags":["embedded","iot"],"projects":3}' spellcheck="false"></textarea>
+      <div class="toolbar">
+        <button class="btn-primary" onclick="doFormat()">格式化</button>
+        <div class="seg" id="indentSeg">
+          <button data-indent="2" class="active">2 空格</button>
+          <button data-indent="4">4 空格</button>
+        </div>
+        <button class="btn-ghost" onclick="doMinify()">压缩成一行</button>
+        <button class="btn-ghost" onclick="loadSample()">示例</button>
+        <button class="btn-ghost" onclick="clearAll()">清空</button>
+      </div>
+      <div class="error" id="errBox"></div>
+      <div class="ok" id="okBox"></div>
     </div>
-    <pre class="pre-out" id="jsonOut"></pre>
-    <div class="toolbar">
-      <button class="btn-primary" onclick="copyOut()">复制结果</button>
+
+    <div class="card" id="resultCard" style="display:none">
+      <div class="res-head">
+        <span class="label" style="margin:0">输出</span>
+        <span class="stat" id="stat"></span>
+      </div>
+      <pre class="pre-out" id="jsonOut"></pre>
+      <div class="toolbar">
+        <button class="btn-primary" onclick="copyOut()">复制结果</button>
+        <button class="btn-ghost" onclick="saveLocal('json')">保存本地 .json</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ Tab 2: 转义 / Unicode ============ -->
+  <div class="tab-panel" id="panel-escape">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>文本转换</div>
+      <div class="toolbar" style="margin-top:0">
+        <div class="seg" id="escapeSeg">
+          <button data-mode="escape" class="active">JSON 转义</button>
+          <button data-mode="unescape">JSON 去转义</button>
+          <button data-mode="unicode">中文 → Unicode</button>
+          <button data-mode="deunicode">Unicode → 中文</button>
+        </div>
+      </div>
+      <textarea id="escInput" placeholder="输入需要转换的文本，例如：{"a":"中文内容","b":true}" spellcheck="false"></textarea>
+      <div class="toolbar">
+        <button class="btn-primary" onclick="doEscape()">转换</button>
+        <button class="btn-ghost" onclick="swapEscape()">⇄ 输入输出交换</button>
+        <button class="btn-ghost" onclick="loadEscSample()">示例</button>
+        <button class="btn-ghost" onclick="clearEsc()">清空</button>
+      </div>
+      <div class="error" id="escErr"></div>
+      <div class="hint" id="escHint">JSON 转义：压缩成一行并将双引号、反斜杠等特殊字符加上转义符，可直接嵌入 JS/JSON 字符串。</div>
+    </div>
+
+    <div class="card" id="escResultCard" style="display:none">
+      <div class="res-head">
+        <span class="label" style="margin:0">输出</span>
+        <span class="stat" id="escStat"></span>
+      </div>
+      <textarea id="escOut" readonly spellcheck="false"></textarea>
+      <div class="toolbar">
+        <button class="btn-primary" onclick="copyEsc()">复制结果</button>
+        <button class="btn-ghost" onclick="saveLocal('txt')">保存本地 .txt</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ Tab 3: JSON 视图 ============ -->
+  <div class="tab-panel" id="panel-view">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>输入 JSON</div>
+      <textarea id="viewInput" placeholder='{"name":"Stark","skills":["C","BLE"],"meta":{"level":3,"active":true}}' spellcheck="false"></textarea>
+      <div class="toolbar">
+        <button class="btn-primary" onclick="doView()">生成视图</button>
+        <button class="btn-ghost" onclick="loadViewSample()">示例</button>
+        <button class="btn-ghost" onclick="clearView()">清空</button>
+      </div>
+      <div class="error" id="viewErr"></div>
+    </div>
+
+    <div class="card" id="viewCard" style="display:none">
+      <div class="res-head">
+        <span class="label" style="margin:0">树形视图</span>
+        <span class="stat" id="viewStat"></span>
+      </div>
+      <div class="tree" id="viewTree"></div>
+      <div class="toolbar">
+        <button class="btn-ghost" onclick="collapseAll()">全部折叠</button>
+        <button class="btn-ghost" onclick="expandAll()">全部展开</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ Tab 4: JSON 对比 ============ -->
+  <div class="tab-panel" id="panel-compare">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>两份 JSON 对比</div>
+      <div class="cmp-grid">
+        <div class="cmp-card">
+          <div class="card-title">JSON A（基准）</div>
+          <textarea id="cmpA" placeholder='{"name":"Stark","age":30,"tags":["a","b"]}' spellcheck="false"></textarea>
+        </div>
+        <div class="cmp-card">
+          <div class="card-title">JSON B（对比）</div>
+          <textarea id="cmpB" placeholder='{"name":"Stark","age":31,"tags":["a","c"],"extra":true}' spellcheck="false"></textarea>
+        </div>
+      </div>
+      <div class="toolbar">
+        <button class="btn-primary" onclick="doCompare()">开始对比</button>
+        <button class="btn-ghost" onclick="loadCmpSample()">示例</button>
+        <button class="btn-ghost" onclick="clearCmp()">清空</button>
+      </div>
+      <div class="error" id="cmpErr"></div>
+    </div>
+
+    <div class="card" id="cmpCard" style="display:none">
+      <div class="res-head">
+        <span class="label" style="margin:0">差异结果</span>
+        <span class="stat" id="cmpStat"></span>
+      </div>
+      <div class="diff-list" id="cmpResult"></div>
     </div>
   </div>
 
@@ -217,20 +366,12 @@
     </div>
   </div>
 
-  <footer>JSON 格式化工具 · 开源免费 · 支持离线使用</footer>
+  <footer>JSON 工具集 · 开源免费 · 支持离线使用</footer>
 </div>
 
 <script>
 (function () {
   'use strict';
-
-  var input = document.getElementById('jsonInput');
-  var out = document.getElementById('jsonOut');
-  var resultCard = document.getElementById('resultCard');
-  var errBox = document.getElementById('errBox');
-  var okBox = document.getElementById('okBox');
-  var stat = document.getElementById('stat');
-  var indent = 2;
 
   /* ===== 主题 ===== */
   var themeBtn = document.getElementById('themeBtn');
@@ -241,26 +382,30 @@
     applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
   });
 
-  /* ===== 缩进分段 ===== */
-  document.getElementById('indentSeg').addEventListener('click', function (e) {
-    var b = e.target.closest('button'); if (!b) return;
-    Array.prototype.forEach.call(this.children, function (c) { c.classList.remove('active'); });
-    b.classList.add('active');
-    indent = parseInt(b.getAttribute('data-indent'), 10);
+  /* ===== Tab 切换 ===== */
+  var tabBtns = document.querySelectorAll('.tab-btn');
+  function switchTab(name) {
+    tabBtns.forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-tab') === name); });
+    document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.remove('active'); });
+    var panel = document.getElementById('panel-' + name);
+    if (panel) panel.classList.add('active');
+  }
+  tabBtns.forEach(function (b) {
+    b.addEventListener('click', function () { switchTab(b.getAttribute('data-tab')); });
   });
 
-  function showErr(msg) {
-    resultCard.style.display = 'none'; okBox.style.display = 'none';
-    errBox.style.display = 'block'; errBox.textContent = msg;
+  /* ===== 通用工具 ===== */
+  function escapeHtml(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
-  function parse(inputStr) {
-    try { return { ok: true, data: JSON.parse(inputStr) }; }
+  function parseJson(str) {
+    try { return { ok: true, data: JSON.parse(str) }; }
     catch (e) {
       var detail = '';
       var m = e.message.match(/position\s+(\d+)/i);
       if (m) {
         var pos = parseInt(m[1], 10);
-        var before = inputStr.slice(0, pos);
+        var before = str.slice(0, pos);
         var line = before.split('\n').length;
         var col = pos - before.lastIndexOf('\n');
         detail = '（第 ' + line + ' 行，第 ' + col + ' 列）';
@@ -268,9 +413,32 @@
       return { ok: false, msg: e.message + ' ' + detail };
     }
   }
-
-  function escapeHtml(s) {
-    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  function copyText(text, btn) {
+    function done() {
+      var o = btn.textContent;
+      btn.textContent = '已复制';
+      setTimeout(function () { btn.textContent = o; }, 1200);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text, done); });
+    } else { fallbackCopy(text, done); }
+  }
+  function fallbackCopy(text, done) {
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta); done();
+  }
+  function saveLocal(ext) {
+    var name = ext === 'json' ? 'output.json' : 'output.txt';
+    var content = ext === 'json' ? document.getElementById('jsonOut').textContent : document.getElementById('escOut').value;
+    var blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
   }
   function highlight(jsonStr) {
     var re = /("(?:[^"\\]|\\.)*"|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?|true|false|null|[{}[\],:])/g;
@@ -293,6 +461,26 @@
     return html;
   }
 
+  /* ================= Tab 1: 格式化 ================= */
+  var input = document.getElementById('jsonInput');
+  var out = document.getElementById('jsonOut');
+  var resultCard = document.getElementById('resultCard');
+  var errBox = document.getElementById('errBox');
+  var okBox = document.getElementById('okBox');
+  var stat = document.getElementById('stat');
+  var indent = 2;
+
+  document.getElementById('indentSeg').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    Array.prototype.forEach.call(this.children, function (c) { c.classList.remove('active'); });
+    b.classList.add('active');
+    indent = parseInt(b.getAttribute('data-indent'), 10);
+  });
+
+  function showErr(box, msg) {
+    box.style.display = 'block'; box.textContent = msg;
+  }
+  function hideErr(box) { box.style.display = 'none'; }
   function render(str) {
     out.innerHTML = highlight(str);
     stat.textContent = str.length + ' 字符';
@@ -301,21 +489,21 @@
 
   function doFormat() {
     var raw = input.value.trim();
-    if (!raw) { showErr('请输入 JSON 内容'); return; }
-    var r = parse(raw);
-    if (!r.ok) { showErr('JSON 解析失败：' + r.msg); return; }
-    errBox.style.display = 'none';
+    if (!raw) { okBox.style.display = 'none'; resultCard.style.display = 'none'; showErr(errBox, '请输入 JSON 内容'); return; }
+    var r = parseJson(raw);
+    if (!r.ok) { okBox.style.display = 'none'; resultCard.style.display = 'none'; showErr(errBox, 'JSON 解析失败：' + r.msg); return; }
+    hideErr(errBox);
     render(JSON.stringify(r.data, null, indent));
     okBox.style.display = 'block'; okBox.textContent = '✓ 格式有效，已美化';
   }
   function doMinify() {
     var raw = input.value.trim();
-    if (!raw) { showErr('请输入 JSON 内容'); return; }
-    var r = parse(raw);
-    if (!r.ok) { showErr('JSON 解析失败：' + r.msg); return; }
-    errBox.style.display = 'none';
+    if (!raw) { okBox.style.display = 'none'; resultCard.style.display = 'none'; showErr(errBox, '请输入 JSON 内容'); return; }
+    var r = parseJson(raw);
+    if (!r.ok) { okBox.style.display = 'none'; resultCard.style.display = 'none'; showErr(errBox, 'JSON 解析失败：' + r.msg); return; }
+    hideErr(errBox);
     render(JSON.stringify(r.data));
-    okBox.style.display = 'block'; okBox.textContent = '✓ 格式有效，已压缩';
+    okBox.style.display = 'block'; okBox.textContent = '✓ 格式有效，已压缩成一行';
   }
   function loadSample() {
     input.value = '{"name":"Stark1898y","site":"www.stark1898y.cc","role":"embedded engineer","skills":["C","STM32","RT-Thread","BLE"],"openSource":true,"repos":{"tools":3,"docs":1},"stars":null}';
@@ -324,10 +512,267 @@
     input.value = ''; resultCard.style.display = 'none'; errBox.style.display = 'none'; okBox.style.display = 'none';
   }
   function copyOut() {
-    var text = out.textContent;
-    function done() { var b = document.querySelector('#resultCard .btn-primary'); if (b) { var o = b.textContent; b.textContent = '已复制'; setTimeout(function () { b.textContent = o; }, 1200); } }
-    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(text).then(done); }
-    else { var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (e) {} document.body.removeChild(ta); done(); }
+    copyText(out.textContent, document.querySelector('#resultCard .btn-primary'));
+  }
+
+  /* ================= Tab 2: 转义 / Unicode ================= */
+  var escInput = document.getElementById('escInput');
+  var escOut = document.getElementById('escOut');
+  var escResultCard = document.getElementById('escResultCard');
+  var escErr = document.getElementById('escErr');
+  var escStat = document.getElementById('escStat');
+  var escHint = document.getElementById('escHint');
+  var escMode = 'escape';
+
+  var escHints = {
+    escape: 'JSON 转义：压缩成一行并将双引号、反斜杠等特殊字符加上转义符，可直接嵌入 JS/JSON 字符串。',
+    unescape: 'JSON 去转义：把转义后的字符串还原为原始 JSON 文本。',
+    unicode: '中文 → Unicode：将中文及非 ASCII 字符转换为 \\uXXXX 形式。',
+    deunicode: 'Unicode → 中文：将 \\uXXXX 形式还原为可读中文。'
+  };
+
+  document.getElementById('escapeSeg').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    Array.prototype.forEach.call(this.children, function (c) { c.classList.remove('active'); });
+    b.classList.add('active');
+    escMode = b.getAttribute('data-mode');
+    escHint.textContent = escHints[escMode] || '';
+  });
+
+  function escapeJson(s) {
+    return s.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
+  }
+  function unescapeJson(s) {
+    return s.replace(/\\n/g, '\n').replace(/\\r/g, '\r').replace(/\\t/g, '\t').replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+  }
+  function toUnicode(s) {
+    return s.replace(/[^\x00-\xff]/g, function (c) {
+      return '\\u' + ('0000' + c.charCodeAt(0).toString(16)).slice(-4);
+    });
+  }
+  function fromUnicode(s) {
+    return s.replace(/\\u([0-9a-fA-F]{4})/g, function (_, h) {
+      return String.fromCharCode(parseInt(h, 16));
+    });
+  }
+
+  function doEscape() {
+    var raw = escInput.value;
+    if (!raw) { showErr(escErr, '请输入要转换的文本'); return; }
+    hideErr(escErr);
+    var result;
+    if (escMode === 'escape') result = escapeJson(raw);
+    else if (escMode === 'unescape') result = unescapeJson(raw);
+    else if (escMode === 'unicode') result = toUnicode(raw);
+    else result = fromUnicode(raw);
+    escOut.value = result;
+    escStat.textContent = result.length + ' 字符';
+    escResultCard.style.display = '';
+  }
+  function swapEscape() {
+    var prevOut = escOut.value;
+    if (!prevOut) { showErr(escErr, '输出为空，无法交换'); return; }
+    escInput.value = prevOut;
+    hideErr(escErr);
+    // 重新按当前模式转换（原输出作为新输入）
+    doEscape();
+  }
+  function loadEscSample() {
+    escInput.value = '{"message":"你好，世界！\\u2014 from Stark","ok":true}';
+    escMode = 'escape';
+    var b = document.querySelector('#escapeSeg button[data-mode="escape"]');
+    if (b) b.click();
+  }
+  function clearEsc() {
+    escInput.value = ''; escResultCard.style.display = 'none'; escErr.style.display = 'none';
+  }
+  function copyEsc() {
+    copyText(escOut.value, document.querySelector('#escResultCard .btn-primary'));
+  }
+
+  /* ================= Tab 3: JSON 视图 ================= */
+  var viewInput = document.getElementById('viewInput');
+  var viewCard = document.getElementById('viewCard');
+  var viewTree = document.getElementById('viewTree');
+  var viewErr = document.getElementById('viewErr');
+  var viewStat = document.getElementById('viewStat');
+
+  function shortValue(v) {
+    if (typeof v === 'string') {
+      var s = v.length > 40 ? v.slice(0, 40) + '…' : v;
+      return JSON.stringify(s);
+    }
+    if (typeof v === 'number' || typeof v === 'boolean') return String(v);
+    if (v === null) return 'null';
+    return '';
+  }
+  function typeLabel(v) {
+    if (v === null) return 'null';
+    if (Array.isArray(v)) return 'array[' + v.length + ']';
+    if (typeof v === 'object') return 'object{' + Object.keys(v).length + '}';
+    return typeof v;
+  }
+
+  function buildTree(key, v, isLast) {
+    var div = document.createElement('div');
+    div.className = 't-node';
+    var row = document.createElement('div');
+    row.className = 't-row';
+
+    var isObj = v !== null && typeof v === 'object';
+    if (isObj) {
+      var caret = document.createElement('span');
+      caret.className = 't-caret';
+      caret.textContent = '▶';
+      var keys = Object.keys(v);
+      var children = document.createElement('div');
+      children.className = 't-children';
+      keys.forEach(function (k, i) {
+        children.appendChild(buildTree(k, v[k], i === keys.length - 1));
+      });
+      row.appendChild(caret);
+      row.appendChild(createKeySpan(key));
+      row.appendChild(createColon());
+      var preview = document.createElement('span');
+      preview.className = 't-type';
+      preview.textContent = Array.isArray(v) ? '[' + v.length + ' 项]' : '{' + keys.length + ' 项}';
+      row.appendChild(preview);
+      div.appendChild(row);
+      div.appendChild(children);
+      row.addEventListener('click', function () {
+        caret.classList.toggle('open');
+        children.classList.toggle('open');
+      });
+    } else {
+      row.appendChild(createKeySpan(key));
+      row.appendChild(createColon());
+      var val = document.createElement('span');
+      val.className = 't-str t-num t-bool';
+      val.className = typeof v === 'string' ? 't-str' : (typeof v === 'number' ? 't-num' : 't-bool');
+      val.textContent = shortValue(v);
+      row.appendChild(val);
+      var vt = document.createElement('span');
+      vt.className = 't-type';
+      vt.textContent = typeLabel(v);
+      row.appendChild(vt);
+      div.appendChild(row);
+    }
+    return div;
+  }
+  function createKeySpan(key) {
+    var s = document.createElement('span');
+    s.className = 't-key';
+    s.textContent = JSON.stringify(key);
+    return s;
+  }
+  function createColon() {
+    var s = document.createElement('span');
+    s.className = 't-colon';
+    s.textContent = ': ';
+    return s;
+  }
+
+  function doView() {
+    var raw = viewInput.value.trim();
+    if (!raw) { showErr(viewErr, '请输入 JSON 内容'); return; }
+    var r = parseJson(raw);
+    if (!r.ok) { showErr(viewErr, 'JSON 解析失败：' + r.msg); return; }
+    hideErr(viewErr);
+    viewTree.innerHTML = '';
+    viewTree.appendChild(buildTree('$', r.data));
+    viewStat.textContent = '点击行可折叠/展开';
+    viewCard.style.display = '';
+    expandAll();
+  }
+  function loadViewSample() {
+    viewInput.value = '{"name":"Stark","skills":["C","BLE","RTOS"],"meta":{"level":3,"active":true,"config":{"debug":false,"rate":0.8}},"empty":null}';
+  }
+  function clearView() {
+    viewInput.value = ''; viewCard.style.display = 'none'; viewErr.style.display = 'none';
+  }
+  function collapseAll() {
+    viewTree.querySelectorAll('.t-children').forEach(function (c) { c.classList.remove('open'); });
+    viewTree.querySelectorAll('.t-caret').forEach(function (c) { c.classList.remove('open'); });
+  }
+  function expandAll() {
+    viewTree.querySelectorAll('.t-children').forEach(function (c) { c.classList.add('open'); });
+    viewTree.querySelectorAll('.t-caret').forEach(function (c) { c.classList.add('open'); });
+  }
+
+  /* ================= Tab 4: JSON 对比 ================= */
+  var cmpA = document.getElementById('cmpA');
+  var cmpB = document.getElementById('cmpB');
+  var cmpCard = document.getElementById('cmpCard');
+  var cmpResult = document.getElementById('cmpResult');
+  var cmpErr = document.getElementById('cmpErr');
+  var cmpStat = document.getElementById('cmpStat');
+
+  function diffValues(a, b, path, changes) {
+    var same = JSON.stringify(a) === JSON.stringify(b);
+    if (same) return;
+
+    if (a === null || b === null || typeof a !== 'object' || typeof b !== 'object') {
+      changes.push({ type: 'mod', path: path, a: shortValue(a), b: shortValue(b) });
+      return;
+    }
+    if (Array.isArray(a) !== Array.isArray(b)) {
+      changes.push({ type: 'mod', path: path, a: shortValue(a), b: shortValue(b) });
+      return;
+    }
+
+    var keysA = Object.keys(a);
+    var keysB = Object.keys(b);
+    var allKeys = new Set(keysA.concat(keysB));
+    allKeys.forEach(function (k) {
+      var p = path + (Array.isArray(a) ? '[' + k + ']' : '.' + k);
+      var hasA = Object.prototype.hasOwnProperty.call(a, k);
+      var hasB = Object.prototype.hasOwnProperty.call(b, k);
+      if (hasA && !hasB) {
+        changes.push({ type: 'del', path: p, a: shortValue(a[k]), b: '' });
+      } else if (!hasA && hasB) {
+        changes.push({ type: 'add', path: p, a: '', b: shortValue(b[k]) });
+      } else {
+        diffValues(a[k], b[k], p, changes);
+      }
+    });
+  }
+
+  function doCompare() {
+    var ra = cmpA.value.trim(), rb = cmpB.value.trim();
+    if (!ra || !rb) { showErr(cmpErr, '请输入两份 JSON 内容'); return; }
+    var pa = parseJson(ra), pb = parseJson(rb);
+    if (!pa.ok) { showErr(cmpErr, 'JSON A 解析失败：' + pa.msg); return; }
+    if (!pb.ok) { showErr(cmpErr, 'JSON B 解析失败：' + pb.msg); return; }
+    hideErr(cmpErr);
+
+    var changes = [];
+    diffValues(pa.data, pb.data, '$', changes);
+
+    cmpResult.innerHTML = '';
+    if (changes.length === 0) {
+      cmpResult.innerHTML = '<div class="diff-item diff-mod"><span class="d-badge">✓</span><span class="d-path">两份 JSON 完全一致</span></div>';
+      cmpStat.textContent = '无差异';
+    } else {
+      changes.forEach(function (c) {
+        var div = document.createElement('div');
+        div.className = 'diff-item diff-' + c.type;
+        var badge = c.type === 'add' ? '＋' : (c.type === 'del' ? '－' : '～');
+        var label = c.type === 'add' ? '新增' : (c.type === 'del' ? '删除' : '修改');
+        div.innerHTML = '<span class="d-badge">' + badge + ' ' + label + '</span>' +
+          '<span class="d-path">' + escapeHtml(c.path) + '</span>' +
+          '<span class="d-val">' + (c.a ? 'A: ' + escapeHtml(c.a) + ' ' : '') + (c.b ? 'B: ' + escapeHtml(c.b) : '') + '</span>';
+        cmpResult.appendChild(div);
+      });
+      cmpStat.textContent = changes.length + ' 处差异';
+    }
+    cmpCard.style.display = '';
+  }
+  function loadCmpSample() {
+    cmpA.value = '{"name":"Stark","age":30,"tags":["a","b"],"meta":{"x":1}}';
+    cmpB.value = '{"name":"Stark","age":31,"tags":["a","c"],"extra":true,"meta":{"x":2}}';
+  }
+  function clearCmp() {
+    cmpA.value = ''; cmpB.value = ''; cmpCard.style.display = 'none'; cmpErr.style.display = 'none';
   }
 
   /* ===== URL 参数 ===== */
@@ -335,6 +780,8 @@
     var qs = new URLSearchParams(location.search);
     var j = qs.get('json');
     if (j) { input.value = j; doFormat(); }
+    var tab = qs.get('tab');
+    if (tab && document.getElementById('panel-' + tab)) switchTab(tab);
     if (qs.get('theme') === 'dark') applyTheme('dark');
   } catch (e) {}
 
@@ -343,6 +790,20 @@
   window.loadSample = loadSample;
   window.clearAll = clearAll;
   window.copyOut = copyOut;
+  window.saveLocal = saveLocal;
+  window.doEscape = doEscape;
+  window.swapEscape = swapEscape;
+  window.loadEscSample = loadEscSample;
+  window.clearEsc = clearEsc;
+  window.copyEsc = copyEsc;
+  window.doView = doView;
+  window.loadViewSample = loadViewSample;
+  window.clearView = clearView;
+  window.collapseAll = collapseAll;
+  window.expandAll = expandAll;
+  window.doCompare = doCompare;
+  window.loadCmpSample = loadCmpSample;
+  window.clearCmp = clearCmp;
 
   /* ===== 链接跳转日志（排查路径问题） ===== */
   document.addEventListener('click', function (e) {
