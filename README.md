@@ -209,7 +209,8 @@ npm run preview
 3. 在 `dev-tools/index.md` 概览页加入分类与入口链接
 4. 在 `.vitepress/config.mts` 导航的「开发工具」下拉中加一项
 5. 如需要面包屑高亮，在 `.vitepress/theme/Breadcrumb.vue` 的 `breadcrumbMap` 加条目
-6. 运行 `npm run build` 验证，确认 `dist/dev-tools/<tool>/index.html` 输出的是工具 HTML
+6. **在 `.vitepress/theme/ForceFullNav.vue` 的 `STATIC_TOOL_PATHS` 中加入该路径**（否则点击入口会因 SPA 路由显示 404）
+7. 运行 `npm run build` 验证，确认 `dist/dev-tools/<tool>/index.html` 输出的是工具 HTML
 
 ### 红线规则（避免 404）
 
