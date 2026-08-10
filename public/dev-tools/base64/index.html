@@ -122,11 +122,38 @@
 
   footer { text-align: center; font-size: 12px; color: var(--text-2); margin-top: 28px; }
   @media (max-width: 560px) { .related-grid { grid-template-columns: 1fr; } }
+
+  /* ===== 骨架屏 ===== */
+  .skeleton { position: fixed; inset: 0; z-index: 9990; background: var(--bg); display: flex; justify-content: center; padding: 24px 16px; transition: opacity .3s ease; }
+  .skeleton.hide { opacity: 0; pointer-events: none; }
+  .sk-wrap { width: 100%; max-width: 860px; }
+  .sk-bar { height: 16px; border-radius: 8px; background: linear-gradient(90deg, rgba(128,128,128,.08) 25%, rgba(128,128,128,.18) 50%, rgba(128,128,128,.08) 75%); background-size: 200% 100%; animation: sk-shimmer 1.3s infinite; }
+  .sk-title { height: 26px; width: 45%; margin-bottom: 14px; }
+  .sk-sub { height: 14px; width: 70%; margin-bottom: 20px; }
+  .sk-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+  .sk-line { height: 12px; width: 30%; margin-bottom: 14px; }
+  .sk-block { height: 150px; width: 100%; border-radius: 10px; background: linear-gradient(90deg, rgba(128,128,128,.06) 25%, rgba(128,128,128,.14) 50%, rgba(128,128,128,.06) 75%); background-size: 200% 100%; animation: sk-shimmer 1.3s infinite; }
+  @keyframes sk-shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
 </style>
 </head>
 <body>
 <div id="errBoundary" style="display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:#fee2e2;color:#b91c1c;padding:10px 16px;font-size:13px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.15)">页面出现异常，部分功能可能不可用。
   <button onclick="location.reload()" style="margin-left:8px;padding:4px 12px;border:none;border-radius:6px;background:#b91c1c;color:#fff;cursor:pointer;font-size:12px">刷新重试</button>
+</div>
+<div id="skeleton" class="skeleton" aria-hidden="true">
+  <div class="sk-wrap">
+    <div class="sk-bar sk-title"></div>
+    <div class="sk-bar sk-sub"></div>
+    <div class="sk-card">
+      <div class="sk-bar sk-line"></div>
+      <div class="sk-block"></div>
+      <div class="sk-bar sk-line" style="width:20%;margin-top:14px"></div>
+    </div>
+    <div class="sk-card">
+      <div class="sk-bar sk-line"></div>
+      <div class="sk-block" style="height:100px"></div>
+    </div>
+  </div>
 </div>
 <div class="container">
 
@@ -222,6 +249,18 @@
     showErrBoundary();
   });
   window.addEventListener('unhandledrejection', function () { showErrBoundary(); });
+
+  /* ===== 骨架屏：页面内容就绪后淡出 ===== */
+  (function () {
+    var sk = document.getElementById('skeleton');
+    if (!sk) return;
+    requestAnimationFrame(function () {
+      setTimeout(function () {
+        sk.classList.add('hide');
+        setTimeout(function () { if (sk.parentNode) sk.parentNode.removeChild(sk); }, 350);
+      }, 80);
+    });
+  })();
 
   var input = document.getElementById('input');
   var output = document.getElementById('output');

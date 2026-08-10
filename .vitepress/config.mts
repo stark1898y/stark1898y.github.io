@@ -121,6 +121,16 @@ export default defineConfig({
     darkModeSwitchLabel: '深色模式',
     sidebarMenuLabel: '菜单',
     returnToTopLabel: '回到顶部',
+
+    // 404 页面文案（VitePress 内置 NotFound 组件，直接访问未知 URL 时回退显示）
+    notFound: {
+      code: '404',
+      title: '页面不存在',
+      quote: '抱歉，你访问的页面不存在或已被移动。',
+      link: '/',
+      linkText: '返回首页',
+      linkLabel: '返回首页',
+    },
   },
 
   // Markdown 配置

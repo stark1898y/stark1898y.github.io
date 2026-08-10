@@ -6,6 +6,7 @@ import BackToTop from './BackToTop.vue'
 import SidebarToggle from './SidebarToggle.vue'
 import VisitorCounter from './VisitorCounter.vue'
 import ForceFullNav from './ForceFullNav.vue'
+import Custom404Fallback from './Custom404Fallback.vue'
 import './style.css'
 
 export default {
@@ -13,14 +14,16 @@ export default {
   Layout: () =>
     h(Mermaid, null, () =>
       h(ForceFullNav, null, () =>
-        h('div', null, [
-          h(DefaultTheme.Layout, null, {
-            'doc-before': () => h(Breadcrumb),
-            'sidebar-nav-before': () => h(SidebarToggle),
-          }),
-          h(BackToTop),
-          h(VisitorCounter),
-        ]),
+        h(Custom404Fallback, null, () =>
+          h('div', null, [
+            h(DefaultTheme.Layout, null, {
+              'doc-before': () => h(Breadcrumb),
+              'sidebar-nav-before': () => h(SidebarToggle),
+            }),
+            h(BackToTop),
+            h(VisitorCounter),
+          ]),
+        ),
       ),
     ),
 }
