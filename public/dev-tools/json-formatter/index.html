@@ -389,6 +389,7 @@
     document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.remove('active'); });
     var panel = document.getElementById('panel-' + name);
     if (panel) panel.classList.add('active');
+    try { localStorage.setItem('jt-tab', name); } catch (e) {}
   }
   tabBtns.forEach(function (b) {
     b.addEventListener('click', function () { switchTab(b.getAttribute('data-tab')); });
@@ -475,6 +476,7 @@
     Array.prototype.forEach.call(this.children, function (c) { c.classList.remove('active'); });
     b.classList.add('active');
     indent = parseInt(b.getAttribute('data-indent'), 10);
+    try { localStorage.setItem('jt-indent', indent); } catch (e) {}
   });
 
   function showErr(box, msg) {
@@ -510,6 +512,7 @@
   }
   function clearAll() {
     input.value = ''; resultCard.style.display = 'none'; errBox.style.display = 'none'; okBox.style.display = 'none';
+    try { localStorage.removeItem('jt-draft-jsonInput'); } catch (e) {}
   }
   function copyOut() {
     copyText(out.textContent, document.querySelector('#resultCard .btn-primary'));
@@ -585,6 +588,7 @@
   }
   function clearEsc() {
     escInput.value = ''; escResultCard.style.display = 'none'; escErr.style.display = 'none';
+    try { localStorage.removeItem('jt-draft-escInput'); } catch (e) {}
   }
   function copyEsc() {
     copyText(escOut.value, document.querySelector('#escResultCard .btn-primary'));
@@ -689,6 +693,7 @@
   }
   function clearView() {
     viewInput.value = ''; viewCard.style.display = 'none'; viewErr.style.display = 'none';
+    try { localStorage.removeItem('jt-draft-viewInput'); } catch (e) {}
   }
   function collapseAll() {
     viewTree.querySelectorAll('.t-children').forEach(function (c) { c.classList.remove('open'); });
@@ -773,7 +778,45 @@
   }
   function clearCmp() {
     cmpA.value = ''; cmpB.value = ''; cmpCard.style.display = 'none'; cmpErr.style.display = 'none';
+    try { localStorage.removeItem('jt-draft-cmpA'); localStorage.removeItem('jt-draft-cmpB'); } catch (e) {}
   }
+
+  /* ===== 偏好恢复 + 草稿自动保存 ===== */
+  (function () {
+    var DRAFT_PREFIX = 'jt-draft-';
+    var draftIds = ['jsonInput', 'escInput', 'viewInput', 'cmpA', 'cmpB'];
+
+    // 恢复上次的 Tab
+    try {
+      var savedTab = localStorage.getItem('jt-tab');
+      if (savedTab && document.getElementById('panel-' + savedTab)) switchTab(savedTab);
+    } catch (e) {}
+
+    // 恢复上次的缩进偏好
+    try {
+      var savedIndent = parseInt(localStorage.getItem('jt-indent'), 10);
+      if (savedIndent === 2 || savedIndent === 4) {
+        indent = savedIndent;
+        var segBtns = document.querySelectorAll('#indentSeg button');
+        Array.prototype.forEach.call(segBtns, function (b) {
+          b.classList.toggle('active', parseInt(b.getAttribute('data-indent'), 10) === savedIndent);
+        });
+      }
+    } catch (e) {}
+
+    // 恢复草稿并监听输入自动保存
+    draftIds.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      try {
+        var saved = localStorage.getItem(DRAFT_PREFIX + id);
+        if (saved !== null) el.value = saved;
+      } catch (e) {}
+      el.addEventListener('input', function () {
+        try { localStorage.setItem(DRAFT_PREFIX + id, el.value); } catch (e) {}
+      });
+    });
+  })();
 
   /* ===== URL 参数 ===== */
   try {

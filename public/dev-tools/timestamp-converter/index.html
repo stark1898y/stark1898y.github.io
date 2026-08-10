@@ -829,7 +829,17 @@
   function clearBatch() {
     document.getElementById('batchInput').value = '';
     document.getElementById('batchResult').innerHTML = '';
+    try { localStorage.removeItem('ts-batch'); } catch (e) {}
   }
+
+  // 恢复上次的批量输入草稿，输入时自动保存
+  try {
+    var savedBatch = localStorage.getItem('ts-batch');
+    if (savedBatch !== null) document.getElementById('batchInput').value = savedBatch;
+  } catch (e) {}
+  document.getElementById('batchInput').addEventListener('input', function () {
+    try { localStorage.setItem('ts-batch', document.getElementById('batchInput').value); } catch (e) {}
+  });
 
   function escapeHtml(s) {
     return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');

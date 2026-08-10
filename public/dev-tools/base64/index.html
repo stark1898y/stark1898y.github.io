@@ -223,9 +223,25 @@
     document.getElementById('modeDecode').classList.toggle('active', m === 'decode');
     input.placeholder = m === 'encode' ? '在此输入要编码的文本…' : '在此输入要解码的 Base64 字符串…';
     resultCard.style.display = 'none'; errBox.style.display = 'none'; okBox.style.display = 'none';
+    try { localStorage.setItem('b64-mode', m); } catch (e) {}
   }
   document.getElementById('modeEncode').addEventListener('click', function () { setMode('encode'); });
   document.getElementById('modeDecode').addEventListener('click', function () { setMode('decode'); });
+
+  // 恢复上次选择的模式
+  try {
+    var savedMode = localStorage.getItem('b64-mode');
+    if (savedMode === 'encode' || savedMode === 'decode') setMode(savedMode);
+  } catch (e) {}
+
+  // 输入草稿自动保存/恢复
+  try {
+    var savedDraft = localStorage.getItem('b64-draft');
+    if (savedDraft !== null) input.value = savedDraft;
+  } catch (e) {}
+  input.addEventListener('input', function () {
+    try { localStorage.setItem('b64-draft', input.value); } catch (e) {}
+  });
 
   /* ===== 主题 ===== */
   var themeBtn = document.getElementById('themeBtn');
@@ -290,6 +306,7 @@
   function clearAll() {
     input.value = ''; output.value = '';
     resultCard.style.display = 'none'; errBox.style.display = 'none'; okBox.style.display = 'none';
+    try { localStorage.removeItem('b64-draft'); } catch (e) {}
   }
 
   function copyOut() {
