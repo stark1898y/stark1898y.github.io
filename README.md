@@ -171,13 +171,13 @@ npm run preview
 
 ## 配置说明
 
-| 文件 | 作用 |
-|------|------|
-| `config.mts` | 站点全局配置：标题、导航栏、搜索、页脚、编辑链接等 |
-| `sidebar.ts` | 自动扫描 `docs/` 和 `open-source/` 目录生成侧边栏 |
-| `theme/index.ts` | 自定义主题入口，加载样式和组件 |
-| `theme/style.css` | 首页项目卡片、平台卡片等自定义样式 |
-| `theme/Mermaid.vue` | Mermaid 图表客户端渲染组件 |
+| 文件                  | 作用                                                 |
+| --------------------- | ---------------------------------------------------- |
+| `config.mts`        | 站点全局配置：标题、导航栏、搜索、页脚、编辑链接等   |
+| `sidebar.ts`        | 自动扫描`docs/` 和 `open-source/` 目录生成侧边栏 |
+| `theme/index.ts`    | 自定义主题入口，加载样式和组件                       |
+| `theme/style.css`   | 首页项目卡片、平台卡片等自定义样式                   |
+| `theme/Mermaid.vue` | Mermaid 图表客户端渲染组件                           |
 
 ## 开发工具分区（dev-tools）路径约定
 
@@ -187,20 +187,20 @@ npm run preview
 
 开发工具分区由**两个目录配合**组成，构建后按路径合并进 `dist/`：
 
-| 目录 | 职责 | 构建产物 |
-|------|------|----------|
-| `dev-tools/*.md` | VitePress 文档页（概览、教程） | `dist/dev-tools/*.html`（带主题） |
-| `public/dev-tools/<tool>/` | 纯静态工具页（单文件 HTML） | `dist/dev-tools/<tool>/index.html`（原样复制） |
+| 目录                         | 职责                           | 构建产物                                         |
+| ---------------------------- | ------------------------------ | ------------------------------------------------ |
+| `dev-tools/*.md`           | VitePress 文档页（概览、教程） | `dist/dev-tools/*.html`（带主题）              |
+| `public/dev-tools/<tool>/` | 纯静态工具页（单文件 HTML）    | `dist/dev-tools/<tool>/index.html`（原样复制） |
 
 ### 路径对照表
 
-| 访问路径 | 实际来源 |
-|----------|----------|
-| `/dev-tools/` | `dev-tools/index.md` |
-| `/dev-tools/timestamp-converter/` | `public/dev-tools/timestamp-converter/index.html` |
-| `/dev-tools/json-formatter/` | `public/dev-tools/json-formatter/index.html` |
-| `/dev-tools/base64/` | `public/dev-tools/base64/index.html` |
-| `/dev-tools/timestamp-converter-guide/` | `dev-tools/timestamp-converter-guide/index.md` |
+| 访问路径                                  | 实际来源                                            |
+| ----------------------------------------- | --------------------------------------------------- |
+| `/dev-tools/`                           | `dev-tools/index.md`                              |
+| `/dev-tools/timestamp-converter/`       | `public/dev-tools/timestamp-converter/index.html` |
+| `/dev-tools/json-formatter/`            | `public/dev-tools/json-formatter/index.html`      |
+| `/dev-tools/base64/`                    | `public/dev-tools/base64/index.html`              |
+| `/dev-tools/timestamp-converter-guide/` | `dev-tools/timestamp-converter-guide/index.md`    |
 
 ### 新增一个工具的步骤
 
@@ -241,11 +241,11 @@ $r.Content.IndexOf('返回开发工具')
 
 ## 命令速查
 
-| 命令 | 作用 |
-|------|------|
-| `npm run dev` | 启动开发服务器 |
-| `npm run build` | 生产构建 |
-| `npm run preview` | 预览生产构建 |
+| 命令                | 作用           |
+| ------------------- | -------------- |
+| `npm run dev`     | 启动开发服务器 |
+| `npm run build`   | 生产构建       |
+| `npm run preview` | 预览生产构建   |
 
 ## 声明
 
