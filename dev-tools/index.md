@@ -12,7 +12,7 @@
 - 解析失败定位到具体行、列
 - 完全本地处理，支持离线使用
 
-[查看详情 →](/dev-tools/json-formatter/)
+<a href="/dev-tools/json-formatter/" target="_self">查看详情 →</a>
 
 ### ⏰ 时间戳转换
 
@@ -22,7 +22,7 @@ Unix 时间戳（秒/毫秒）与日期时间互转工具，自动识别精度�
 - 38 个常用时区，支持城市/偏移搜索
 - 多格式输出与批量转换，完全本地处理
 
-[查看详情 →](/dev-tools/timestamp-converter/)
+<a href="/dev-tools/timestamp-converter/" target="_self">查看详情 →</a>
 
 📖 [Unix 时间戳完全指南：转换、精度与时区 →](/dev-tools/timestamp-converter-guide/)
 
@@ -36,4 +36,4 @@ UTF-8 文本与 Base64 字符串互转工具，支持文件转 Data URI。
 - 文件转 Base64（Data URI），可直接用于图片嵌入
 - 输入输出一键交换，完全本地处理
 
-[查看详情 →](/dev-tools/base64/)
+<a href="/dev-tools/base64/" target="_self">查看详情 →</a>

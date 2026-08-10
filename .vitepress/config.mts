@@ -54,9 +54,9 @@ export default defineConfig({
         activeMatch: '/dev-tools/',
         items: [
           { text: '工具集概览', link: '/dev-tools/' },
-          { text: '时间戳转换', link: '/dev-tools/timestamp-converter/' },
-          { text: 'JSON 格式化', link: '/dev-tools/json-formatter/' },
-          { text: 'Base64 编解码', link: '/dev-tools/base64/' },
+          { text: '时间戳转换', link: '/dev-tools/timestamp-converter/', target: '_self' },
+          { text: 'JSON 格式化', link: '/dev-tools/json-formatter/', target: '_self' },
+          { text: 'Base64 编解码', link: '/dev-tools/base64/', target: '_self' },
         ],
       },
       {

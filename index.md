@@ -100,7 +100,7 @@ features:
 
 <div class="project-grid">
 
-  <a class="project-card" href="/dev-tools/timestamp-converter/">
+  <a class="project-card" href="/dev-tools/timestamp-converter/" target="_self">
     <div class="card-body">
       <div class="card-icon">⏰</div>
       <div class="card-title">时间戳转换</div>
@@ -109,7 +109,7 @@ features:
     </div>
   </a>
 
-  <a class="project-card" href="/dev-tools/json-formatter/">
+  <a class="project-card" href="/dev-tools/json-formatter/" target="_self">
     <div class="card-body">
       <div class="card-icon">📄</div>
       <div class="card-title">JSON 格式化</div>
@@ -118,7 +118,7 @@ features:
     </div>
   </a>
 
-  <a class="project-card" href="/dev-tools/base64/">
+  <a class="project-card" href="/dev-tools/base64/" target="_self">
     <div class="card-body">
       <div class="card-icon">🔤</div>
       <div class="card-title">Base64 编解码</div>
