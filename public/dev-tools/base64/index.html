@@ -178,24 +178,25 @@
     <textarea id="output" readonly style="min-height:140px"></textarea>
     <div class="toolbar">
       <button class="btn-primary" onclick="copyOut()">复制结果</button>
+      <button class="btn-ghost" onclick="saveLocal()">保存本地</button>
     </div>
   </div>
 
   <div class="related">
     <div class="related-title">相关工具推荐</div>
     <div class="related-grid">
+      <a class="related-card" href="/dev-tools/json-formatter/" target="_blank">
+        <span class="rc-icon">📄</span>
+        <span>
+          <span class="rc-name">JSON 工具集</span>
+          <span class="rc-desc">格式化、压缩、转义、视图与对比</span>
+        </span>
+      </a>
       <a class="related-card" href="/dev-tools/timestamp-converter/" target="_blank">
         <span class="rc-icon">⏰</span>
         <span>
           <span class="rc-name">时间戳转换</span>
           <span class="rc-desc">Unix 时间戳与日期时间互转，多时区</span>
-        </span>
-      </a>
-      <a class="related-card" href="/dev-tools/json-formatter/" target="_blank">
-        <span class="rc-icon">📄</span>
-        <span>
-          <span class="rc-name">JSON 格式化</span>
-          <span class="rc-desc">美化缩进、语法高亮、错误定位</span>
         </span>
       </a>
     </div>
@@ -271,6 +272,7 @@
   }
 
   function swap() {
+    if (!output.value) { showErr('输出为空，无法交换'); return; }
     var t = input.value;
     input.value = output.value;
     output.value = t;
@@ -297,10 +299,27 @@
     else { output.select(); try { document.execCommand('copy'); } catch (e) {} done(); }
   }
 
+  function saveLocal() {
+    var text = output.value;
+    if (!text) { showErr('输出为空，无法保存'); return; }
+    var blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = mode === 'encode' ? 'output.txt' : 'decoded.txt';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+  }
+
   /* ===== 文件 → Base64 (Data URI) ===== */
   document.getElementById('fileInput').addEventListener('change', function () {
     var f = this.files[0];
     if (!f) return;
+    if (f.size > 10 * 1024 * 1024) {
+      if (!confirm('文件较大（' + (f.size / 1024 / 1024).toFixed(1) + ' MB），转换为 Data URI 可能占用较多内存，是否继续？')) {
+        this.value = '';
+        return;
+      }
+    }
     var reader = new FileReader();
     reader.onload = function () {
       setMode('encode');
@@ -330,6 +349,7 @@
   window.loadSample = loadSample;
   window.clearAll = clearAll;
   window.copyOut = copyOut;
+  window.saveLocal = saveLocal;
 
   /* ===== 链接跳转日志（排查路径问题） ===== */
   document.addEventListener('click', function (e) {

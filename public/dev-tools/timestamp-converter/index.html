@@ -339,7 +339,7 @@
       <textarea id="batchInput" placeholder="每行一个，例如：&#10;1780713460&#10;1780713460000&#10;0"></textarea>
       <div class="batch-actions">
         <button class="btn-primary" onclick="runBatch()">开始转换</button>
-        <button class="btn-ghost" onclick="document.getElementById('batchInput').value=''; document.getElementById('batchResult').innerHTML='';">清空</button>
+        <button class="btn-ghost" onclick="clearBatch()">清空</button>
       </div>
       <div class="batch-result" id="batchResult"></div>
     </div>
@@ -351,8 +351,8 @@
       <a class="related-card" href="/dev-tools/json-formatter/" target="_blank">
         <span class="rc-icon">📄</span>
         <span>
-          <span class="rc-name">JSON 格式化</span>
-          <span class="rc-desc">美化缩进、语法高亮、错误定位</span>
+          <span class="rc-name">JSON 工具集</span>
+          <span class="rc-desc">格式化、压缩、转义、视图与对比</span>
         </span>
       </a>
       <a class="related-card" href="/dev-tools/base64/" target="_blank">
@@ -434,6 +434,13 @@
     batchMode: 'ts2dt'
   };
 
+  // 恢复上次选择的时区（localStorage 持久化）
+  var savedTz = null;
+  try { savedTz = parseInt(localStorage.getItem('ts-tz'), 10); } catch (e) {}
+  if (!isNaN(savedTz) && savedTz >= 0 && savedTz < TIMEZONES.length) {
+    state.tzIndex = savedTz;
+  }
+
   /* ================= 工具函数 ================= */
   function pad(n) { return String(n).padStart(2, '0'); }
 
@@ -445,6 +452,11 @@
     var abs = Math.abs(m);
     var h = Math.floor(abs / 60), min = abs % 60;
     return 'UTC' + sign + pad(h) + ':' + pad(min);
+  }
+
+  // 固定偏移为 0 的时区索引（UTC）
+  function utcIndex() {
+    return TIMEZONES.findIndex(function (t) { return t.offset === 0; });
   }
 
   // 在指定时区下取时间各部分（用 UTC 计算，固定偏移无 DST 干扰）
@@ -560,6 +572,7 @@
     Array.prototype.forEach.call(tzList.querySelectorAll('.tz-item'), function (el) {
       el.addEventListener('click', function () {
         state.tzIndex = parseInt(el.getAttribute('data-idx'), 10);
+        try { localStorage.setItem('ts-tz', state.tzIndex); } catch (e) {}
         tzLabel.textContent = tzLabelText(state.tzIndex);
         tzSelect.classList.remove('open');
         refreshAll();
@@ -576,6 +589,7 @@
   tzSearch.addEventListener('click', function (e) { e.stopPropagation(); });
   document.addEventListener('click', function () { tzSelect.classList.remove('open'); });
   renderTzList('');
+  tzLabel.textContent = tzLabelText(state.tzIndex); // 同步恢复后的时区标签
 
   /* ================= 复制 ================= */
   document.addEventListener('click', function (e) {
@@ -655,7 +669,7 @@
     var rows = [
       { k: '本地日期时间（' + fmtOffset(idx) + '）', v: fmtDT(p, true) },
       { k: 'ISO 8601', v: isoWithOffset(p, idx) },
-      { k: 'UTC 时间', v: fmtDT(parts(ms, TIMEZONES.map(function (_, i) { return i; }).filter(function (i) { return TIMEZONES[i].offset === 0; })[0]), false) + ' UTC' },
+      { k: 'UTC 时间', v: fmtDT(parts(ms, utcIndex()), false) + ' UTC' },
       { k: '秒级时间戳', v: String(Math.floor(ms / 1000)) },
       { k: '毫秒级时间戳', v: String(Math.round(ms)) },
       { k: '时区', v: tzLabelText(idx) }
@@ -750,7 +764,7 @@
     document.getElementById('tsResultCard').style.display = '';
     document.getElementById('resSec').textContent = String(Math.floor(ms / 1000));
     document.getElementById('resMs').textContent = String(ms);
-    document.getElementById('resUtc').textContent = fmtDT(parts(ms, TIMEZONES.findIndex(function (t) { return t.offset === 0; })), false) + ' UTC';
+    document.getElementById('resUtc').textContent = fmtDT(parts(ms, utcIndex()), false) + ' UTC';
     document.getElementById('dtInterpret').textContent = r.hasOffset
       ? '已按输入中携带的时区偏移解析'
       : '已按 ' + tzLabelText(idx) + ' 解析';
@@ -805,11 +819,20 @@
     var head = state.batchMode === 'ts2dt' ? '日期时间（' + fmtOffset(state.tzIndex) + '）' : '时间戳';
     var html = '<table class="batch-table"><thead><tr><th style="width:32%">原始输入</th><th style="width:44%">' + head + '</th><th>相对时间</th></tr></thead><tbody>';
     rows.forEach(function (r) {
-      html += '<tr><td class="num">' + r.raw + '</td><td>' + r.out + '</td><td>' + r.rel + '</td></tr>';
+      html += '<tr><td class="num">' + escapeHtml(r.raw) + '</td><td>' + escapeHtml(r.out) + '</td><td>' + escapeHtml(r.rel) + '</td></tr>';
     });
     html += '</tbody></table>';
     if (errCount) html += '<div class="hint" style="margin-top:8px">有 ' + errCount + ' 行无法解析，已跳过</div>';
     box.innerHTML = html;
+  }
+
+  function clearBatch() {
+    document.getElementById('batchInput').value = '';
+    document.getElementById('batchResult').innerHTML = '';
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
   /* ================= 联动刷新 ================= */
@@ -821,6 +844,7 @@
   window.fillTsNow = fillTsNow;
   window.fillDtNow = fillDtNow;
   window.setBatchMode = setBatchMode;
+  window.clearBatch = clearBatch;
 
   /* ================= URL 参数支持 =================
      ?ts=1780713460        预填时间戳
