@@ -66,7 +66,8 @@ def main():
             assert page.get_by_text("从开发实践到知识沉淀").count() > 0
             try:
                 # The runtime replaces <pre class="mermaid"> with rendered SVG.
-                page.locator(".mermaid svg, svg[id^='mermaid']").first.wait_for(timeout=9000)
+                page.get_by_text("实践开发", exact=True).first.wait_for(timeout=9000)
+                assert page.locator("article svg").count() > 0
                 print("PASS Mermaid diagram SVG rendered")
             except Exception:
                 page.screenshot(path=str(OUTPUT / "mermaid-debug.png"), full_page=True)
