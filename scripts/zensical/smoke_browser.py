@@ -56,6 +56,37 @@ def main():
             assert page.evaluate("typeof fillTsNow") == "function"
             print("PASS timestamp tool loaded")
 
+            # A VitePress-era .html URL must keep working after migration.
+            page.goto(base + "/docs/rtos/comparison.html", wait_until="load")
+            assert page.url.endswith("/docs/rtos/comparison/"), page.url
+            print("PASS legacy .html URL redirect")
+
+            # Verify Chinese page content and Mermaid diagram rendering.
+            page.goto(base + "/docs/intro/", wait_until="load")
+            assert page.get_by_text("从开发实践到知识沉淀").count() > 0
+            assert page.locator("pre.mermaid").count() > 0, "Mermaid source block missing"
+            try:
+                page.locator(".mermaid svg").first.wait_for(timeout=9000)
+                print("PASS Mermaid diagram SVG rendered")
+            except Exception:
+                page.screenshot(path=str(OUTPUT / "mermaid-debug.png"), full_page=True)
+                raise
+
+            # Verify the actual search interaction, not just the search icon.
+            page.goto(base, wait_until="load")
+            page.locator(".md-search__button").click()
+            page.wait_for_timeout(350)
+            visible = [
+                control for control in page.locator("input").all()
+                if control.is_visible() and control.get_attribute("type") in (None, "text", "search")
+            ]
+            assert visible, "Search dialog has no visible input"
+            visible[-1].fill("NTC")
+            page.wait_for_timeout(1300)
+            page.screenshot(path=str(OUTPUT / "search-ntc.png"))
+            assert "热敏电阻" in page.locator("body").inner_text(), "Chinese search result was not shown"
+            print("PASS Chinese/English technical term search")
+
             browser.close()
     finally:
         server.shutdown()
