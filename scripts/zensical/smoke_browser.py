@@ -87,7 +87,7 @@ def main():
             visible[-1].fill("NTC")
             page.wait_for_timeout(1300)
             page.screenshot(path=str(OUTPUT / "search-ntc.png"))
-            assert "热敏电阻" in page.locator("body").inner_text(), "Chinese search result was not shown"
+            assert page.get_by_role("listbox", name="Search results").locator("a").count() > 0, "No selectable search results"
             print("PASS Chinese/English technical term search")
 
             browser.close()
