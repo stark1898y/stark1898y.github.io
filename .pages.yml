@@ -19,8 +19,11 @@ content:
     view:
       primary: title
       fields: [title, date, draft]
-      sort: date
-      order: desc
+      sort: [date, title]
+      search: [title, description]
+      default:
+        sort: date
+        order: desc
     operations:
       rename: false
     fields:
