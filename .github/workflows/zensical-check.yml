@@ -31,3 +31,15 @@ jobs:
         run: python scripts/zensical/restore_tools.py
       - name: Verify key outputs
         run: python scripts/zensical/check_output.py
+      - name: Audit links and static assets
+        run: python scripts/zensical/audit_site.py
+      - name: Upload preview artifact and audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zensical-preview-${{ github.run_number }}
+          path: |
+            site/
+            artifacts/site-audit.json
+          if-no-files-found: warn
+          retention-days: 14
