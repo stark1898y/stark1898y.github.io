@@ -1,6 +1,6 @@
 # 个人网站 Zensical + Pages CMS 迁移工作记录
 
-> 状态：阶段二，Zensical 已在 PR 通过构建及 Chrome 冒烟测试；`main` 正式站点仍由 VitePress 部署。
+> 状态：阶段三，继续完善旧 URL、门户首页和搜索浏览器验收；正式站点仍在 main 上运行 VitePress。
 
 ## 技术决策
 
@@ -88,3 +88,25 @@ python scripts/zensical/audit_site.py
 - CMS 授权和上传操作必须实际验收，不能仅凭配置文件视为成功。
 - 旧 URL 与导航锚点需逐项抽查；现阶段自动校验只能证明构建文件及普通链接存在。
 - 线上切换前应更新 Zensical `edit_uri` 为 `edit/main/content/`，准备回滚 Tag，然后由审核者合并草稿 PR。
+
+## 阶段三：迁移兼容、页面与搜索（2026-11-06）
+
+- 首页采用独立 `content/index.md` 和 `content/stylesheets/home.css`，保留技术知识库、博客、开源项目和浏览器工具入口；隐藏首页侧边目录以扩大阅读空间。
+- `zensical.toml` 新增 `extra_css`，首页 CSS 类以 `stark-` 为前缀，避免污染普通文档。
+- `.pages.yml` 已按官方文档将博客后台日期排序改成 `view.sort: [date, title]` 与 `view.default.sort/order`。
+- 迁移兼容脚本 `scripts/zensical/restore_legacy_urls.py` 为旧版非首页文章生成 `.html` 轻量重定向，保留 URL 查询参数和锚点，防止历史分享地址失效。
+- `scripts/zensical/check_output.py` 检查 `search.json` 是否索引硬件设计、STM32、RTOS、NTC 等术语，同时确保测试草稿未进入索引。
+- Chrome 冒烟测试新增旧 `.html` 跳转、Mermaid 动态图表转换以及浏览器搜索结果交互测试。
+- GitHub Actions 的普通 PR 测试不再反复安装中文字体；需要查看含中文字形的 CI 截图时，可以手动触发带 CJK 字体安装的工作流。
+- `scripts/zensical/restore_tools.py` 为静态 HTML 工具加入网站 SVG favicon 引用，避免旧站工具页面没有站点图标。
+- 测试采用自动化 PR 构建，不会发布到实际自定义域名，且所有正式部署控制仍归原 `main` 工作流。
+
+### 上线前仍然必须人工验收
+
+- [ ] 用本人 GitHub 登录 Pages CMS，确认能够切换到测试分支、新建草稿、修改正文和上传图片；检查 Git 差异是否保留代码块与 Markdown。
+- [ ] 浏览器验证搜索中文分词、结果链接点击和移动端搜索入口；静态 `search.json` 检查不能完全替代实测。
+- [ ] 验证已分享的站内旧 URL、`.html` 和锚点；当前生成的是静态跳转，不依赖服务器端 301。
+- [ ] 检查现有项目 iframe、引用图、复杂旧表格与 Mermaid 混排文档。
+- [ ] 正式部署之前锁定 Zensical 版本、验证 Sitemap、域名和回滚 Tag；改 `edit_uri` 为主分支。
+- [ ] 旧 VitePress 源目录在验收通过后再移除，不得提前清理。
+
