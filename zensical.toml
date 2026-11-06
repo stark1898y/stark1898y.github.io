@@ -24,12 +24,17 @@ features = [
 ]
 
 [project.plugins.awesome-nav]
+[project.plugins.awesome-nav.logs]
+no_matches = "info"
 
 [project.plugins.blog]
 
-[project.markdown_extensions.attr_list]
-[project.markdown_extensions.md_in_html]
-[project.markdown_extensions.admonition]
-[project.markdown_extensions.pymdownx.details]
+[project.markdown_extensions]
+attr_list = {}
+md_in_html = {}
+admonition = {}
+pymdownx.details = {}
+pymdownx.emoji.emoji_index = "zensical.extensions.emoji.twemoji"
+pymdownx.emoji.emoji_generator = "zensical.extensions.emoji.to_svg"
 [project.markdown_extensions.pymdownx.superfences]
 custom_fences = [{ name = "mermaid", class = "mermaid", format = "pymdownx.superfences.fence_code_format" }]
