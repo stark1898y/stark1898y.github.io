@@ -26,7 +26,7 @@ jobs:
       - name: Install Zensical
         run: python -m pip install -r requirements-site.txt
       - name: Build site
-        run: zensical build --clean
+        run: zensical build --clean --strict
       - name: Restore standalone browser tools
         run: python scripts/zensical/restore_tools.py
       - name: Verify key outputs
@@ -36,6 +36,9 @@ jobs:
       - name: Install browser test runner
         run: |
           python -m pip install playwright==1.56.0
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk
+          fc-match 'sans:lang=zh-cn'
           google-chrome --version
       - name: Browser smoke tests (desktop/mobile and tools)
         run: python scripts/zensical/smoke_browser.py
