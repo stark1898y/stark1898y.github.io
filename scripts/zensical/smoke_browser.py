@@ -73,8 +73,9 @@ def main():
                 raise
 
             # Verify the actual search interaction, not just the search icon.
+            page.set_viewport_size({"width": 1365, "height": 900})
             page.goto(base, wait_until="load")
-            page.locator(".md-search__button").click()
+            page.locator('.md-header label[for="__search"]').click()
             page.wait_for_timeout(350)
             visible = [
                 control for control in page.locator("input").all()
