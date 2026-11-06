@@ -1,4 +1,5 @@
-"""Verify primary pages, stand-alone tools and visible search UI."""
+"""Verify key pages, old article routes, local search, and draft privacy."""
+import json
 from pathlib import Path
 
 root = Path(__file__).resolve().parents[2] / "site"
@@ -13,15 +14,33 @@ paths = [
     "dev-tools/json-formatter/index.html",
     "dev-tools/base64/index.html",
     "blog/index.html",
+    "docs/rtos/comparison.html",
+    "docs/hardware/component/ntc.html",
+    "docs/mcu/stm32/cubemx.html",
 ]
 missing = [p for p in paths if not (root / p).is_file()]
 if missing:
-    raise SystemExit("Missing expected site outputs:\\n" + "\\n".join(missing))
+    raise SystemExit("Missing expected site outputs:\n" + "\n".join(missing))
 
-# Zensical uses a different search implementation from MkDocs Material;
-# do not assume it outputs 'search/search_index.json'.
 index = (root / "index.html").read_text(encoding="utf-8")
 if 'data-md-component="search"' not in index:
     raise SystemExit("Search UI not found in generated homepage")
+if 'class="stark-home"' not in index:
+    raise SystemExit("Custom homepage not found")
 
-print(f"PASS: {len(paths)} critical site files + search UI")
+search = root / "search.json"
+if not search.is_file():
+    raise SystemExit("Zensical search.json is absent")
+items = json.loads(search.read_text(encoding="utf-8")).get("items", [])
+all_text = "\n".join(str(x.get("title","")) + str(x.get("text","")) for x in items)
+for term in ("硬件设计", "STM32", "RTOS", "NTC"):
+    if term not in all_text:
+        raise SystemExit(f"Search index does not contain {term}")
+if "Zensical 网站迁移记录（草稿）" in all_text:
+    raise SystemExit("Private blog draft was indexed!")
+
+legacy = (root / "docs/rtos/comparison.html").read_text(encoding="utf-8")
+if "/docs/rtos/comparison/" not in legacy:
+    raise SystemExit("Historical redirect target missing")
+
+print(f"PASS: {len(paths)} critical pages + legacy routes + {len(items)} search entries")
