@@ -75,7 +75,9 @@ def main():
             # Verify the actual search interaction, not just the search icon.
             page.set_viewport_size({"width": 1365, "height": 900})
             page.goto(base, wait_until="load")
-            page.locator('.md-header label[for="__search"]').click()
+            # Zensical's search trigger is responsive and may be hidden in DOM.
+            # The documented Ctrl+K shortcut works across desktop layouts.
+            page.keyboard.press("Control+k")
             page.wait_for_timeout(350)
             visible = [
                 control for control in page.locator("input").all()
