@@ -25,6 +25,8 @@ jobs:
           python-version: '3.12'
       - name: Install Zensical
         run: python -m pip install -r requirements-site.txt
+      - name: Verify awesome-nav auto-discovery
+        run: python scripts/zensical/check_nav.py
       - name: Build site
         run: zensical build --clean --strict
       - name: Restore standalone browser tools
