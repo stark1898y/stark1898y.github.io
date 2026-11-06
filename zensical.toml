@@ -7,6 +7,7 @@ repo_name = "stark1898y/stark1898y.github.io"
 edit_uri = "edit/refactor/zensical-pagescms-v1/content/"
 docs_dir = "content"
 site_dir = "site"
+extra_css = ["stylesheets/home.css"]
 copyright = "Copyright © 2026-present Stark1898y · Powered by Zensical · GitHub Pages"
 
 [project.theme]
