@@ -64,9 +64,9 @@ def main():
             # Verify Chinese page content and Mermaid diagram rendering.
             page.goto(base + "/docs/intro/", wait_until="load")
             assert page.get_by_text("从开发实践到知识沉淀").count() > 0
-            assert page.locator("pre.mermaid").count() > 0, "Mermaid source block missing"
             try:
-                page.locator(".mermaid svg").first.wait_for(timeout=9000)
+                # The runtime replaces <pre class="mermaid"> with rendered SVG.
+                page.locator(".mermaid svg, svg[id^='mermaid']").first.wait_for(timeout=9000)
                 print("PASS Mermaid diagram SVG rendered")
             except Exception:
                 page.screenshot(path=str(OUTPUT / "mermaid-debug.png"), full_page=True)
