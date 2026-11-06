@@ -1,0 +1,7 @@
+nav:
+  - index.md
+  - docs
+  - blog
+  - open-source
+  - dev-tools
+  - "*"

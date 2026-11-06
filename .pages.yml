@@ -1,0 +1,43 @@
+# Pages CMS: https://pagescms.org/docs/configuration/
+# 在 GitHub 授权时仅授予此网站仓库访问权限。
+settings:
+  content:
+    merge: true
+
+media:
+  input: content/assets/uploads
+  output: /assets/uploads
+
+content:
+  - name: blog
+    label: 博客与开发日志
+    type: collection
+    path: content/blog/posts
+    subfolders: true
+    fields:
+      - name: title
+        label: 标题
+        type: string
+        required: true
+      - name: date
+        label: 发布日期
+        type: date
+        required: true
+      - name: draft
+        label: 草稿
+        type: boolean
+        default: true
+      - name: categories
+        label: 分类
+        type: string
+        list: true
+      - name: body
+        label: 正文
+        type: rich-text
+        options:
+          switcher: true
+  - name: knowledge
+    label: 技术知识库（Markdown 源码）
+    type: collection
+    path: content/docs
+    subfolders: true

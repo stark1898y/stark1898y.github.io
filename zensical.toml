@@ -1,0 +1,35 @@
+[project]
+site_name = "Stark's 知识库"
+site_description = "嵌入式开发笔记、开源项目、学习记录与在线工具"
+site_url = "https://www.stark1898y.cc/"
+repo_url = "https://github.com/stark1898y/stark1898y.github.io"
+repo_name = "stark1898y/stark1898y.github.io"
+edit_uri = "edit/refactor/zensical-pagescms-v1/content/"
+docs_dir = "content"
+site_dir = "site"
+copyright = "Copyright © 2026-present Stark1898y · Powered by Zensical · GitHub Pages"
+
+[project.theme]
+language = "zh"
+logo = "logo.svg"
+features = [
+  "navigation.tabs",
+  "navigation.sections",
+  "navigation.indexes",
+  "navigation.path",
+  "navigation.top",
+  "navigation.footer",
+  "content.code.copy",
+  "search.highlight",
+]
+
+[project.plugins.awesome-nav]
+
+[project.plugins.blog]
+
+[project.markdown_extensions.attr_list]
+[project.markdown_extensions.md_in_html]
+[project.markdown_extensions.admonition]
+[project.markdown_extensions.pymdownx.details]
+[project.markdown_extensions.pymdownx.superfences]
+custom_fences = [{ name = "mermaid", class = "mermaid", format = "pymdownx.superfences.fence_code_format" }]

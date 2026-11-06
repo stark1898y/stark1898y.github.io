@@ -1,0 +1,11 @@
+title: "知识库"
+nav:
+  - "intro.md"
+  - "hardware"
+  - "mcu"
+  - "software"
+  - "rtos"
+  - "tools"
+  - "linux"
+  - "ai-python"
+  - "resources"

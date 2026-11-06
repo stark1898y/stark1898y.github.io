@@ -1,0 +1,33 @@
+name: Zensical migration checks
+
+on:
+  pull_request:
+    paths:
+      - 'zensical.toml'
+      - '.pages.yml'
+      - 'requirements-site.txt'
+      - 'content/**'
+      - 'public/dev-tools/**'
+      - 'scripts/zensical/**'
+      - '.github/workflows/zensical-check.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Zensical
+        run: python -m pip install -r requirements-site.txt
+      - name: Build site
+        run: zensical build --clean
+      - name: Restore standalone browser tools
+        run: python scripts/zensical/restore_tools.py
+      - name: Verify key outputs
+        run: python scripts/zensical/check_output.py

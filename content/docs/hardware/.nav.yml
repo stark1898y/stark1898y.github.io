@@ -1,0 +1,9 @@
+title: "硬件设计"
+nav:
+  - "index.md"
+  - "power"
+  - "interface"
+  - "protection"
+  - "component"
+  - "wireless"
+  - "*"
