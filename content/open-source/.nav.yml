@@ -3,3 +3,4 @@ nav:
   - "index.md"
   - "power-calculator"
   - "gas-converter"
+  - "*"
