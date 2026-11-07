@@ -62,8 +62,8 @@ description: 可燃气体 %VOL、ppm、%LEL 浓度单位在线换算工具
 ## 在线换算工具
 
 <div style="margin-bottom: 12px;">
-  <a href="https://stark1898y.github.io/Gas_VOL_ppm_LEL/" target="_blank" style="display: inline-block; padding: 8px 20px; background: var(--vp-c-brand); color: white; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 500;">在新窗口打开 →</a>
-  <span style="margin-left: 12px; font-size: 13px; color: var(--vp-c-text-2);">内嵌页面显示不全时可点击上方按钮跳转</span>
+  <a href="https://stark1898y.github.io/Gas_VOL_ppm_LEL/" target="_blank" style="display: inline-block; padding: 8px 20px; background: var(--md-primary-fg-color); color: white; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 500;">在新窗口打开 →</a>
+  <span style="margin-left: 12px; font-size: 13px; color: var(--md-default-fg-color--light);">内嵌页面显示不全时可点击上方按钮跳转</span>
 </div>
 
 <iframe

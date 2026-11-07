@@ -4,7 +4,7 @@
  * 启动本地静态服务器 + 无头 Chrome（CDP 协议），对三个工具页执行：
  *   设置输入 → 刷新多次 → 验证输入/偏好/草稿是否真实持久化。
  *
- * 运行：npm run verify:persist   （需先 npm run build 生成 dist）
+ * 运行：npm run verify:persist   （需先 zensical build --clean && python scripts/zensical/restore_tools.py 生成 site）
  */
 import http from 'node:http'
 import fs from 'node:fs'
@@ -205,7 +205,7 @@ async function testTimestamp(cdp, base) {
 /* ================= 主流程 ================= */
 async function main() {
   if (!fs.existsSync(DIST)) {
-    console.error('✖ 未找到 .vitepress/dist，请先运行 npm run build')
+    console.error('✖ 未找到 site，请先运行 npm run build')
     process.exit(1)
   }
 
