@@ -2,6 +2,8 @@
 
 > **状态：** 页脚与只读 API 已在重构分支实现；**尚未配置 Vercel 生产环境 Token，也未验证真实统计响应**。主站 `main` 仍是旧版 VitePress。
 
+> **Vercel 项目授权已验证（2026-11-07）**：当前项目是 `stark1898y-github-io`（ID `prj_NHpAS595h6gZlU60aBGAEynp57fj`），团队 `stark1898ys-projects`（ID `team_84cDWsO47xX44itlhxVFiD1H`），Vercel 已验证 `www.stark1898y.cc`。已查询的项目环境变量列表为空（生产环境也没有隐藏的变量）。从 Vercel Web Analytics 官方 `visits/count` 接口查询 2026-10-08 至 2026-11-07 区间，返回 `visitors: 0`、`pageviews: 0`。这只能证明该区间没有已采集的事件，**不能单独证明 Analytics 功能已经启用，也不代表网站真实访问人数为零**。
+
 ## 显示形式
 
 ```text
@@ -33,10 +35,10 @@
    | 环境变量 | 值 |
    | --- | --- |
    | `VERCEL_STATS_TOKEN` | 用户自行创建的最小权限 Vercel API Token，仅存在 Vercel |
-   | `VERCEL_STATS_PROJECT_ID` | 当前项目的 Vercel Project ID（`prj_...`）或项目名 |
-   | `VERCEL_STATS_TEAM_ID` | 团队 ID（`team_...`），团队项目需要 |
+   | `VERCEL_STATS_PROJECT_ID` | `prj_NHpAS595h6gZlU60aBGAEynp57fj`（已核实） |
+   | `VERCEL_STATS_TEAM_ID` | `team_84cDWsO47xX44itlhxVFiD1H`（已核实） |
 
-   **不要把 Token 发到聊天、提交到 GitHub、放在前端代码或 Preview 环境。**
+   **不要把 Token 发到聊天、提交到 GitHub、放在前端代码或 Preview 环境。** 项目 ID、团队 ID 不属于 API 凭据；可以按上述核实值填写。
 
 3. 保存配置后重新部署 **Production**。当统计开始收集数据时，访问 `https://www.stark1898y.cc/api/site-stats`，应返回类似下列格式（数值仅为示例）：
 
