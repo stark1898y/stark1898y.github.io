@@ -2,10 +2,7 @@
 (function () {
   "use strict";
   const languages = [
-    { code: "en", label: "English" },
-    { code: "ja", label: "日本語" },
-    { code: "ko", label: "한국어" },
-    { code: "fr", label: "Français" }
+    { code: "en", label: "English" }
   ];
 
   function currentPageUrl() {
