@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'zensical.toml'
+      - 'vercel.json'
       - '.pages.yml'
       - 'requirements-site.txt'
       - 'content/**'
@@ -34,18 +35,12 @@ jobs:
         run: python scripts/zensical/check_nav.py
       - name: Verify CMS blog publish and media output
         run: python scripts/zensical/check_blog_publish.py
-      - name: Build site
-        run: zensical build --clean --strict
-      - name: Restore standalone browser tools
-        run: python scripts/zensical/restore_tools.py
-      - name: Restore legacy VitePress article URLs
-        run: python scripts/zensical/restore_legacy_urls.py
-      - name: Complete SEO sitemap and robots
-        run: python scripts/zensical/finalize_seo.py
-      - name: Verify key outputs
-        run: python scripts/zensical/check_output.py
-      - name: Audit links and static assets
-        run: python scripts/zensical/audit_site.py
+      - name: Validate Vercel configuration
+        run: |
+          python -m json.tool vercel.json > /dev/null
+          python -c "import json; d=json.load(open('vercel.json')); assert d['framework'] is None and d['outputDirectory'] == 'site' and d['buildCommand'] == 'python3 scripts/zensical/build_site.py'"
+      - name: Build production static output (same script as Vercel)
+        run: python scripts/zensical/build_site.py
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
