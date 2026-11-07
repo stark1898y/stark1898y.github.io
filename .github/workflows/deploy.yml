@@ -38,11 +38,18 @@ jobs:
       - name: Restore legacy VitePress URLs
         run: python scripts/zensical/restore_legacy_urls.py
 
+      - name: Complete SEO sitemap and robots
+        run: python scripts/zensical/finalize_seo.py
       - name: Verify pages and search index
         run: python scripts/zensical/check_output.py
 
       - name: Audit local references
         run: python scripts/zensical/audit_site.py
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Regression tests for standalone tools
+        run: node --test tests/*.test.mjs
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5

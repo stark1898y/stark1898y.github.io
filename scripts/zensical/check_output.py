@@ -57,6 +57,26 @@ for source in posts_dir.rglob("*.md"):
     if any((root / "blog").rglob(f"{slug}/index.html")):
         raise SystemExit(f"Draft URL was published: {source}")
 
+from urllib.parse import urlparse
+import xml.etree.ElementTree as ET
+base = "https://www.stark1898y.cc"
+if not (root / "404.html").is_file():
+    raise SystemExit("404.html missing")
+sitemap = root / "sitemap.xml"
+robots = root / "robots.txt"
+if not sitemap.is_file() or not robots.is_file():
+    raise SystemExit("SEO files missing")
+urls = {e.text for e in ET.parse(sitemap).getroot().iter() if e.tag.endswith("}loc")}
+for tool in ("timestamp-converter", "json-formatter", "base64"):
+    expected = f"{base}/dev-tools/{tool}/"
+    if expected not in urls:
+        raise SystemExit(f"Tool not indexed in sitemap: {expected}")
+    page = (root / "dev-tools" / tool / "index.html").read_text(encoding="utf-8")
+    if f'rel="canonical" href="{expected}"' not in page:
+        raise SystemExit(f"Tool canonical missing: {tool}")
+if any(urlparse(u).netloc != "www.stark1898y.cc" for u in urls):
+    raise SystemExit("Non-canonical sitemap URL")
+
 legacy = (root / "docs/rtos/comparison.html").read_text(encoding="utf-8")
 if "/docs/rtos/comparison/" not in legacy:
     raise SystemExit("Historical redirect target missing")
