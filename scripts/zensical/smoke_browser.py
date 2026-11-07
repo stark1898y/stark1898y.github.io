@@ -39,14 +39,14 @@ def main():
             page.screenshot(path=str(OUTPUT / "mobile-home.png"), full_page=True)
             print("PASS desktop/mobile homepage")
             # Mobile navigation, search and translation must be reachable.
-            drawer_toggle = page.locator('label[for="__drawer"]')
+            drawer_toggle = page.locator('.md-header__button[for="__drawer"]')
             assert drawer_toggle.count() > 0, "Mobile navigation toggle missing"
             drawer_toggle.first.click()
             page.wait_for_function("document.querySelector('#__drawer')?.checked === true")
             navigation = page.locator(".md-sidebar--primary")
             assert navigation.is_visible(), "Mobile navigation drawer not visible"
             assert navigation.locator('a[href*="/docs/"]').count() > 0, "Knowledge-base link missing from mobile navigation"
-            page.locator('label[for="__drawer"]').first.click()
+            page.locator('label.md-overlay[for="__drawer"]').click()
             page.wait_for_function("document.querySelector('#__drawer')?.checked === false")
             mobile_translate = page.locator(".stark-translate__trigger")
             assert mobile_translate.is_visible(), "Translation action not available on mobile"
