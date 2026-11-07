@@ -8,3 +8,5 @@
     line-height: 1.75;
   }
 }
+
+.stark-footer-stats { white-space: nowrap; font-variant-numeric: tabular-nums; }
