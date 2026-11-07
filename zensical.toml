@@ -4,7 +4,7 @@ site_description = "嵌入式开发笔记、开源项目、学习记录与在线
 site_url = "https://www.stark1898y.cc/"
 repo_url = "https://github.com/stark1898y/stark1898y.github.io"
 repo_name = "stark1898y/stark1898y.github.io"
-edit_uri = "edit/refactor/zensical-pagescms-v1/content/"
+edit_uri = "edit/main/content/"
 docs_dir = "content"
 site_dir = "site"
 extra_css = ["stylesheets/home.css"]
@@ -29,6 +29,8 @@ features = [
 no_matches = "info"
 
 [project.plugins.blog]
+# URL stays stable when the displayed publication date changes.
+post_url_format = "{slug}"
 
 [project.markdown_extensions]
 attr_list = {}
