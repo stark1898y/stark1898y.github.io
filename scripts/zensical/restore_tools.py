@@ -19,6 +19,8 @@ for page in target.glob("*/index.html"):
         if 'rel="canonical"' not in source_html:
             canonical = "https://www.stark1898y.cc/dev-tools/" + page.parent.name + "/"
             additions.append('<link rel="canonical" href="' + canonical + '">')
+        if '/javascripts/analytics.js' not in source_html:
+            additions.append('<script defer src="/javascripts/analytics.js"></script>')
         if additions:
             page.write_text(
                 source_html.replace("<head>", "<head>" + chr(10) + chr(10).join(additions), 1),
