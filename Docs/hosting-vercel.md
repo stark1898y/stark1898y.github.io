@@ -71,7 +71,12 @@ Pages CMS 修改 Markdown/图片后写入 GitHub；GitHub Actions 验证内容�
 
 旧失败预览示例：<https://vercel.com/stark1898ys-projects/stark1898y-github-io/2CndGQfPUZ6CSK4nH8PqscC4yNQv>。
 
-**修复是否通过，以新提交的 Vercel Preview Build Logs 和 Ready 状态为准**。仍失败则检查新错误，不改回系统 `pip`。
+**部署验证已通过：** 修复提交 `a198d833` 对应的 Vercel Preview 在 GitHub 返回 `Deployment has completed`，后续 CI 配置修正提交 `51f0ddd1` 的 Vercel 部署也返回成功状态。
+
+- 成功的 Vercel 部署：<https://vercel.com/stark1898ys-projects/stark1898y-github-io/4YUv7cRsTg2et5rwoF7Vcov1tXAM>
+- GitHub CI 修正：`.github/workflows/zensical-check.yml` 同步校验 Vercel 的 `uv` 安装及 `.venv` 构建配置。
+
+**后续仍需人工打开 Preview URL 检查网页效果、工具交互及旧链接。** Vercel 部署状态成功不代表完整浏览器验收已经完成；PR 保持 Draft，`main` 和线上正式域名不动。
 
 
 ## 上线前备份
