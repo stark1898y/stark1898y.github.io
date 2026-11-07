@@ -50,7 +50,7 @@ GitHub PR 会自动执行临时文章发布、awesome-nav、浏览器工具及 C
 
 网页编辑：登录 <https://app.pagescms.org/> → 选择仓库 `stark1898y/stark1898y.github.io` → 选择目标分支 → **博客与开发日志**。
 
-- 新建文章填写中文标题、日期、唯一英文 `slug`；默认 `draft: true`，不会在正式网站公开。
+- 新建文章填写中文标题、日期、唯一英文 `slug`；默认 `draft: true`，不会在正式网站或搜索里显示；**仓库本身公开，GitHub 上的草稿源码仍可见**。
 - 正文可通过富文本模式编辑，也可切换 Markdown 源码。推荐技术文章保留 Markdown 源码。
 - 如需发布，将 `draft` 改为 `false` 并保存；GitHub Actions 在正式分支上构建并部署。
 - 已发布文章的 `slug` 不要随意修改，以免旧 URL 失效。
