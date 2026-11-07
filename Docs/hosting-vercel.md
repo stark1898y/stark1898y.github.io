@@ -4,7 +4,7 @@
 
 ## 为什么保留 Vercel
 
-当前生产站 `https://www.stark1898y.cc/` 已绑定到 Vercel 项目。Vercel 可直接为 GitHub PR 生成 Preview URL、部署生产分支并从历史部署快速恢复；同时提供分析、速度洞察、预览保护等能力（可能受当前套餐额度限制）。对于现阶段的纯静态 Zensical 站点，**不需要额外数据库或 Functions**。
+当前生产站 `https://www.stark1898y.cc/` 已绑定到 Vercel 项目。Vercel 可直接为 GitHub PR 生成 Preview URL、部署生产分支并从历史部署快速恢复；同时提供分析、速度洞察、预览保护等能力（可能受当前套餐额度限制）。网站内容仍为静态生成，不需要数据库；仅 `api/site-stats.js` 使用一项只读 Vercel Function 来查询访客统计。
 
 GitHub Pages 如果不作为生产入口，不应要求 DNS 指向 `stark1898y.github.io`。GitHub Pages 设置里出现 `InvalidCNAMEError` 是域名未指向 GitHub Pages 的表现；只要继续由 Vercel 托管，这个提示可以暂时不处理。
 
@@ -72,7 +72,7 @@ Pages CMS 修改 Markdown/图片后写入 GitHub；GitHub Actions 验证内容�
 
 **已定位根因：** Vercel 使用由 `uv` 管理的 Python，原先 `python3 -m pip install -r requirements-site.txt` 尝试修改系统环境，被 PEP 668 拒绝（`externally-managed-environment`）。错误发生在安装依赖阶段，Zensical 尚未启动。
 
-已在重构分支修改 `vercel.json`：
+现已在 `main` 使用下列 `vercel.json` 配置：
 
 ```json
 {
@@ -96,10 +96,10 @@ Pages CMS 修改 Markdown/图片后写入 GitHub；GitHub Actions 验证内容�
 - 成功的 Vercel 部署：<https://vercel.com/stark1898ys-projects/stark1898y-github-io/4YUv7cRsTg2et5rwoF7Vcov1tXAM>
 - GitHub CI 修正：`.github/workflows/zensical-check.yml` 同步校验 Vercel 的 `uv` 安装及 `.venv` 构建配置。
 
-**后续仍需人工打开 Preview URL 检查网页效果、工具交互及旧链接。** Vercel 部署状态成功不代表完整浏览器验收已经完成；PR 保持 Draft，`main` 和线上正式域名不动。
+**该阶段已结束**：2026-11-07 PR #1 已正式合并，Production 构建成功。上线前的 Preview HTTP 检查与 Chrome 自动化测试均通过；今后的新 PR 继续先检查 Preview 再合并。
 
 
-## 上线前备份
+## 原 VitePress 备份与回滚
 
 迁移前 VitePress 主分支提交：
 
@@ -124,13 +124,15 @@ git ls-remote --tags origin site-vitepress-pre-zensical-20261107
 
 **GitHub Pages 手动备用：** `.github/workflows/deploy.yml` 只提供 `workflow_dispatch`。即使手动运行成功，现有域名也不会自动切到 GitHub Pages，需要另外规划 DNS；此流程不是主站的一部分。
 
-## 上线前核对清单
+## 正式上线验收（2026-11-07）
 
 - [x] GitHub Actions 严格构建、awesome-nav、草稿、中文搜索、Mermaid 和浏览器工具通过。
 - [x] Pages CMS 真实新建 / 编辑 / PNG 上传、测试数据清理。
-- [x] Vercel 构建文件及同源构建脚本已提交到重构分支。
+- [x] Vercel 构建文件及同源构建脚本已合并至 `main`。
 - [x] Vercel Preview 部署为 Ready；已通过连接真实请求验证首页、知识库、两个工具、历史 `.html` 地址、`search.json` 和统计 Function（Preview 无 Token 时正常降级）。
 - [ ] 最终仍需在实际浏览器中人工确认移动端布局与导航操作。
-- [ ] Vercel 项目 Settings 确认 Production Branch、根目录、域名和相关配置。
+- [x] Vercel 生产部署实际来自 `main`；正式自定义域名 `www.stark1898y.cc` 已验证。
 - [x] 回滚 Tag 已推送远端，并核对注释 Tag 最终目标提交。
-- [ ] 通过 PR #1 的最终审核后再合并到 `main`；合并后检查生产部署及访问地址。
+- [x] PR #1 已于 2026-11-07 合并，Squash Merge SHA：`b113235615043a2950c10d7ecc910ece2f3d22df`。
+- [x] 新 Production 部署 Ready；实际网站首页、博客、知识库、三个工具、旧 URL、Sitemap、robots.txt 和统计 API 均返回 HTTP 200。
+- [ ] 实际浏览器人工体验移动端、日夜切换和表单交互；继续观察 Analytics 的生产访问事件是否开始累计。

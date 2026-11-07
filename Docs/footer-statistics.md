@@ -1,6 +1,6 @@
 # 页脚：建站天数与 Vercel 访问统计
 
-> **状态（2026-11-07）：** 页脚与只读 API 已在重构分支实现；三个 Production 环境变量已核验名称和适用环境（未读取 Token）；**正式站尚未部署该接口，真实 Token 权限和实际访问数据仍待上线实测**。`main` 仍是旧版 VitePress。
+> **正式上线（2026-11-07）**：页脚与只读 API 已部署至 `main`，Production `/api/site-stats` 返回 HTTP 200，响应为 `{\"visitors\":0,\"pageviews\":0,\"periodDays\":30}`。已验证 Token 认证及返回格式；真实访客事件采集仍需后续观察。Token 明文未被读取或提交。
 
 > **Vercel 项目授权已验证（2026-11-07）**：当前项目是 `stark1898y-github-io`（ID `prj_NHpAS595h6gZlU60aBGAEynp57fj`），团队 `stark1898ys-projects`（ID `team_84cDWsO47xX44itlhxVFiD1H`），Vercel 已验证 `www.stark1898y.cc`。截至 2026-11-07，**已确认三个 `VERCEL_STATS_*` 环境变量全部保存成功且仅应用于 Production**：`VERCEL_STATS_TOKEN` 为敏感类型，Project ID 和 Team ID 已保存；检查时未解密 Token。从 Vercel Web Analytics 官方 `visits/count` 接口查询 2026-10-08 至 2026-11-07 区间，返回 `visitors: 0`、`pageviews: 0`。这只能证明该区间没有已采集的事件，**不能单独证明 Analytics 功能已经启用，也不代表网站真实访问人数为零**。
 
@@ -27,10 +27,10 @@
 | `tests/site-stats.test.mjs` | 模拟测试权限、缓存、数据有效性及失败降级 |
 | `scripts/zensical/restore_tools.py` | 让三项独立 HTML 工具也启用生产统计脚本 |
 
-## 需要在 Vercel 后台操作
+## Vercel 已配置项与维护操作
 
-1. 打开项目 `stark1898y-github-io` → **Analytics** → **Enable**。如已经启用，无需重复操作。
-2. 到 **Settings → Environment Variables**，新增下列变量，**只选择 Production**：
+1. 项目 `stark1898y-github-io` 的统计脚本已经随新版 Production 部署。打开 **Analytics** 检查访问量是否开始累计（如仍显示 Get Started，请尝试实际浏览器访问数个页面、检查浏览器拦截器和 Network 上报）。
+2. **Settings → Environment Variables** 中三个变量均已存在、仅选择 Production，不需要重复配置：
 
    | 环境变量 | 值 |
    | --- | --- |
@@ -40,7 +40,7 @@
 
    **不要把 Token 发到聊天、提交到 GitHub、放在前端代码或 Preview 环境。** 三个环境变量已保存到 Production，无须重复添加。
 
-3. 环境变量已保存。**待 PR #1 审核合并后，由 Vercel 部署新生产版本**（不要提前将旧 VitePress 重部署作为验收）。当统计开始收集数据时，访问 `https://www.stark1898y.cc/api/site-stats`，应返回类似下列格式（数值仅为示例）：
+3. 新版 Vercel Production 已部署并实际返回有效汇总；要再次核对数据，可访问 `https://www.stark1898y.cc/api/site-stats`，应返回类似下列格式（数值仅为示例）：
 
 ```json
 {"visitors": 29, "pageviews": 71, "periodDays": 30}
@@ -56,12 +56,13 @@
 
 - [x] 实现静态追踪入口、只读接口、前端显示和失败隐藏。
 - [x] 测试接口缺失凭据、禁止 POST、正常汇总、错误数据降级。
-- [ ] 最新 GitHub Actions 全链路构建通过。
-- [ ] Vercel Preview 包含 Function 且部署 Ready（Preview 没有生产环境统计 Token）。
+- [x] Ubuntu 26.04 / Python 3.12 / Node.js 24 的 GitHub Actions 全链路构建通过。
+- [x] Vercel Preview 包含 Function 且部署 Ready（Preview 没有生产环境统计 Token）。
 - [ ] Vercel Analytics 后台实际启用及正式站流量开始采集。
-- [x] 已确认三个环境变量仅在 Production 配置成功（尚未验证 Token 对 Analytics REST API 的实际权限）。
-- [ ] 在正式合并 PR、部署 Zensical 后验证生产 Function 使用新环境变量并返回有效统计数据。
-- [ ] 用真实的 API 响应验证字段格式、数据口径和页脚值。
+- [x] 三个环境变量仅在 Production 配置成功，Production API 已实测 HTTP 200。
+- [x] 正式合并 PR、部署 Zensical 后，生产 Function 已使用环境变量返回有效的汇总数据结构。
+- [x] 使用真实 API 响应验证字段格式与近 30 天口径（当前访客/PV 均为 0）。
+- [ ] 通过真实浏览器事件确认 Analytics 开始累计，并验证页脚随缓存刷新显示新值。
 
 ## 不选择不蒜子等第三方计数器
 
@@ -78,4 +79,4 @@
 - Web Analytics visits/count 采用 ISO 8601（UTC）字符串传递 since/until，避免毫秒时间戳格式可能导致的上游错误。
 - Node 单元测试验证起止时间格式及 30 天区间。
 - PR CI 将 api/**、tests/** 加入触发范围。
-- 已实测 Vercel Preview 的 /api/site-stats 正常到达 Function，并按预期返回 statistics_not_configured（Preview 没有生产 Token）；生产环境 Token 认证仍待上线实测。
+- 已实测 Vercel Preview 的 /api/site-stats 正常到达 Function，并按预期返回 statistics_not_configured（Preview 没有生产 Token）；生产环境 Token 认证已于 2026-11-07 上线实测通过。
