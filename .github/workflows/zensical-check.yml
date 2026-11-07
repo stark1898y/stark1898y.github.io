@@ -9,6 +9,8 @@ on:
       - 'vercel.json'
       - '.pages.yml'
       - 'requirements-site.txt'
+      - 'api/**'
+      - 'tests/**'
       - 'content/**'
       - 'public/dev-tools/**'
       - 'scripts/zensical/**'

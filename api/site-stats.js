@@ -25,8 +25,8 @@ module.exports = async function handler(req, res) {
   const until = Date.now();
   url.searchParams.set("projectId", projectId);
   if (teamId) url.searchParams.set("teamId", teamId);
-  url.searchParams.set("since", String(until - 30 * DAY));
-  url.searchParams.set("until", String(until));
+  url.searchParams.set("since", new Date(until - 30 * DAY).toISOString());
+  url.searchParams.set("until", new Date(until).toISOString());
   // visits/count defaults to Production environment.
   try {
     const upstream = await fetch(url, {

@@ -51,10 +51,11 @@ test("returns authenticated cached totals, not the token", async () => {
       assert.equal(url.searchParams.get("projectId"), "prj_test");
       assert.equal(url.searchParams.get("teamId"), "team_test");
       assert.equal(options.headers.Authorization, "Bearer dummy_token");
-      assert.equal(
-        Number(url.searchParams.get("until")) - Number(url.searchParams.get("since")),
-        30 * 86400000
-      );
+      const start = url.searchParams.get("since");
+      const end = url.searchParams.get("until");
+      assert.match(start, /^\d{4}-\d{2}-\d{2}T/);
+      assert.match(end, /^\d{4}-\d{2}-\d{2}T/);
+      assert.equal(Date.parse(end) - Date.parse(start), 30 * 86400000);
       return { ok: true, json: async () => ({ data: { visitors: 29, pageviews: 71 } }) };
     };
     await scopedEnv({
