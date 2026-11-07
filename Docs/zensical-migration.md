@@ -1,6 +1,6 @@
 # 个人网站 Zensical + Pages CMS 迁移工作记录
 
-> 状态：阶段四，Pages CMS 在线新建草稿已由真实提交验证；正式网站仍在 main 运行 VitePress，PR #1 保持 Draft。
+> 状态：阶段五，Pages CMS 完整读写与媒体上传已验证，旧源码清理及 SEO 构建已完成；正式 main 仍为 VitePress，PR #1 保持 Draft。
 
 ## 技术决策
 
@@ -156,3 +156,51 @@ python scripts/zensical/audit_site.py
 - **隐私边界**：草稿隐藏仅作用于博客文章和搜索。上传到 `content/assets/uploads/` 的图片本身会进入静态网站产物，即使对应文章仍是草稿，也可能通过完整 URL 直接访问；公开仓库中的媒体文件更是对外可见。不要上传任何不打算公开的图片或数据。
 - 阶段四实际 CMS 验收已完成：授权、新建、再次编辑、上传媒体、构建和草稿排除。尚需生产上线前旧链接/复杂文档抽查、清理测试文章和无用图片、创建回滚 Tag 与域名确认。
 
+
+## 阶段五：旧架构清理、SEO 和正式部署预检查（2026-11-07）
+
+### 已执行
+
+- 将旧 `docs/`、`dev-tools/`、`open-source/` 的 73 篇 Markdown 及配套图片迁移到 `content/`，保留原文章内容和旧项目媒体。分类 `_category_.json` 由 29 份 `.nav.yml` 取代。
+- 清理仓库中已失效的 `.vitepress/`、旧目录、副本图片、根目录旧首页、旧 404 Markdown、VitePress 的 `package.json` / `package-lock.json`。共删除 133 个过渡文件及 CMS 测试资源；未删除 `public/dev-tools/` 下的三个 HTML 工具。
+- 清理 `pages-cms-test.md`、`first-draft.md`、`image.png`、`image-1.png`。保留目录中的 `.gitkeep` 以让 Pages CMS 空博客集合和媒体目录继续存在；测试提交仍可通过 Git 历史追踪。
+- 将项目页内旧的 VitePress CSS 变量改为 Zensical 支持的主题变量，避免两个 iframe 工具说明页按钮配色失效。
+- Node 20 项独立工具测试迁移到站点实际生成文件，不依赖 VitePress 构建；仍保留 `scripts/verify-persist.mjs` 供 Windows 本地验证浏览器持久化，输出目录改为 `site/`。
+- 添加 `content/robots.txt` 与 `scripts/zensical/finalize_seo.py`：检查 `https://www.stark1898y.cc/sitemap.xml`、404 页面，并将三个独立 HTML 工具纳入 Sitemap。三个 HTML 工具在复制后增加 canonical 链接和网站 favicon。
+- Zensical 的普通文章自带规范 URL；旧文章生成的 `.html` 兼容跳转页面使用 `noindex` 防止重复索引。
+- CI 和生产部署流程同时执行 Zensical 严格构建、工具复制、旧链接恢复、Sitemap/robots 规范检查、全站本地链接审计及 Node 工具测试。生产部署增加 `github.ref == 'refs/heads/main'` 防护。
+- 已从构建产物验证：Sitemap 共 78 个规范 URL（包含三个独立工具），主域名均为 `www.stark1898y.cc`；`robots.txt` 与 `404.html` 存在；CMS 测试文章和 PNG 均已从最新网站产物移除。
+- CI 清理后的构建检查和 Chrome 浏览器测试通过，可访问旧 `.html` 兼容页面、网站搜索、Mermaid 以及原三项工具。
+
+### 主分支回滚基线（正式上线前务必完成）
+
+迁移前旧 VitePress 正式站点的 `main` 提交：
+
+```text
+7126143f26514a3e3b4c45c7f52d84c51b46ac1d
+```
+
+建议在本地 Git 创建并推送永久 Tag：
+
+```powershell
+git fetch origin
+git tag -a site-vitepress-pre-zensical-20261107 7126143f26514a3e3b4c45c7f52d84c51b46ac1d -m "VitePress live site before Zensical migration"
+git push origin site-vitepress-pre-zensical-20261107
+git ls-remote --tags origin site-vitepress-pre-zensical-20261107
+```
+
+这项 Tag **目前只提供了命令，尚未替用户执行**。创建前不要合并 PR。GitHub 合并后可从该 Tag 恢复旧 `deploy.yml`、`package.json`、`docs/` 等完整源码，以 PR 方式恢复，避免在 `main` 上直接强制回退。
+
+### 必须在网页上复核的上线前检查
+
+- [x] CMS 创建、修改和上传 PNG 的真实 GitHub 提交。
+- [x] CMS 草稿不在文章页及搜索索引公开；上传图片的公开属性已说明。
+- [x] Zensical 严格构建，awesome-nav 自动发现与发布探针，SEO/Sitemap 与历史文章重定向。
+- [x] Node 工具测试、Chrome 冒烟、手机无横向溢出及 Mermaid、搜索结果。
+- [x] 删除 CMS 测试文章和无用图片，并保留空博客/媒体目录。
+- [ ] GitHub 远端确认已推送回滚 Tag。
+- [ ] 手工抽查复杂旧 Markdown、项目 iframe、特殊表格、中文标题与跳转页面的锚点。
+- [ ] GitHub Settings → Pages 核实自定义域名 `www.stark1898y.cc`、HTTPS 与部署来源为 Actions（当前连接不支持读取管理设置）。
+- [ ] 审核 PR #1 并决定切换时间。合并后检查 Pages 部署记录与实际网站，确保新版 `sitemap.xml`、`robots.txt`、404 和外部工具链接正常。
+
+**正式域名仍使用原 VitePress；不要把 PR 的自动构建通过误认为正式部署已完成。**
