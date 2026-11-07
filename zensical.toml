@@ -1,0 +1,58 @@
+[project]
+site_name = "Stark's 知识库"
+site_description = "嵌入式开发笔记、开源项目、学习记录与在线工具"
+site_url = "https://www.stark1898y.cc/"
+repo_url = "https://github.com/stark1898y/stark1898y.github.io"
+repo_name = "stark1898y/stark1898y.github.io"
+edit_uri = "edit/main/content/"
+docs_dir = "content"
+site_dir = "site"
+extra_css = ["stylesheets/home.css", "stylesheets/footer.css"]
+extra_javascript = ["javascripts/footer.js", "javascripts/analytics.js"]
+# Days since GitHub repository creation (2022-01-12T05:49:47Z), not server uptime.
+copyright = """© 2022–present Stark1898y · <span class="stark-footer-running" data-stark-site-since="2022-01-12T05:49:47Z" title="从 GitHub 仓库创建时间 2022-01-12 起计算（不是服务器连续在线时间）">建站于 2022-01-12</span><span class="stark-footer-stats" data-stark-stats hidden></span> · Zensical · Vercel"""
+
+[project.theme]
+language = "zh"
+logo = "logo.svg"
+features = [
+  "navigation.tabs",
+  "navigation.sections",
+  "navigation.indexes",
+  "navigation.path",
+  "navigation.top",
+  "navigation.footer",
+  "content.code.copy",
+  "search.highlight",
+]
+
+# Respect the system theme on the first visit; allow a persistent manual choice.
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
+scheme = "default"
+toggle.icon = "lucide/sun"
+toggle.name = "切换到深色模式"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
+scheme = "slate"
+toggle.icon = "lucide/moon"
+toggle.name = "切换到浅色模式"
+
+[project.plugins.awesome-nav]
+[project.plugins.awesome-nav.logs]
+no_matches = "info"
+
+[project.plugins.blog]
+# URL stays stable when the displayed publication date changes.
+post_url_format = "{slug}"
+
+[project.markdown_extensions]
+attr_list = {}
+md_in_html = {}
+admonition = {}
+pymdownx.details = {}
+pymdownx.emoji.emoji_index = "zensical.extensions.emoji.twemoji"
+pymdownx.emoji.emoji_generator = "zensical.extensions.emoji.to_svg"
+[project.markdown_extensions.pymdownx.superfences]
+custom_fences = [{ name = "mermaid", class = "mermaid", format = "pymdownx.superfences.fence_code_format" }]

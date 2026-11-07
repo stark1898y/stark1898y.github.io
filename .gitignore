@@ -34,3 +34,13 @@ npm-debug.log*
 # Temp files
 *.tmp
 *.temp
+
+# Zensical outputs
+/site/
+/artifacts/
+.venv/
+__pycache__/
+*.pyc
+
+# Vercel local configuration, may include account/project IDs
+.vercel/

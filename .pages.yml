@@ -1,0 +1,76 @@
+# Pages CMS (https://app.pagescms.org/) - edit Markdown in GitHub; hosting is on Vercel.
+settings:
+  content:
+    merge: true
+
+media:
+  input: content/assets/uploads
+  output: /assets/uploads
+  rename: safe
+
+content:
+  - name: blog
+    label: 博客与开发日志
+    type: collection
+    path: content/blog/posts
+    format: yaml-frontmatter
+    subfolders: true
+    filename: "{fields.slug}.md"
+    view:
+      primary: title
+      fields: [title, date, draft]
+      sort: [date, title]
+      search: [title, description]
+      default:
+        sort: date
+        order: desc
+    operations:
+      rename: false
+    fields:
+      - name: title
+        label: 标题
+        type: string
+        required: true
+      - name: slug
+        label: 文件名（英文短标识）
+        type: string
+        required: true
+        pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      - name: date
+        label: 发布日期
+        type: date
+        required: true
+      - name: draft
+        label: 草稿（网站不展示）
+        description: 仅从网站和搜索排除；此 GitHub 仓库是公开的，源码仍可被查看，勿存保密信息。
+        type: boolean
+        default: true
+      - name: categories
+        label: 分类
+        type: string
+        list: true
+      - name: description
+        label: 摘要
+        type: text
+      - name: body
+        label: 正文
+        type: rich-text
+        options:
+          format: markdown
+          switcher: true
+  - name: knowledge
+    label: 技术知识库（原始 Markdown）
+    type: collection
+    path: content/docs
+    subfolders: true
+    operations:
+      rename: false
+      delete: false
+  - name: projects
+    label: 开源项目（原始 Markdown）
+    type: collection
+    path: content/open-source
+    subfolders: true
+    operations:
+      rename: false
+      delete: false

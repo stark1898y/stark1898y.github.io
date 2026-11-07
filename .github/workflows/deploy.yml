@@ -1,8 +1,7 @@
-name: Deploy VitePress site to GitHub Pages
+# Vercel deploys GitHub main automatically. Run manually on main for emergency fallback only.
+name: Manual fallback - GitHub Pages (Vercel is production)
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -16,35 +15,68 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Setup Python
+        uses: actions/setup-python@v7
         with:
-          node-version: 20
-          cache: npm
+          python-version: '3.12'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Verify GitHub Pages fallback toolchain
+        run: |
+          set -euo pipefail
+          source /etc/os-release
+          test "$VERSION_ID" = "26.04"
+          python -c "import sys; assert sys.version_info[:2] == (3, 12)"
+          echo "Runner: $PRETTY_NAME, Python $(python --version)"
 
-      - name: Build with VitePress
-        run: npm run build
+      - name: Install pinned Zensical
+        run: python -m pip install -r requirements-site.txt
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Strict site build
+        run: zensical build --clean --strict
+
+      - name: Restore standalone HTML tools
+        run: python scripts/zensical/restore_tools.py
+
+      - name: Restore legacy VitePress URLs
+        run: python scripts/zensical/restore_legacy_urls.py
+
+      - name: Complete SEO sitemap and robots
+        run: python scripts/zensical/finalize_seo.py
+      - name: Verify pages and search index
+        run: python scripts/zensical/check_output.py
+
+      - name: Audit local references
+        run: python scripts/zensical/audit_site.py
+      - uses: actions/setup-node@v7
         with:
-          path: .vitepress/dist
+          node-version: '24'
+      - name: Verify Node runtime
+        run: node -e "if (Number(process.versions.node.split('.')[0]) !== 24) process.exit(1)"
+      - name: Regression tests for standalone tools
+        run: node --test tests/*.test.mjs
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v6
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
 
   deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-26.04
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

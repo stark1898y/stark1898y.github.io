@@ -1,253 +1,137 @@
-# Stark1898y 的个人知识库
+# Stark1898y 技术网站
 
-基于 [VitePress](https://vitepress.dev/) 构建的个人知识库，记录嵌入式开发学习笔记和技术文档。
+**嵌入式技术知识库 · 开发日志 · 开源项目 · 在线工具**
 
-## 本地开发
+- 网站：<https://www.stark1898y.cc/>
+- 代码和文档：[stark1898y/stark1898y.github.io](https://github.com/stark1898y/stark1898y.github.io)
+- 在线编辑：[Pages CMS](https://app.pagescms.org/)
+- 技术栈：[Zensical](https://zensical.org/) + 原生 `awesome-nav` + Pages CMS + Vercel
 
-### 已有仓库
+> **迁移状态（2026-11-07）**：本文件位于 `refactor/zensical-pagescms-v1`，尚未合并到 `main`。目前线上仍为旧 VitePress 网站。先在 Vercel Preview 检查新站并审核 [PR #1](https://github.com/stark1898y/stark1898y.github.io/pull/1)，再安排正式发布。
 
-```bash
-npm install
-npm run dev
+## 一、网站架构与部署分工
+
+| 平台 | 负责什么 | 是否正式生产部署 |
+| --- | --- | --- |
+| **GitHub** | Markdown/图片/代码的唯一源码仓库、PR、版本历史 | 不直接承载正式域名 |
+| **Pages CMS** | 在浏览器中创建博客、编辑文章、上传图片并提交 GitHub | 不负责网站托管 |
+| **GitHub Actions** | 构建校验、awesome-nav、搜索、链接、工具回归、Chrome 测试 | 不自动发布 GitHub Pages |
+| **Vercel** | 构建 Zensical、分支/PR Preview、正式域名、CDN、HTTPS、回滚 | **唯一自动生产托管** |
+| **GitHub Pages** | 仅保留手动触发的备用部署 | 平时不触发、无须修改 DNS |
+
+生产域名 `www.stark1898y.cc` 继续由 Vercel 管理。**不要把 `www` 的 DNS 同时指向 Vercel 和 GitHub Pages。** GitHub Pages 中出现 `InvalidCNAMEError` 是因为目前 DNS 不指向 GitHub Pages，不代表 Vercel 正式站异常。暂不为解决 GitHub Pages 的提示而调整 DNS。
+
+部署关系：
+
+```text
+Pages CMS ──保存 Markdown──┐
+                          ▼
+开发者 Git Push ───────> GitHub 仓库
+                          │
+              ┌───────────┴───────────┐
+              ▼                       ▼
+        GitHub Actions              Vercel Git
+        PR 构建与浏览器测试          分支/PR Preview
+                                    main → Production
+                                           │
+                                           ▼
+                                    www.stark1898y.cc
 ```
 
-### 新电脑 / 首次克隆
+具体 Vercel 设置见 [部署与回滚说明](Docs/hosting-vercel.md)，页脚运行天数和访问人数接入说明见 [页脚统计](Docs/footer-statistics.md)，重构过程见 [迁移记录](Docs/zensical-migration.md)。
 
-```bash
-git clone https://github.com/stark1898y/stark1898y.github.io.git
-cd stark1898y.github.io
-npm install      # 还原依赖（package-lock.json 保证版本一致）
-npm run dev      # 启动开发服务器
-```
+### CI 运行环境（2026-11-07）
 
-> `package-lock.json` 已纳入版本控制，`npm install` 会还原完全一致的依赖版本，不会出现环境差异问题。
+GitHub Actions 已明确采用 `ubuntu-26.04`（不是随时间变化的 `ubuntu-latest`），`actions/setup-python@v7` 设置 Python 3.12，`actions/setup-node@v7` 设置 Node.js 24。浏览器测试使用 Ubuntu 26.04 运行器预装的 Google Chrome 和固定版本的 Playwright 1.56.0，并校验操作系统与运行时版本。手动截图审查工作流可额外安装 Noto CJK 字体。
 
-### 局域网访问（手机预览等）
+Vercel 正式构建继续通过 `uv` 虚拟环境使用 Python 3.12；这是与 GitHub CI 分离的构建机器，不受 Actions Ubuntu 版本影响。`zensical==0.1.0` 仍锁定，不在同一次 OS 迁移中升级框架。
 
-```bash
-npx vitepress dev --host 0.0.0.0
-```
+## 二、开发与预览
 
-访问 http://localhost:5173 预览。
-
-## 项目结构
-
-```
-my_site/
-├── index.md                 # 首页
-├── docs/                    # 文档笔记（知识库内容）
-│   ├── intro.md             # 知识库简介
-│   ├── hardware/            # 硬件设计
-│   │   ├── _category_.json  #   分类配置（标签、排序）
-│   │   ├── tools.md         #   概述
-│   │   ├── power/           #   电源相关
-│   │   ├── interface/       #   接口协议
-│   │   ├── protection/      #   保护器件
-│   │   ├── component/       #   常用器件
-│   │   └── wireless/        #   无线通信
-│   ├── mcu/                 # MCU 开发
-│   │   ├── stm32/           #   STM32
-│   │   ├── ch32v/           #   WCH RISC-V
-│   │   └── ble/             #   BLE 蓝牙
-│   ├── software/            # 软件开发
-│   │   ├── framework/       #   框架与架构
-│   │   ├── component/       #   常用组件
-│   │   ├── storage/         #   存储相关
-│   │   ├── protocol/        #   通信协议
-│   │   └── upgrade/         #   升级方案
-│   ├── rtos/                # RTOS 系统
-│   ├── tools/               # 开发工具
-│   ├── linux/               # Linux 开发
-│   ├── ai-python/           # AI & Python
-│   └── resources/           # 学习资源
-├── open-source/             # 开源项目（独立于 docs）
-│   ├── index.md             #   项目概览
-│   ├── _category_.json      #   分类配置
-│   ├── power-calculator/    #   功耗计算器
-│   └── gas-converter/       #   气体浓度换算
-├── dev-tools/               # 在线开发工具分区（VitePress 页面）
-│   ├── index.md             #   工具集概览
-│   ├── _category_.json      #   分类配置
-│   └── timestamp-converter-guide/   #   时间戳教程（独立文档页）
-├── public/                  # 静态资源（图片、图标、工具页等）
-│   ├── dev-tools/           #   工具静态页（一个工具一个文件夹）
-│   │   ├── json-formatter/index.html
-│   │   ├── timestamp-converter/index.html
-│   │   └── base64/index.html
-│   ├── gas-converter.png
-│   ├── power-calc.png
-│   └── logo.svg
-├── .vitepress/              # VitePress 配置
-│   ├── config.mts           #   站点配置（导航、搜索、页脚等）
-│   ├── sidebar.ts           #   侧边栏自动生成脚本
-│   └── theme/               #   自定义主题
-│       ├── index.ts         #     主题入口
-│       ├── style.css        #     自定义样式
-│       └── Mermaid.vue      #     Mermaid 图表渲染组件
-├── package.json
-├── .gitignore
-└── README.md
-```
-
-## 如何添加新文档
-
-### 在已有分类下添加一篇新文章
-
-直接在对应目录下新建 `.md` 文件即可，侧边栏会自动更新。
-
-```bash
-# 例如在硬件设计 > 电源相关下添加一篇新文章
-echo "# 锂电池充电管理" > docs/hardware/power/battery-charger.md
-```
-
-- 文章标题会自动从 frontmatter `title` 或第一个 `# 标题` 提取
-- 侧边栏按文件名中文排序
-
-### 新建一个分类（新目录）
-
-1. 在 `docs/` 下新建目录
-2. 创建 `_category_.json` 指定分类名和排序
-
-```json
-{
-  "label": "分类名称",
-  "position": 10
-}
-```
-
-3. 放入 `.md` 文章文件
-
-`position` 控制分类在侧边栏中的顺序，数字越小越靠前。
-
-### 新建一个子分类（二级目录）
-
-同上，在父目录下创建子目录 + `_category_.json` 即可。
-
-```
-docs/新分类/
-├── _category_.json       # {"label": "新分类", "position": 10}
-├── overview.md           # 概览文章
-└── 子分类/
-    ├── _category_.json   # {"label": "子分类", "position": 1}
-    └── article.md
-```
-
-### 文章 frontmatter（可选）
-
-```markdown
----
-title: 文章标题          # 侧边栏显示的名称（优先级高于 # 标题）
-description: 简短描述     # SEO 描述
----
-```
-
-### 在文档中使用 Mermaid 图表
-
-已内置支持，直接使用 ````mermaid` 代码块即可：
-
-````markdown
-```mermaid
-graph TD
-    A[开始] --> B[结束]
-```
-````
-
-支持的图表类型：`graph`、`flowchart`、`sequenceDiagram`、`classDiagram`、`stateDiagram`、`gantt`、`pie` 等。
-
-## 构建部署
-
-### 本地验证
-
-```bash
-npm run build
-npm run preview
-```
-
-### 部署到 GitHub Pages
-
-推送 `main` 分支后，GitHub Actions 自动构建并部署（使用 Pages Actions 环境）。
-
-> 首次部署需要在仓库 Settings > Pages 中将 Source 设为 "GitHub Actions"。
-
-## 配置说明
-
-| 文件                  | 作用                                                 |
-| --------------------- | ---------------------------------------------------- |
-| `config.mts`        | 站点全局配置：标题、导航栏、搜索、页脚、编辑链接等   |
-| `sidebar.ts`        | 自动扫描`docs/` 和 `open-source/` 目录生成侧边栏 |
-| `theme/index.ts`    | 自定义主题入口，加载样式和组件                       |
-| `theme/style.css`   | 首页项目卡片、平台卡片等自定义样式                   |
-| `theme/Mermaid.vue` | Mermaid 图表客户端渲染组件                           |
-
-## 开发工具分区（dev-tools）路径约定
-
-> ⚠️ 这是 2026-08 路径归并后的最终约定，改动工具路径前务必阅读本节，避免再次出现 404。
-
-### 双目录职责划分
-
-开发工具分区由**两个目录配合**组成，构建后按路径合并进 `dist/`：
-
-| 目录                         | 职责                           | 构建产物                                         |
-| ---------------------------- | ------------------------------ | ------------------------------------------------ |
-| `dev-tools/*.md`           | VitePress 文档页（概览、教程） | `dist/dev-tools/*.html`（带主题）              |
-| `public/dev-tools/<tool>/` | 纯静态工具页（单文件 HTML）    | `dist/dev-tools/<tool>/index.html`（原样复制） |
-
-### 路径对照表
-
-| 访问路径                                  | 实际来源                                            |
-| ----------------------------------------- | --------------------------------------------------- |
-| `/dev-tools/`                           | `dev-tools/index.md`                              |
-| `/dev-tools/timestamp-converter/`       | `public/dev-tools/timestamp-converter/index.html` |
-| `/dev-tools/json-formatter/`            | `public/dev-tools/json-formatter/index.html`      |
-| `/dev-tools/base64/`                    | `public/dev-tools/base64/index.html`              |
-| `/dev-tools/timestamp-converter-guide/` | `dev-tools/timestamp-converter-guide/index.md`    |
-
-### 新增一个工具的步骤
-
-1. 在 `public/dev-tools/` 下创建 `<tool>/index.html`，单文件自包含（CSS/JS 内联）
-2. 工具页内保留：面包屑（`首页 / 开发工具 / <工具名>`）、`← 返回开发工具`（`/dev-tools/`）、相关工具卡片、GitHub 源码链接
-3. 在 `dev-tools/index.md` 概览页加入分类与入口链接
-4. 在 `.vitepress/config.mts` 导航的「开发工具」下拉中加一项
-5. 如需要面包屑高亮，在 `.vitepress/theme/Breadcrumb.vue` 的 `breadcrumbMap` 加条目
-6. **在 `.vitepress/theme/ForceFullNav.vue` 的 `STATIC_TOOL_PATHS` 中加入该路径**（否则点击入口会因 SPA 路由显示 404）
-7. 运行 `npm run build` 验证，确认 `dist/dev-tools/<tool>/index.html` 输出的是工具 HTML
-
-### 红线规则（避免 404）
-
-- **工具子目录下禁止出现 `.md` 文件**：若 `dev-tools/<tool>/`（源码）与 `public/dev-tools/<tool>/`（静态）同名，VitePress 页面会与静态 HTML 冲突覆盖
-- **工具文档页必须使用不同目录名**：如教程放 `dev-tools/timestamp-converter-guide/`，不能叫 `timestamp-converter/`
-- **`public/tools/` 已废弃**：旧路径 `/tools/<tool>/` 全部迁移到 `/dev-tools/<tool>/`，代码中不得再引用 `/tools/`
-- **删除工具时**：同时清理 `public/dev-tools/<tool>/`、`dev-tools/index.md` 入口、`config.mts` 导航项、`Breadcrumb.vue` 映射
-
-### 旧路径检查方法
-
-```bash
-# 搜索旧路径残留（应无输出或仅剩 /docs/tools/ 知识库页面）
-rg -n "public/tools|/tools/timestamp|/tools/json|/tools/base64" --glob "*.{md,ts,mts,json,vue,html}"
-```
-
-### 排查记录
-
-- **2026-08 工具页 `target="_blank"` 误报排查**：曾有一轮浏览器自动化报告「返回开发工具」链接缺失 `target="_blank"`。经三处验证（本地源码、线上原始 HTML `Invoke-WebRequest`、渲染后 DOM 无头 Chrome `--dump-dom`），该属性实际**均存在**，浏览器 agent 读取 click 事件后 DOM 导致误报。**结论：无需修复代码。** 排查方法记录如下：
+建议 Python 3.12（CI 使用该版本），只需 Python 即可构建网站。Node.js 24 LTS 主要用于三个独立 HTML 工具及统计 API 的测试。
 
 ```powershell
-# 1. 检查本地源码
-Select-String -Path "public\dev-tools\*\index.html" -Pattern "返回开发工具"
-# 2. 检查线上原始 HTML
-$r = Invoke-WebRequest -Uri "https://www.stark1898y.cc/dev-tools/json-formatter/" -UseBasicParsing
-$r.Content.IndexOf('返回开发工具')
-# 3. 检查渲染后 DOM（以无头 Chrome 输出为准，勿依赖浏览器自动化工具的 DOM 快照）
-& "C:\Program Files\Google\Chrome\Application\chrome.exe" --headless=new --dump-dom "https://www.stark1898y.cc/dev-tools/json-formatter/"
+git clone https://github.com/stark1898y/stark1898y.github.io.git
+cd stark1898y.github.io
+git fetch origin
+git switch refactor/zensical-pagescms-v1
+
+python -m pip install -r requirements-site.txt
+zensical serve
 ```
 
-## 命令速查
+`zensical serve` 可实时预览 Markdown，但完整构建还会复制独立工具、恢复旧文章 URL、生成 Sitemap 并执行 SEO 和链接检查：
 
-| 命令                | 作用           |
-| ------------------- | -------------- |
-| `npm run dev`     | 启动开发服务器 |
-| `npm run build`   | 生产构建       |
-| `npm run preview` | 预览生产构建   |
+```powershell
+python scripts/zensical/build_site.py
+python -m http.server 8000 --directory site
+```
 
-## 声明
+打开 `http://localhost:8000/`。如需跑 Node 工具回归：
 
-本知识库内容仅供学习参考，欢迎阅读和分享。
+```powershell
+node --test tests/*.test.mjs
+```
+
+**Vercel 使用同一份构建脚本**。仓库根目录 `vercel.json` 指定了 Other 框架、Python 安装命令、构建脚本以及静态产物 `site/`，不再执行旧 `npm run build`。PR 在 Vercel 的实际构建及预览仍需审核，GitHub Actions 成功不等于已经确认 Vercel 部署成功。
+
+## 三、仓库目录
+
+| 路径 | 作用 |
+| --- | --- |
+| `content/index.md` | 响应式首页 |
+| `content/docs/` | 硬件、MCU、RTOS、Linux、软件架构等知识库 |
+| `content/blog/posts/` | Pages CMS 管理的博客文章 |
+| `content/open-source/` | 开源项目说明 |
+| `content/dev-tools/` | 在线工具索引与教程 |
+| `content/assets/uploads/` | 上传图片与下载附件 |
+| `public/dev-tools/` | Base64、JSON、时间戳三个独立 HTML/JS 工具 |
+| `content/stylesheets/` | 首页和页脚主题样式 |
+| `content/javascripts/footer.js` | 页脚建站天数和真实访客/浏览量显示 |
+| `content/javascripts/analytics.js` | 仅正式域名启用 Vercel Web Analytics |
+| `api/site-stats.js` | Vercel Function：安全读取近 30 天汇总统计（不暴露 Token） |
+| `scripts/zensical/` | 统一构建、兼容旧 URL、SEO、自动测试 |
+| `zensical.toml` | 站点、主题及博客配置 |
+| `vercel.json` | Vercel 部署配置 |
+| `.pages.yml` | Pages CMS 在线编辑字段 |
+| `.github/workflows/zensical-check.yml` | PR 验证 |
+| `.github/workflows/deploy.yml` | 手动 GitHub Pages 备用部署 |
+
+构建输出 `site/`、截图 `artifacts/`、`.vercel/` 等不提交仓库。
+
+## 四、在线写作与导航
+
+在 [Pages CMS](https://app.pagescms.org/) 使用 GitHub 账号登录，选择此仓库和编辑分支，打开「博客与开发日志」。新建文章填写标题、日期、唯一英文 `slug`；默认 `draft: true`，保存后不会进入网站与搜索索引。准备发布时将 `draft` 改为 `false`，并提交到正式 `main`。
+
+**公开仓库的草稿不是私密文件**：GitHub 上的源 Markdown 仍可查看；上传的图片也可能直接通过静态文件 URL 访问。不要上传密码、Token、公司资料或其他保密信息。
+
+复杂技术文档（Mermaid、代码、表格、HTML）建议使用 Markdown 源码方式编辑，避免富文本重排。
+
+网站顶部提供 Zensical 原生 **太阳/月亮日夜模式开关**：首次访问跟随系统明暗偏好，手动切换后跨页面保持选择。该开关覆盖首页、知识库、博客和项目说明页；独立 HTML 工具保持各自的界面样式，不受 Zensical 主题切换控制。
+
+导航使用目录中的 `.nav.yml`，例如：
+
+```yaml
+title: MCU 开发
+nav:
+  - index.md
+  - stm32
+  - ch32v
+  - ble
+  - "*"
+```
+
+`"*"` 自动收录未明确指定的新增文章，无需维护 TypeScript 侧边栏生成器。三个浏览器工具原地址 `/dev-tools/base64/`、`/dev-tools/json-formatter/`、`/dev-tools/timestamp-converter/` 保持不变。
+
+Pages CMS 的**真实新建、再次编辑、PNG 上传与草稿排除**已经通过测试，相关测试文章/图片已从重构分支删除。
+
+## 五、上线流程与回滚
+
+1. 检查 GitHub [PR #1](https://github.com/stark1898y/stark1898y.github.io/pull/1) 所有检查通过，并在 Vercel 生成的 **Preview URL** 中实际打开首页、知识库、博客及三个工具。
+2. 在 Vercel 项目 `Settings → General` 确认仓库根目录为 `./`，`Settings → Git` 确认 Production Branch 为 `main`；仓库 `vercel.json` 应覆盖构建命令及输出目录。
+3. **已完成旧站备份**：远端注释 Tag [`site-vitepress-pre-zensical-20261107`](https://github.com/stark1898y/stark1898y.github.io/tree/site-vitepress-pre-zensical-20261107) 已确认存在，并准确指向旧 VitePress `main` 提交 `7126143f26514a3e3b4c45c7f52d84c51b46ac1d`。无需重复创建。
+4. 确认自定义域名仍在 Vercel，HTTPS 正常，且 PR 预览无问题，再审核合并 PR。**不需要更改 DNS。**
+5. Vercel 的 `main` 新部署成功后检查主页、图片、Mermaid、搜索、Sitemap、robots、404、旧 `.html` 文章和浏览器工具。
+6. 发布出错时优先使用 Vercel Deployments → Promote/Rollback 恢复旧版本，或通过备份 Tag 在 GitHub 恢复旧站源码。
+
+> 已提交的是 **重构分支**，不是正式上线。不要仅因 GitHub Actions 通过就直接合并，先确认实际的 Vercel Preview 部署结果。

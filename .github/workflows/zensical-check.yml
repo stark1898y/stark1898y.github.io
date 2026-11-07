@@ -1,0 +1,94 @@
+name: Zensical migration checks
+
+on:
+  pull_request:
+    paths:
+      - 'zensical.toml'
+      - 'README.md'
+      - 'Docs/**'
+      - 'vercel.json'
+      - '.pages.yml'
+      - 'requirements-site.txt'
+      - 'api/**'
+      - 'tests/**'
+      - 'content/**'
+      - 'public/dev-tools/**'
+      - 'scripts/zensical/**'
+      - '.github/workflows/zensical-check.yml'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: zensical-check-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Install Zensical
+        run: python -m pip install -r requirements-site.txt
+      - name: Verify awesome-nav auto-discovery
+        run: python scripts/zensical/check_nav.py
+      - name: Verify CMS blog publish and media output
+        run: python scripts/zensical/check_blog_publish.py
+      - name: Validate Vercel configuration
+        run: |
+          python -m json.tool vercel.json > /dev/null
+          python -c "import json; d=json.load(open('vercel.json')); assert d['framework'] is None and d['outputDirectory'] == 'site' and d['buildCommand'] == '.venv/bin/python scripts/zensical/build_site.py' and 'uv venv --python 3.12 .venv' in d['installCommand']"
+      - name: Build production static output (same script as Vercel)
+        run: python scripts/zensical/build_site.py
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - name: Verify runner and toolchain
+        run: |
+          set -euo pipefail
+          source /etc/os-release
+          echo "Runner OS: $PRETTY_NAME"
+          test "$VERSION_ID" = "26.04"
+          python -c "import sys; assert sys.version_info[:2] == (3, 12), sys.version"
+          node -e "if (Number(process.versions.node.split('.')[0]) !== 24) process.exit(1)"
+          python --version
+          node --version
+          npm --version
+          google-chrome --version
+          {
+            echo "### Verified build environment"
+            echo "- OS: ${PRETTY_NAME}"
+            echo "- Python: $(python --version)"
+            echo "- Node: $(node --version)"
+            echo "- Chrome: $(google-chrome --version)"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Regression tests for standalone tools
+        run: node --test tests/*.test.mjs
+      - name: Install browser test runner
+        run: |
+          python -m pip install playwright==1.56.0
+          google-chrome --version
+      - name: Install CJK fonts for manually requested screenshot review
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk
+          fc-match 'sans:lang=zh-cn'
+      - name: Browser smoke tests (desktop/mobile and tools)
+        run: python scripts/zensical/smoke_browser.py
+      - name: Upload preview artifact and audit
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: zensical-preview-${{ github.run_number }}
+          path: |
+            site/
+            artifacts/site-audit.json
+            artifacts/screenshots/
+          if-no-files-found: warn
+          retention-days: 14
