@@ -98,6 +98,24 @@ def main():
             assert page.get_by_role("listbox", name="Search results").locator("a").count() > 0, "No selectable search results"
             print("PASS Chinese/English technical term search")
 
+            # Native Zensical light/dark toggle, system default and persistence.
+            page.emulate_media(color_scheme="light")
+            page.goto(base + "/", wait_until="load")
+            assert page.locator('input[data-md-color-scheme="default"]').count() == 1
+            assert page.locator('input[data-md-color-scheme="slate"]').count() == 1
+            page.wait_for_function("document.body.getAttribute('data-md-color-scheme') === 'default'")
+            dark_switch = page.locator('label[title="切换到深色模式"]')
+            assert dark_switch.count() > 0, "Header has no dark mode toggle"
+            dark_switch.first.click()
+            page.wait_for_function("document.body.getAttribute('data-md-color-scheme') === 'slate'")
+            page.goto(base + "/docs/intro/", wait_until="load")
+            page.wait_for_function("document.body.getAttribute('data-md-color-scheme') === 'slate'")
+            light_switch = page.locator('label[title="切换到浅色模式"]')
+            assert light_switch.count() > 0, "Header has no light mode toggle"
+            light_switch.first.click()
+            page.wait_for_function("document.body.getAttribute('data-md-color-scheme') === 'default'")
+            print("PASS native light/dark toggle and cross-page preference")
+
             # Footer displays an actual calculated day count on every Zensical page.
             page.goto(base + "/", wait_until="load")
             age = page.locator(".stark-footer-running")

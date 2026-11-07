@@ -26,6 +26,19 @@ features = [
   "search.highlight",
 ]
 
+# Respect the system theme on the first visit; allow a persistent manual choice.
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
+scheme = "default"
+toggle.icon = "lucide/sun"
+toggle.name = "切换到深色模式"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
+scheme = "slate"
+toggle.icon = "lucide/moon"
+toggle.name = "切换到浅色模式"
+
 [project.plugins.awesome-nav]
 [project.plugins.awesome-nav.logs]
 no_matches = "info"
