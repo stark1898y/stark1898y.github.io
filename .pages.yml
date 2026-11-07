@@ -41,7 +41,8 @@ content:
         type: date
         required: true
       - name: draft
-        label: 草稿（不公开）
+        label: 草稿（网站不展示）
+        description: 仅从网站和搜索排除；此 GitHub 仓库是公开的，源码仍可被查看，勿存保密信息。
         type: boolean
         default: true
       - name: categories
