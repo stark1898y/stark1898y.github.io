@@ -38,7 +38,7 @@ Pages CMS ──保存 Markdown──┐
                                     www.stark1898y.cc
 ```
 
-具体 Vercel 设置见 [部署与回滚说明](Docs/hosting-vercel.md)，页脚运行天数和访问人数方案见 [页脚统计](Docs/footer-statistics.md)，重构过程见 [迁移记录](Docs/zensical-migration.md)。
+具体 Vercel 设置见 [部署与回滚说明](Docs/hosting-vercel.md)，页脚运行天数和访问人数接入说明见 [页脚统计](Docs/footer-statistics.md)，重构过程见 [迁移记录](Docs/zensical-migration.md)。
 
 ## 二、开发与预览
 
@@ -81,7 +81,9 @@ node --test tests/*.test.mjs
 | `content/assets/uploads/` | 上传图片与下载附件 |
 | `public/dev-tools/` | Base64、JSON、时间戳三个独立 HTML/JS 工具 |
 | `content/stylesheets/` | 首页和页脚主题样式 |
-| `content/javascripts/footer.js` | 页脚建站天数计算（不采集用户信息） |
+| `content/javascripts/footer.js` | 页脚建站天数和真实访客/浏览量显示 |
+| `content/javascripts/analytics.js` | 仅正式域名启用 Vercel Web Analytics |
+| `api/site-stats.js` | Vercel Function：安全读取近 30 天汇总统计（不暴露 Token） |
 | `scripts/zensical/` | 统一构建、兼容旧 URL、SEO、自动测试 |
 | `zensical.toml` | 站点、主题及博客配置 |
 | `vercel.json` | Vercel 部署配置 |
