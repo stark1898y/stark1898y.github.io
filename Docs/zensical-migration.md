@@ -71,3 +71,11 @@ Pages CMS 测试文章 `pages-cms-test.md`、`first-draft.md` 和两张 PNG 已�
 - [ ] 正式域名上的旧文章、浏览器工具、SEO、Sitemap、404 复核。
 
 **重要：** README 的 `main` 版本目前仍对应旧 VitePress 生产代码，这是正常的。只有 PR 合并后，`main/README.md` 才会同步更新为本次新架构说明。
+
+## 阶段六：网站页脚与访客统计（2026-11-07）
+
+- 在 Zensical 主题已有版权栏追加「本站已运行 N 天」，以 Vercel 项目创建日 `2026-08-10` 作为临时建站起点，不将它等同于服务器实际可用率或无故障运行时间。
+- 通过 `zensical.toml` 的 HTML `copyright`、`extra_javascript` 和 `extra_css` 实现，保留主题原生页脚，不复制整份模板。
+- `content/javascripts/footer.js` 无 Cookies、不访问第三方服务器；按访问者当前时间计算天数。起点可在配置中的 `data-stark-site-since` 修改。
+- Chrome 冒烟测试增加首页和文档页脚的数值检查。
+- **访客人数暂不显示虚构数据**。优先推荐 Vercel Web Analytics；Hobby 仅保证约一个月的数据查询窗口，适合展示「近 30 日访客 / 浏览量」而非伪称「历史累计访客」。公开展示指标需要安全的服务端代理或定时生成统计数据，Token 不得放在网页里。详见 [页脚统计方案](footer-statistics.md)。
