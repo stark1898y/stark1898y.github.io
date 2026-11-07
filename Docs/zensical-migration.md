@@ -1,11 +1,11 @@
 # Stark1898y 网站重构：迁移与验收记录
 
 > 最新决策：**Zensical + 原生 awesome-nav + Pages CMS + Vercel 正式部署，GitHub Actions CI，GitHub Pages 手动备用**。
-> 截至 2026-11-07，本工作仍在 [PR #1](https://github.com/stark1898y/stark1898y.github.io/pull/1) Draft 分支，**未合并到 main、未切换生产**。
+> **2026-11-07 已正式上线**：[PR #1](https://github.com/stark1898y/stark1898y.github.io/pull/1) 已 Squash Merge 到 `main`（提交 `b11323561504`），Vercel Production Ready，正式域名为 <https://www.stark1898y.cc/>。以下保留迁移过程和历史验收记录。
 
 ## 一、迁移范围
 
-从 VitePress 迁移原知识库、项目说明和开发工具首页。73 篇 Markdown 与配套项目图片复制到 `content/`；按原有分类建立 29 份 `.nav.yml`。原 `.vitepress/`、TypeScript 侧边栏、旧副本和 `package.json` / `package-lock.json` 已从**重构分支**清理，但旧版本仍保留在 `main` 和 Git 历史中。
+从 VitePress 迁移原知识库、项目说明和开发工具首页。73 篇 Markdown 与配套项目图片复制到 `content/`；按原有分类建立 29 份 `.nav.yml`。原 `.vitepress/`、TypeScript 侧边栏、旧副本和 `package.json` / `package-lock.json` 已从正式 `main` 清理，旧版本在 Git 历史和备份 Tag 中保留。
 
 ### 当前目录
 
@@ -52,25 +52,25 @@ Pages CMS 测试文章 `pages-cms-test.md`、`first-draft.md` 和两张 PNG 已�
 
 `vercel.json` 设置 `framework: null`、Python 安装、`site/` 产物目录及目录末尾斜杠。使用 `scripts/zensical/build_site.py` 与 GitHub Actions 共用生产构建流程。
 
-**这只是已提交的配置；Vercel 真实 Preview 是否 Ready 需要另外查看部署日志才能确认。** 不应将 GitHub Actions 成功当作 Vercel 成功。
+**已验证**：重构分支 Preview Ready，合并后的 Production 亦 Ready。此前的环境兼容问题与修复记录见部署文档。
 
 ## 四、上线前检查和回滚
 
 主站旧 VitePress `main` 基线：`7126143f26514a3e3b4c45c7f52d84c51b46ac1d`。
 
-旧站回滚 Tag `site-vitepress-pre-zensical-20261107` 已确认推送并指向正确的 VitePress 基线提交。上线前继续核对 Vercel Preview 的页面视觉及交互，最终审核合并 PR 后等待 Vercel `main` Production 部署成功。
+旧站回滚 Tag `site-vitepress-pre-zensical-20261107` 已确认推送并指向正确的 VitePress 基线提交。2026-11-07 PR #1 已合并，新版 Production 部署 Ready。
 
 - [x] 原始文章、图片、工具目录迁移并清理重复源码。
 - [x] 本地与 CI 构建、浏览器、搜索、Mermaid、Sitemap 等测试。
 - [x] CMS 实际在线编辑及图片上传。
 - [x] Vercel 构建配置与 GitHub Pages 手动备用配置已提交。
-- [ ] Vercel Preview 真实构建日志与页面访问验收。
-- [ ] Vercel Production Branch、根目录和域名配置核对。
+- [x] Vercel Preview 真实构建日志与页面访问验收。
+- [x] Vercel Production 关联 `main`，正式域名已验证且实际提供新版站点。
 - [x] 远端备份 Tag 已推送且 Git 对象目标正确。
-- [ ] PR #1 审核后正式合并。
-- [ ] 正式域名上的旧文章、浏览器工具、SEO、Sitemap、404 复核。
+- [x] PR #1 已正式合并：`b11323561504`。
+- [x] 正式域名上的首页、文档、三项工具、旧文章兼容 URL、robots、Sitemap 和统计 API 实际 HTTP 请求通过。404 等页面由构建与 CI 检查，仍可人工抽查。
 
-**重要：** README 的 `main` 版本目前仍对应旧 VitePress 生产代码，这是正常的。只有 PR 合并后，`main/README.md` 才会同步更新为本次新架构说明。
+**当前基线**：`main` 已采用 Zensical；README 与开发文档已更新。上线后写作使用 Pages CMS，构建和正式托管使用 Vercel。
 
 ## 阶段六：网站页脚与访客统计（2026-11-07）
 
@@ -87,3 +87,13 @@ Pages CMS 测试文章 `pages-cms-test.md`、`first-draft.md` 和两张 PNG 已�
 - Web Analytics 官方脚本 `/_vercel/insights/script.js` 在预览部署返回 200，但实际追踪代码仅在 `www.stark1898y.cc` 生产域名执行，不计入 Preview 流量。
 - 阅读 Vercel 官方 visits/count REST API 文档后，将统计请求 `since/until` 改成 ISO 8601（UTC）格式，覆盖日期格式测试；同时修复只修改 `api/**`、`tests/**` 时 CI 不触发的问题。
 - 最终上线前仍需在浏览器人工检查 Vercel Preview 视觉效果，以及新生产部署中 Token 对 Analytics API 的认证是否成功。
+
+## 第八阶段：正式上线验收（2026-11-07）
+
+- [x] [PR #1](https://github.com/stark1898y/stark1898y.github.io/pull/1) 已合并到 `main`：`b113235615043a2950c10d7ecc910ece2f3d22df`。
+- [x] Vercel Production 已部署该提交，状态 Ready；没有修改自定义域名 DNS。
+- [x] 通过正式域名实际检查：首页、知识库、博客、Base64/JSON/时间戳工具、历史 `.html` 地址、Sitemap、robots、Analytics 脚本及 `/api/site-stats` 均为 HTTP 200。
+- [x] 页脚日期保持 GitHub 仓库创建时间 `2022-01-12T05:49:47Z`；日夜模式的生产页面配置已生效。
+- [x] Production `/api/site-stats` 返回 `{\"visitors\":0,\"pageviews\":0,\"periodDays\":30}`，表示 API 鉴权与结构校验成功，但还需观察实际浏览器事件是否持续收集。
+- [ ] 访问者真实浏览器最终检查手机端布局、主题切换、搜索操作和三项独立工具。
+- [ ] 在 Vercel Analytics 中确认访问事件开始累计，必要时等待统计缓存过期。

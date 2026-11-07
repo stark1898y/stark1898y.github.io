@@ -7,7 +7,7 @@
 - 在线编辑：[Pages CMS](https://app.pagescms.org/)
 - 技术栈：[Zensical](https://zensical.org/) + 原生 `awesome-nav` + Pages CMS + Vercel
 
-> **迁移状态（2026-11-07）**：本文件位于 `refactor/zensical-pagescms-v1`，尚未合并到 `main`。目前线上仍为旧 VitePress 网站。先在 Vercel Preview 检查新站并审核 [PR #1](https://github.com/stark1898y/stark1898y.github.io/pull/1)，再安排正式发布。
+> **正式上线（2026-11-07）**：Zensical 已通过 [PR #1](https://github.com/stark1898y/stark1898y.github.io/pull/1) 合并到 `main`（提交 `b11323561504`），Vercel Production 已成功部署，正式域名为 <https://www.stark1898y.cc/>。旧 VitePress 的备份 Tag 已保留。
 
 ## 一、网站架构与部署分工
 
@@ -53,8 +53,8 @@ Vercel 正式构建继续通过 `uv` 虚拟环境使用 Python 3.12；这是与 
 ```powershell
 git clone https://github.com/stark1898y/stark1898y.github.io.git
 cd stark1898y.github.io
-git fetch origin
-git switch refactor/zensical-pagescms-v1
+git switch main
+git pull --ff-only origin main
 
 python -m pip install -r requirements-site.txt
 zensical serve
@@ -125,13 +125,16 @@ nav:
 
 Pages CMS 的**真实新建、再次编辑、PNG 上传与草稿排除**已经通过测试，相关测试文章/图片已从重构分支删除。
 
-## 五、上线流程与回滚
+## 五、日常发布、验收与回滚
 
-1. 检查 GitHub [PR #1](https://github.com/stark1898y/stark1898y.github.io/pull/1) 所有检查通过，并在 Vercel 生成的 **Preview URL** 中实际打开首页、知识库、博客及三个工具。
-2. 在 Vercel 项目 `Settings → General` 确认仓库根目录为 `./`，`Settings → Git` 确认 Production Branch 为 `main`；仓库 `vercel.json` 应覆盖构建命令及输出目录。
-3. **已完成旧站备份**：远端注释 Tag [`site-vitepress-pre-zensical-20261107`](https://github.com/stark1898y/stark1898y.github.io/tree/site-vitepress-pre-zensical-20261107) 已确认存在，并准确指向旧 VitePress `main` 提交 `7126143f26514a3e3b4c45c7f52d84c51b46ac1d`。无需重复创建。
-4. 确认自定义域名仍在 Vercel，HTTPS 正常，且 PR 预览无问题，再审核合并 PR。**不需要更改 DNS。**
-5. Vercel 的 `main` 新部署成功后检查主页、图片、Mermaid、搜索、Sitemap、robots、404、旧 `.html` 文章和浏览器工具。
-6. 发布出错时优先使用 Vercel Deployments → Promote/Rollback 恢复旧版本，或通过备份 Tag 在 GitHub 恢复旧站源码。
+网站已经通过 Vercel 正式部署，后续无需再次合并原迁移 PR。推荐继续使用功能分支与 PR 工作流：
 
-> 已提交的是 **重构分支**，不是正式上线。不要仅因 GitHub Actions 通过就直接合并，先确认实际的 Vercel Preview 部署结果。
+1. 在功能分支或 Pages CMS 选定的分支修改 Markdown、资源或工具源码，等待 GitHub Actions CI 和 Vercel Preview 通过。
+2. 审阅 PR，合并到 `main` 后由 Vercel Git Integration 自动进行 Production 部署；不用修改 DNS，也不要同时启用 GitHub Pages 自动部署。
+3. 发布后抽查首页、知识库、博客、三个独立工具、日夜模式、搜索、旧 `.html` 地址和 Sitemap。
+4. Pages CMS 文章设置 `draft: false` 才会被 Zensical 发布；该标志不保证公开 GitHub 仓库里的文件保密。
+5. 若生产发生问题，先在 Vercel Deployments 中回滚/重新提升上一稳定部署；如需恢复原 VitePress，使用备份 Tag `site-vitepress-pre-zensical-20261107` 创建恢复 PR，不强制重置 `main`。
+
+生产站点首次正式部署：`b113235615043a2950c10d7ecc910ece2f3d22df`。已直接验证首页、博客、知识库、三个在线工具、历史兼容链接、robots、Sitemap 与 `/api/site-stats` 全部 HTTP 200。统计 API 暂返回近 30 天已采集访客与浏览量均为 0；实际采集事件是否到达 Vercel Analytics 需持续观察。
+
+详细运维和历史验收：[部署与回滚说明](Docs/hosting-vercel.md) · [迁移记录](Docs/zensical-migration.md)。
