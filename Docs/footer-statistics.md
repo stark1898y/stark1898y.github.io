@@ -1,75 +1,71 @@
-# 页脚运行天数与访问统计方案
+# 页脚：建站天数与 Vercel 访问统计
 
-> 状态：已在重构分支实现 **建站天数**；访客人数的公开显示暂未接入。当前正式网站仍是 `main` 上的 VitePress。
+> **状态：** 页脚与只读 API 已在重构分支实现；**尚未配置 Vercel 生产环境 Token，也未验证真实统计响应**。主站 `main` 仍是旧版 VitePress。
 
-## 1. 页脚的推荐呈现
-
-建议保持一行简单信息，而不是在每篇技术文档下面堆满统计卡片：
+## 显示形式
 
 ```text
-© 2022–present Stark1898y · 建站至今 N 天 · Zensical · Vercel
+© 2022–present Stark1898y · 建站至今 N 天 · 近30天访客 U 人 · 浏览 P 次 · Zensical · Vercel
 ```
 
-可选的第二阶段（启用可靠数据后）：
+- 「建站至今」从 GitHub 仓库创建时间 `2022-01-12T05:49:47Z` 计算，**不代表服务器持续在线时间**。
+- U / P 分别来自 Vercel Web Analytics 最近 30 天的访客数和页面浏览量，**不是自 2022 年以来累计的人数**。
+- 只有真实 API 返回两个有效非负整数时才显示 U / P；未配置、网络错误、权限错误或数据格式变化时，隐藏这部分，不显示假数字。
+- 目前生产正式域名为 `www.stark1898y.cc`，本地和 Preview 不调用统计接口，也不主动发送追踪事件。
+- 部分独立 HTML 工具也会加载 `/javascripts/analytics.js`，统一追踪正式站点的页面浏览。
 
-```text
-近 30 天访客 N 人 · 近 30 天浏览 M 次
+## 代码结构
+
+| 文件 | 用途 |
+| --- | --- |
+| `zensical.toml` | 页脚 HTML 和 JS/CSS 注册 |
+| `content/javascripts/footer.js` | 计算建站天数，读取汇总数据并显示 |
+| `content/javascripts/analytics.js` | 仅正式域名加载 Vercel 官方追踪脚本 |
+| `api/site-stats.js` | 只读 Vercel Function，服务器端向 Vercel API 获取汇总 |
+| `tests/site-stats.test.mjs` | 模拟测试权限、缓存、数据有效性及失败降级 |
+| `scripts/zensical/restore_tools.py` | 让三项独立 HTML 工具也启用生产统计脚本 |
+
+## 需要在 Vercel 后台操作
+
+1. 打开项目 `stark1898y-github-io` → **Analytics** → **Enable**。如已经启用，无需重复操作。
+2. 到 **Settings → Environment Variables**，新增下列变量，**只选择 Production**：
+
+   | 环境变量 | 值 |
+   | --- | --- |
+   | `VERCEL_STATS_TOKEN` | 用户自行创建的最小权限 Vercel API Token，仅存在 Vercel |
+   | `VERCEL_STATS_PROJECT_ID` | 当前项目的 Vercel Project ID（`prj_...`）或项目名 |
+   | `VERCEL_STATS_TEAM_ID` | 团队 ID（`team_...`），团队项目需要 |
+
+   **不要把 Token 发到聊天、提交到 GitHub、放在前端代码或 Preview 环境。**
+
+3. 保存配置后重新部署 **Production**。当统计开始收集数据时，访问 `https://www.stark1898y.cc/api/site-stats`，应返回类似下列格式（数值仅为示例）：
+
+```json
+{"visitors": 29, "pageviews": 71, "periodDays": 30}
 ```
 
-### 建站天数的定义
+- 配置缺失：返回 HTTP 503 `statistics_not_configured`。
+- 上游错误或返回格式意外：返回 HTTP 502 `statistics_unavailable`。
+- 正常请求：返回 HTTP 200，CDN 缓存 1 小时，减少 Vercel Analytics API 调用。
+- 页面只取汇总整数，**不会获取或公开 Token、访客 IP/UA、独立访问记录**。
+- Vercel Analytics 的访客数识别采用平台规则，且跨天可能重新计数，并不等同真实自然人数。
 
-- GitHub 仓库始于 **2022-01-12**（GitHub `created_at`）。
-- **统一以 GitHub 仓库的实际创建时间 `2022-01-12T05:49:47Z` 为建站起点**（北京时间 `2022-01-12 13:49:47`），不再使用 Vercel 项目创建日期。
-- `N` 是从配置日期到访客当前时间的**经过天数**，不是持续在线时间，更不是监控实测的 99.9% 可用率。
-- 配置位置：`zensical.toml` 的 `copyright` 中 `data-stark-site-since`。
-- 显示逻辑：`content/javascripts/footer.js`，对桌面和手机文档页均生效。关闭 JavaScript 时仍显示「建站于 2022-01-12」。
-- 不使用浏览器 Cookie、不记录个人信息、不访问外部计数器。
+## 验收门槛
 
-## 2. 访问人数：优先用 Vercel Web Analytics
+- [x] 实现静态追踪入口、只读接口、前端显示和失败隐藏。
+- [x] 测试接口缺失凭据、禁止 POST、正常汇总、错误数据降级。
+- [ ] 最新 GitHub Actions 全链路构建通过。
+- [ ] Vercel Preview 包含 Function 且部署 Ready（Preview 没有生产环境统计 Token）。
+- [ ] Vercel Analytics 后台实际启用及正式站流量开始采集。
+- [ ] 用户将环境变量配置在 Production 并重新部署 `main`。
+- [ ] 用真实的 API 响应验证字段格式、数据口径和页脚值。
 
-Vercel 已是网站的正式托管平台，**优先启用 Web Analytics，而不是再重复安装一个第三方统计脚本**。
+## 不选择不蒜子等第三方计数器
 
-Vercel 后台：项目 → **Analytics** → **Enable**。需按当前 Vercel 控制台提供的静态 HTML 接入说明加载追踪脚本；启用后重新部署，查看浏览器 Network 中 Analytics 的脚本和 view 请求，确认控制台实际开始有数据。
+第三方计数器简单，但其可用性、统计口径、数据保留和对访客的网络请求由第三方控制。现有站点已经使用 Vercel，因此优先用其平台原生 Analytics，避免两套数据来源。
 
-Vercel Hobby 方案官方文档在 2026 年给出的额度为每月 **50,000 events**、保证 **1 个月 reporting window**，超出限额会停止继续采集，不应把它理解为永久的历史累计访问档案。
+参考：
 
-统计口径要明确：
-
-| 名称 | 含义 | 建议展示 |
-| --- | --- | --- |
-| PV（页面浏览） | 有效页面浏览事件 | 近 30 天浏览量 |
-| UV（独立访客） | 统计系统按规则识别的不同访客，非真实人口数 | 近 30 天访客数 |
-| 当前在线人数 | 最近短时间的活跃会话，不等于 UV | 暂不做 |
-| 网站可用率 | 需要持续外部监测才能计算 | 不与「建站天数」混用 |
-
-2026-05-18 Vercel 公布了 Web Analytics API，允许程序读取访客和页面浏览的汇总。但接口需要认证，**绝不能把 `VERCEL_TOKEN` 嵌入前端 JS 或公开仓库**。如果确定要在公开页脚显示数值，建议使用如下模式：
-
-1. 在 Vercel 项目 Environment Variables 中保存具有最小权限的 API Token、项目 ID。
-2. 使用一个只返回两个整数的 Vercel Function 定期读取汇总数据，并进行数分钟到数小时的缓存、请求限流和失败降级。
-3. 页脚以异步方式请求该公开只读接口，显示 **「近 30 天访客」**和 **「近 30 天浏览」**，接口失败时隐藏数字，不显示假数据。
-4. 仅统计 Production 域名，不把 Preview / 开发流量算进正式网站指标。
-5. 真正想展示「历史累计访客」时，需要独立持久存储和明确起算日；不能把 30 天数据当成累计总人数。
-
-这个功能需要实际启用 Analytics、配置 Token 后才能测试，所以当前没有部署访客接口，也没有对用户启用额外的第三方追踪。
-
-## 3. 不蒜子等公开访客计数器
-
-不蒜子可通过外部 JS 在页脚显示 PV/UV，接入简单，不需要后台配置。但外部脚本会将访问记录发送给第三方；统计数据的保存、口径和可用性也由第三方决定。其官网更新历史中曾发生数据库调整和数据清空，因此不推荐用于长期可信的累计数字。
-
-只有在明确接受这类外部依赖与隐私影响时，才考虑作为轻量装饰性计数。优先使用已有的 Vercel 数据体系。
-
-## 4. 验收与后续事项
-
-- [x] Zensical 原生页脚已有「建站至今 N 天」，从 GitHub 仓库创建时间计算，不会改动其他文章正文。
-- [x] JS 无 Cookie、无网络请求，可修改建站起点。
-- [ ] 浏览器 Chrome 在最新 CI 中验证首页与知识库页脚数值。
-- [x] 起点已经确认：GitHub API `created_at=2022-01-12T05:49:47Z`。
-- [ ] 在 Vercel Web Analytics 后台开启统计并检查实际数据。
-- [ ] 若决定公开访客数，再实施安全 API、缓存、权限和限流，验证实际 UV/PV 口径。
-
-参考资料：
-
-- <https://zensical.org/docs/setup/footer/>
 - <https://vercel.com/docs/analytics/quickstart>
 - <https://vercel.com/changelog/web-analytics-api>
-- <https://vercel.com/docs/analytics/limits-and-pricing>
+- <https://vercel.com/docs/project-configuration/vercel-json>
