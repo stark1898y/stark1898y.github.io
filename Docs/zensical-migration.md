@@ -1,6 +1,6 @@
 # 个人网站 Zensical + Pages CMS 迁移工作记录
 
-> 状态：阶段三，继续完善旧 URL、门户首页和搜索浏览器验收；正式站点仍在 main 上运行 VitePress。
+> 状态：阶段四，Pages CMS 在线新建草稿已由真实提交验证；正式网站仍在 main 运行 VitePress，PR #1 保持 Draft。
 
 ## 技术决策
 
@@ -110,3 +110,38 @@ python scripts/zensical/audit_site.py
 - [ ] 正式部署之前锁定 Zensical 版本、验证 Sitemap、域名和回滚 Tag；改 `edit_uri` 为主分支。
 - [ ] 旧 VitePress 源目录在验收通过后再移除，不得提前清理。
 
+
+## 阶段四：Pages CMS 实际接入与生产构建预备（2026-11-07）
+
+### 已确认事项
+
+- **GitHub 在线编辑已真正成功：** 用户使用 Pages CMS 创建了 `content/blog/posts/pages-cms-test.md`，提交 `f95864f3d75e45b189c9ffadb6228c55108e3a54`，提交标题为 `Create content/blog/posts/pages-cms-test.md (via Pages CMS)`。
+- 文件 Frontmatter 含 `title`、`slug`、`date`、`draft: true`、`description`，格式与博客配置一致。
+- GitHub Actions `42323815842` 成功；下载的 Zensical 构建产物确认该草稿未进入博客首页和 `search.json`，也未生成独立文章页面。
+- 新增 `scripts/zensical/check_blog_publish.py`：在 CI 工作目录临时建立与 Pages CMS 相同格式的已发布文章和 SVG 图片，严格构建后核对博客列表、独立 URL、搜索索引、资源路径；临时文件不进入 Git 历史。
+- 新增动态草稿泄露检查：每次构建读取当前 `content/blog/posts/` 下全部 `draft: true` 文章，而非仅检查固定测试标题。
+- 固定文章 URL 为 `/blog/{slug}/`，不把发布日期编码到永久链接中；已有文章的 `slug` 仍应保持稳定。
+- `.github/workflows/deploy.yml` 已在本重构分支预先改为 Zensical 严格构建、兼容旧链接和 GitHub Pages 部署。由于 `main` 尚未合并本 PR，**正式站点没有切换**。
+- `README.md` 更新为迁移完成后的 Zensical 开发、构建、在线编辑和维护说明。
+
+### 草稿隐私提醒
+
+`draft: true` 仅表示**不进入网站发布与搜索索引**。本 GitHub 仓库为公开仓库，源 Markdown 仍可在 GitHub 上查看；任何公司内部资料、密码、Token 等敏感内容都不能保存到公共草稿。Pages CMS 的草稿字段帮助说明已明确提示。
+
+### 需要用户完成的最后一组 CMS 验收
+
+- [x] GitHub 授权后能在 **重构分支** 使用 Pages CMS 新建并保存博客草稿。
+- [x] GitHub 收到带有 `(via Pages CMS)` 的真实提交且触发 Zensical CI。
+- [x] 草稿从正式构建输出及搜索索引中排除。
+- [x] CI 使用 Pages CMS 文章结构临时验证“取消草稿后发布”和图片路径。
+- [ ] **真实修改已有文章**：在 Pages CMS 打开 `pages-cms-test.md`，在正文增加一句话保存；确认生成 `Update ... (via Pages CMS)` 提交且正文仍为规范 Markdown。
+- [ ] **真实上传图片**：从 CMS 富文本编辑器上传一张无隐私的小图，检查 `content/assets/uploads/` 出现文件，并确认正文图片链接正确。CI 临时图片测试无法代替网页上传测试。
+- [ ] 可选：将该测试文章在分支上切换为 `draft: false`，确认页面与搜索出现在**预览构建产物**中；随后改回 `draft: true` 或删除测试文章。
+- [ ] 清点所有历史 URL 和复杂文档效果，必要时处理额外跳转。
+- [ ] 经人工审阅后，创建正式版本回滚 Tag，再合并 PR #1 上线。
+
+### 本阶段相关链接
+
+- PR：<https://github.com/stark1898y/stark1898y.github.io/pull/1>
+- 实际 Pages CMS 写入提交：<https://github.com/stark1898y/stark1898y.github.io/commit/f95864f3d75e45b189c9ffadb6228c55108e3a54>
+- CMS 写入后的成功构建：<https://github.com/stark1898y/stark1898y.github.io/actions/runs/42323815842>
