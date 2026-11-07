@@ -38,6 +38,7 @@ def main():
         assert "在线博客发布验证" in index, "Published post missing from blog index"
         posts = list((OUT / "blog").rglob("ci-publish-probe/index.html"))
         assert posts, "Published blog URL was not generated"
+        assert (OUT / "blog/ci-publish-probe/index.html").is_file(), "Blog permalink must be /blog/{slug}/"
         assert (OUT / "assets/uploads/ci-publish-probe.svg").is_file(), "CMS media output missing"
         search = json.loads((OUT / "search.json").read_text(encoding="utf-8"))
         assert "在线博客发布验证" in json.dumps(search, ensure_ascii=False), "Post absent from search"
