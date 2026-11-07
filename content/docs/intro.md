@@ -1,4 +1,5 @@
 ---
+description: "嵌入式技术知识库导航，涵盖硬件设计、MCU、BLE、FreeRTOS、Linux、软件架构、开发工具与实践笔记。"
 sidebar_position: 1
 ---
 
