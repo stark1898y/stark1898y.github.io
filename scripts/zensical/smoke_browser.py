@@ -98,23 +98,48 @@ def main():
             assert page.get_by_role("listbox", name="Search results").locator("a").count() > 0, "No selectable search results"
             print("PASS Chinese/English technical term search")
 
-            # Native Zensical light/dark toggle, system default and persistence.
+            # Native Zensical three-mode palette: system -> light -> dark.
+            page.keyboard.press("Escape")
             page.emulate_media(color_scheme="light")
             page.goto(base + "/", wait_until="load")
-            assert page.locator('input[data-md-color-scheme="default"]').count() == 1
-            assert page.locator('input[data-md-color-scheme="slate"]').count() == 1
+            labels = page.locator(".md-header label[title]")
+            assert page.locator('label[title="跟随系统 · 切换到浅色模式"]').count() > 0, "No system theme option"
             page.wait_for_function("document.body.getAttribute('data-md-color-scheme') === 'default'")
-            dark_switch = page.locator('label[title="切换到深色模式"]')
-            assert dark_switch.count() > 0, "Header has no dark mode toggle"
-            dark_switch.first.click()
+            page.locator('label[title="跟随系统 · 切换到浅色模式"]').first.click()
+            page.wait_for_function("document.body.getAttribute('data-md-color-scheme') === 'default'")
+            assert page.locator('label[title="浅色模式 · 切换到深色模式"]').count() > 0, "No light theme option"
+            page.locator('label[title="浅色模式 · 切换到深色模式"]').first.click()
             page.wait_for_function("document.body.getAttribute('data-md-color-scheme') === 'slate'")
             page.goto(base + "/docs/intro/", wait_until="load")
             page.wait_for_function("document.body.getAttribute('data-md-color-scheme') === 'slate'")
-            light_switch = page.locator('label[title="切换到浅色模式"]')
-            assert light_switch.count() > 0, "Header has no light mode toggle"
-            light_switch.first.click()
+            assert page.locator('label[title="深色模式 · 切换到跟随系统"]').count() > 0, "No dark theme option"
+            page.locator('label[title="深色模式 · 切换到跟随系统"]').first.click()
             page.wait_for_function("document.body.getAttribute('data-md-color-scheme') === 'default'")
-            print("PASS native light/dark toggle and cross-page preference")
+            page.emulate_media(color_scheme="dark")
+            page.wait_for_function("document.body.getAttribute('data-md-color-scheme') === 'slate'")
+            page.emulate_media(color_scheme="light")
+            page.wait_for_function("document.body.getAttribute('data-md-color-scheme') === 'default'")
+            print("PASS native system/light/dark cycle, persistence, and system preference")
+
+            # Translation dropdown has exactly Chinese original and English.
+            page.goto(base + "/", wait_until="load")
+            trigger = page.locator(".stark-translate__trigger")
+            assert trigger.count() == 1, "Missing header translate button"
+            trigger.click()
+            menu = page.locator(".stark-translate__menu")
+            assert menu.is_visible(), "Translation menu did not open"
+            links = menu.locator("a")
+            assert links.count() == 2, "Expected only original Chinese and English"
+            assert links.nth(0).inner_text() == "简体中文（原文）"
+            assert links.nth(1).inner_text() == "English"
+            assert links.nth(1).get_attribute("target") == "_blank"
+            assert "tl=en" in links.nth(1).get_attribute("href")
+            page.keyboard.press("Escape")
+            assert menu.is_hidden(), "Escape did not dismiss translation menu"
+            page.goto(base + "/docs/intro/", wait_until="load")
+            page.locator(".stark-translate__trigger").click()
+            assert "%2Fdocs%2Fintro%2F" in page.locator('.stark-translate__menu a[data-lang="en"]').get_attribute("href")
+            print("PASS Chinese/English translation dropdown on home and docs")
 
             # Footer displays an actual calculated day count on every Zensical page.
             page.goto(base + "/", wait_until="load")
