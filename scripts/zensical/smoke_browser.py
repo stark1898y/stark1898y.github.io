@@ -111,11 +111,20 @@ def main():
             if not visible:
                 page.screenshot(path=str(OUTPUT / "search-dialog-debug.png"), full_page=True)
                 raise AssertionError("Search dialog has no visible input after retries")
-            visible[-1].fill("NTC")
+            results = page.get_by_role("listbox", name="Search results").locator("a")
+            # Real browser search with a Chinese phrase and two common English terms.
+            for term in ("硬件设计", "NTC", "FreeRTOS"):
+                visible[-1].fill(term)
+                results.first.wait_for(state="visible", timeout=9000)
+                page.wait_for_timeout(300)
+                assert results.count() > 0, f"Search returned no selectable result for {term}"
+                print("PASS search query", term)
+            page.screenshot(path=str(OUTPUT / "search-freertos.png"))
+            # A deliberately unmatchable token should not leave stale results.
+            visible[-1].fill("unlikelysearchtoken987654321abcdef")
             page.wait_for_timeout(1300)
-            page.screenshot(path=str(OUTPUT / "search-ntc.png"))
-            assert page.get_by_role("listbox", name="Search results").locator("a").count() > 0, "No selectable search results"
-            print("PASS Chinese/English technical term search")
+            assert results.count() == 0, "Unmatched search retained stale results"
+            print("PASS search no-results state")
 
             # Native Zensical three-mode palette: system -> light -> dark.
             page.keyboard.press("Escape")
