@@ -1,4 +1,4 @@
-/* Decorative site-age counter. No cookies, fetch, or third-party requests. */
+/* Days since the GitHub repository was created. No cookies, fetch or external requests. */
 (function () {
   "use strict";
 
@@ -10,7 +10,7 @@
       if (!Number.isFinite(startedAt)) return;
 
       const days = Math.max(0, Math.floor((Date.now() - startedAt) / MS_PER_DAY));
-      element.textContent = "本站已运行 " + days.toLocaleString("zh-CN") + " 天";
+      element.textContent = "建站至今 " + days.toLocaleString("zh-CN") + " 天";
     });
   }
 

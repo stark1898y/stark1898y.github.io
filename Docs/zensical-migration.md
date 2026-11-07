@@ -74,7 +74,7 @@ Pages CMS 测试文章 `pages-cms-test.md`、`first-draft.md` 和两张 PNG 已�
 
 ## 阶段六：网站页脚与访客统计（2026-11-07）
 
-- 在 Zensical 主题已有版权栏追加「本站已运行 N 天」，以 Vercel 项目创建日 `2026-08-10` 作为临时建站起点，不将它等同于服务器实际可用率或无故障运行时间。
+- 在 Zensical 主题已有版权栏追加「建站至今 N 天」，以 GitHub 仓库创建时间 `2022-01-12T05:49:47Z` 作为建站起点，不将它等同于服务器实际可用率或无故障运行时间。
 - 通过 `zensical.toml` 的 HTML `copyright`、`extra_javascript` 和 `extra_css` 实现，保留主题原生页脚，不复制整份模板。
 - `content/javascripts/footer.js` 无 Cookies、不访问第三方服务器；按访问者当前时间计算天数。起点可在配置中的 `data-stark-site-since` 修改。
 - Chrome 冒烟测试增加首页和文档页脚的数值检查。

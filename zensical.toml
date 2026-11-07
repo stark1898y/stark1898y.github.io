@@ -9,9 +9,8 @@ docs_dir = "content"
 site_dir = "site"
 extra_css = ["stylesheets/home.css", "stylesheets/footer.css"]
 extra_javascript = ["javascripts/footer.js"]
-# Days since current Vercel site's project creation (2026-08-10); not a live uptime SLA.
-# Change data-stark-site-since if the intended site launch date differs.
-copyright = """© 2022–present Stark1898y · <span class="stark-footer-running" data-stark-site-since="2026-08-10T00:00:00+08:00" title="从 2026-08-10 起计算（建站天数，非服务器在线率）">建站于 2026-08-10</span> · Zensical · Vercel"""
+# Days since GitHub repository creation (2022-01-12T05:49:47Z), not server uptime.
+copyright = """© 2022–present Stark1898y · <span class="stark-footer-running" data-stark-site-since="2022-01-12T05:49:47Z" title="从 GitHub 仓库创建时间 2022-01-12 起计算（不是服务器连续在线时间）">建站于 2022-01-12</span> · Zensical · Vercel"""
 
 [project.theme]
 language = "zh"
