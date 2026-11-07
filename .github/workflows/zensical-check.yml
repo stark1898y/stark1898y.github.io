@@ -4,6 +4,8 @@ on:
   pull_request:
     paths:
       - 'zensical.toml'
+      - 'README.md'
+      - 'Docs/**'
       - 'vercel.json'
       - '.pages.yml'
       - 'requirements-site.txt'
