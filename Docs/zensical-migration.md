@@ -58,7 +58,7 @@ Pages CMS 测试文章 `pages-cms-test.md`、`first-draft.md` 和两张 PNG 已�
 
 主站旧 VitePress `main` 基线：`7126143f26514a3e3b4c45c7f52d84c51b46ac1d`。
 
-上线前：先推送 Tag `site-vitepress-pre-zensical-20261107`（具体命令见 [Vercel 部署文档](hosting-vercel.md)）；再确认 Vercel Preview 中的所有关键页面和工具；最后审核合并 PR 并等待 Vercel `main` Production 部署成功。
+旧站回滚 Tag `site-vitepress-pre-zensical-20261107` 已确认推送并指向正确的 VitePress 基线提交。上线前继续核对 Vercel Preview 的页面视觉及交互，最终审核合并 PR 后等待 Vercel `main` Production 部署成功。
 
 - [x] 原始文章、图片、工具目录迁移并清理重复源码。
 - [x] 本地与 CI 构建、浏览器、搜索、Mermaid、Sitemap 等测试。
@@ -66,7 +66,7 @@ Pages CMS 测试文章 `pages-cms-test.md`、`first-draft.md` 和两张 PNG 已�
 - [x] Vercel 构建配置与 GitHub Pages 手动备用配置已提交。
 - [ ] Vercel Preview 真实构建日志与页面访问验收。
 - [ ] Vercel Production Branch、根目录和域名配置核对。
-- [ ] 远端备份 Tag 已推送。
+- [x] 远端备份 Tag 已推送且 Git 对象目标正确。
 - [ ] PR #1 审核后正式合并。
 - [ ] 正式域名上的旧文章、浏览器工具、SEO、Sitemap、404 复核。
 
@@ -79,3 +79,11 @@ Pages CMS 测试文章 `pages-cms-test.md`、`first-draft.md` 和两张 PNG 已�
 - `content/javascripts/footer.js` 无 Cookies、不访问第三方服务器；按访问者当前时间计算天数。起点可在配置中的 `data-stark-site-since` 修改。
 - Chrome 冒烟测试增加首页和文档页脚的数值检查。
 - **访客人数暂不显示虚构数据**。优先推荐 Vercel Web Analytics；Hobby 仅保证约一个月的数据查询窗口，适合展示「近 30 日访客 / 浏览量」而非伪称「历史累计访客」。公开展示指标需要安全的服务端代理或定时生成统计数据，Token 不得放在网页里。详见 [页脚统计方案](footer-statistics.md)。
+
+## 第七阶段：Vercel Preview 实测及统计 API 兼容检查（2026-11-07）
+
+- 通过已授权的 Vercel 连接访问最新 Preview，首页、知识库、JSON 格式化工具、时间戳工具、历史 `.html` 跳转页面、`search.json` 等返回有效内容。
+- `/api/site-stats` 实际运行于 Vercel Preview Function；因 Token 仅配置在 Production，返回 `statistics_not_configured`（符合保密隔离设计），不是构建错误。
+- Web Analytics 官方脚本 `/_vercel/insights/script.js` 在预览部署返回 200，但实际追踪代码仅在 `www.stark1898y.cc` 生产域名执行，不计入 Preview 流量。
+- 阅读 Vercel 官方 visits/count REST API 文档后，将统计请求 `since/until` 改成 ISO 8601（UTC）格式，覆盖日期格式测试；同时修复只修改 `api/**`、`tests/**` 时 CI 不触发的问题。
+- 最终上线前仍需在浏览器人工检查 Vercel Preview 视觉效果，以及新生产部署中 Token 对 Analytics API 的认证是否成功。

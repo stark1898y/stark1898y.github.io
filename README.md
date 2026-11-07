@@ -121,7 +121,7 @@ Pages CMS 的**真实新建、再次编辑、PNG 上传与草稿排除**已经�
 
 1. 检查 GitHub [PR #1](https://github.com/stark1898y/stark1898y.github.io/pull/1) 所有检查通过，并在 Vercel 生成的 **Preview URL** 中实际打开首页、知识库、博客及三个工具。
 2. 在 Vercel 项目 `Settings → General` 确认仓库根目录为 `./`，`Settings → Git` 确认 Production Branch 为 `main`；仓库 `vercel.json` 应覆盖构建命令及输出目录。
-3. 备份旧 VitePress `main`：原基线提交为 `7126143f26514a3e3b4c45c7f52d84c51b46ac1d`，先创建并推送回滚 Tag，命令见 [部署说明](Docs/hosting-vercel.md)。
+3. **已完成旧站备份**：远端注释 Tag [`site-vitepress-pre-zensical-20261107`](https://github.com/stark1898y/stark1898y.github.io/tree/site-vitepress-pre-zensical-20261107) 已确认存在，并准确指向旧 VitePress `main` 提交 `7126143f26514a3e3b4c45c7f52d84c51b46ac1d`。无需重复创建。
 4. 确认自定义域名仍在 Vercel，HTTPS 正常，且 PR 预览无问题，再审核合并 PR。**不需要更改 DNS。**
 5. Vercel 的 `main` 新部署成功后检查主页、图片、Mermaid、搜索、Sitemap、robots、404、旧 `.html` 文章和浏览器工具。
 6. 发布出错时优先使用 Vercel Deployments → Promote/Rollback 恢复旧版本，或通过备份 Tag 在 GitHub 恢复旧站源码。

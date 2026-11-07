@@ -87,12 +87,12 @@ Pages CMS 修改 Markdown/图片后写入 GitHub；GitHub Actions 验证内容�
 7126143f26514a3e3b4c45c7f52d84c51b46ac1d
 ```
 
-建议本地执行并推送 Tag（**当前尚未代用户创建**）：
+**状态：已验收。** GitHub 远端已经存在注释 Tag `site-vitepress-pre-zensical-20261107`，Git Tag 对象 `31c0b91bf9b79315ff12c9e36f3e3224084e7336` 指向旧版 `main` 提交 `7126143f26514a3e3b4c45c7f52d84c51b46ac1d`。以下命令仅供日后核验或恢复，不要重复创建同名 Tag：
 
 ```powershell
 git fetch origin
-git tag -a site-vitepress-pre-zensical-20261107 7126143f26514a3e3b4c45c7f52d84c51b46ac1d -m "VitePress production before Zensical"
-git push origin site-vitepress-pre-zensical-20261107
+git fetch origin --tags
+git show site-vitepress-pre-zensical-20261107 --no-patch
 git ls-remote --tags origin site-vitepress-pre-zensical-20261107
 ```
 
@@ -109,7 +109,8 @@ git ls-remote --tags origin site-vitepress-pre-zensical-20261107
 - [x] GitHub Actions 严格构建、awesome-nav、草稿、中文搜索、Mermaid 和浏览器工具通过。
 - [x] Pages CMS 真实新建 / 编辑 / PNG 上传、测试数据清理。
 - [x] Vercel 构建文件及同源构建脚本已提交到重构分支。
-- [ ] Vercel 重构分支 **Preview 真实部署为 Ready 并人工打开验证**。
+- [x] Vercel Preview 部署为 Ready；已通过连接真实请求验证首页、知识库、两个工具、历史 `.html` 地址、`search.json` 和统计 Function（Preview 无 Token 时正常降级）。
+- [ ] 最终仍需在实际浏览器中人工确认移动端布局与导航操作。
 - [ ] Vercel 项目 Settings 确认 Production Branch、根目录、域名和相关配置。
-- [ ] 回滚 Tag 已推送远端。
+- [x] 回滚 Tag 已推送远端，并核对注释 Tag 最终目标提交。
 - [ ] 通过 PR #1 的最终审核后再合并到 `main`；合并后检查生产部署及访问地址。
