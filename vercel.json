@@ -1,8 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "installCommand": "python3 -m pip install -r requirements-site.txt",
-  "buildCommand": "python3 scripts/zensical/build_site.py",
+  "installCommand": "uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python -r requirements-site.txt",
+  "buildCommand": ".venv/bin/python scripts/zensical/build_site.py",
   "outputDirectory": "site",
   "trailingSlash": true,
   "cleanUrls": false

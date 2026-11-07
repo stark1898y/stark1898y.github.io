@@ -15,8 +15,8 @@ GitHub Pages 如果不作为生产入口，不应要求 DNS 指向 `stark1898y.g
 | 设置 | 值 |
 | --- | --- |
 | Framework Preset | `Other`（`framework: null`） |
-| Install Command | `python3 -m pip install -r requirements-site.txt` |
-| Build Command | `python3 scripts/zensical/build_site.py` |
+| Install Command | `uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python -r requirements-site.txt` |
+| Build Command | `.venv/bin/python scripts/zensical/build_site.py` |
 | Output Directory | `site` |
 | Trailing Slash | `true` |
 | Clean URLs | `false`（保留 VitePress 旧 `.html` 兼容路径） |
@@ -48,21 +48,31 @@ Pages CMS 修改 Markdown/图片后写入 GitHub；GitHub Actions 验证内容�
 
 `draft: true` 不发布文章，但公开 GitHub 源文件和媒体仍然可见。
 
-## 当前预览构建状态（2026-11-07）
+## Vercel Preview 构建故障与修复（2026-11-07）
 
-**存在真实阻塞：** GitHub Actions 对最新重构分支构建和测试已通过，但 GitHub 上的 Vercel 状态检查显示 **Deployment failed**。Vercel 的具体错误日志尚未取得，因此不能把它推断为 Python 缺失、构建命令错误或输出路径错误。
+**已定位根因：** Vercel 使用由 `uv` 管理的 Python，原先 `python3 -m pip install -r requirements-site.txt` 尝试修改系统环境，被 PEP 668 拒绝（`externally-managed-environment`）。错误发生在安装依赖阶段，Zensical 尚未启动。
 
-- GitHub CI：<https://github.com/stark1898y/stark1898y.github.io/actions/runs/42328336481> （PASS）
-- Vercel 失败的 Preview：<https://vercel.com/stark1898ys-projects/stark1898y-github-io/D8V1va8o2ZrJ1n1gy3uEqM2B6pen>
-- 对应部署 ID：`dpl_D8V1va8o2ZrJ1n1gy3uEqM2B6pen`
+已在重构分支修改 `vercel.json`：
 
-请在 Vercel **Deployments → 失败的 Preview → Build Logs** 查看第一条实际错误；也可在已登录 Vercel CLI 的环境执行：
-
-```powershell
-npx vercel inspect dpl_D8V1va8o2ZrJ1n1gy3uEqM2B6pen --logs
+```json
+{
+  "installCommand": "uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python -r requirements-site.txt",
+  "buildCommand": ".venv/bin/python scripts/zensical/build_site.py",
+  "outputDirectory": "site"
+}
 ```
 
-重点看是否是仓库 Root Directory、Install Command、Python/pip、Zensical 严格构建还是 Output Directory 引起。**未获取具体日志前不得盲目修改配置，也不能合并 PR #1。** Vercel Preview 成功且浏览器实测通过后再推进生产部署。
+构建脚本通过运行中 Python 解释器查找同目录的 `zensical` 命令，避免运行时误用系统 Python 或找不到虚拟环境中的可执行文件。CI 仍按原方式执行，两个环境共用同一个构建脚本。
+
+- 项目级 `.venv/` 不修改 Vercel 的系统 Python。
+- 使用 `uv` 管理环境和依赖，不使用 `--break-system-packages` 绕过 PEP 668。
+- `--python 3.12` 与 GitHub Actions CI 一致。
+- `.venv/` 已被 `.gitignore` 排除，不提交到 GitHub。
+
+旧失败预览示例：<https://vercel.com/stark1898ys-projects/stark1898y-github-io/2CndGQfPUZ6CSK4nH8PqscC4yNQv>。
+
+**修复是否通过，以新提交的 Vercel Preview Build Logs 和 Ready 状态为准**。仍失败则检查新错误，不改回系统 `pip`。
+
 
 ## 上线前备份
 

@@ -10,12 +10,22 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[2]
 
+def zensical_cli():
+    """Prefer the executable installed beside the running Python interpreter."""
+    directory = Path(sys.executable).parent
+    for filename in ("zensical", "zensical.exe"):
+        executable = directory / filename
+        if executable.is_file():
+            return str(executable)
+    # GitHub Actions installs Zensical on PATH without an explicit venv.
+    return "zensical"
+
 def run(*args):
     print("BUILD:", " ".join(args), flush=True)
     subprocess.run(args, cwd=ROOT, check=True)
 
 def main():
-    run("zensical", "build", "--clean", "--strict")
+    run(zensical_cli(), "build", "--clean", "--strict")
     for step in (
         "restore_tools.py",
         "restore_legacy_urls.py",
