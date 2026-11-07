@@ -8,6 +8,20 @@
 
 GitHub Pages 如果不作为生产入口，不应要求 DNS 指向 `stark1898y.github.io`。GitHub Pages 设置里出现 `InvalidCNAMEError` 是域名未指向 GitHub Pages 的表现；只要继续由 Vercel 托管，这个提示可以暂时不处理。
 
+## 构建和验证环境基线（2026-11-07）
+
+| 环境 | 固定版本 | 用途 |
+| --- | --- | --- |
+| GitHub Actions | Ubuntu 26.04 LTS x64 | PR 自动构建和 GitHub Pages 手动备用 |
+| Python | 3.12（setup-python@v7） | Zensical、Pages CMS 文章及链接检查 |
+| Node.js | 24（setup-node@v7） | 独立 HTML 工具和统计 API 单元测试 |
+| Chrome | Ubuntu 26.04 runner 自带 Chrome | Playwright 桌面/移动端冒烟测试 |
+| Playwright | 1.56.0 | 与现有冒烟测试保持一致 |
+| Zensical | 0.1.0（requirements-site.txt） | 保持已验证的构建基线 |
+| Vercel | Python 3.12 项目专属 uv 虚拟环境 | 正式站和 Preview 部署 |
+
+GitHub Actions 不依赖操作系统默认的 Python 3.14 或 Node 24 预装路径，显式安装/选择目标版本。工作流会记录实际 OS/Python/Node/Chrome 版本并验证主版本，防止环境静默漂移。Vercel 自身的云运行环境与 GitHub Actions 不是同一台机器，不为升级 Ubuntu 而修改 Vercel 配置。
+
 ## 构建配置
 
 根目录 `vercel.json` 已设置：

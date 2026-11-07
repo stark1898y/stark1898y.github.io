@@ -27,7 +27,7 @@ concurrency:
 
 jobs:
   validate:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
@@ -47,7 +47,26 @@ jobs:
         run: python scripts/zensical/build_site.py
       - uses: actions/setup-node@v7
         with:
-          node-version: '22'
+          node-version: '24'
+      - name: Verify runner and toolchain
+        run: |
+          set -euo pipefail
+          source /etc/os-release
+          echo "Runner OS: $PRETTY_NAME"
+          test "$VERSION_ID" = "26.04"
+          python -c "import sys; assert sys.version_info[:2] == (3, 12), sys.version"
+          node -e "if (Number(process.versions.node.split('.')[0]) !== 24) process.exit(1)"
+          python --version
+          node --version
+          npm --version
+          google-chrome --version
+          {
+            echo "### Verified build environment"
+            echo "- OS: ${PRETTY_NAME}"
+            echo "- Python: $(python --version)"
+            echo "- Node: $(node --version)"
+            echo "- Chrome: $(google-chrome --version)"
+          } >> "$GITHUB_STEP_SUMMARY"
       - name: Regression tests for standalone tools
         run: node --test tests/*.test.mjs
       - name: Install browser test runner

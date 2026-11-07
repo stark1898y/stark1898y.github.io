@@ -40,9 +40,15 @@ Pages CMS ──保存 Markdown──┐
 
 具体 Vercel 设置见 [部署与回滚说明](Docs/hosting-vercel.md)，页脚运行天数和访问人数接入说明见 [页脚统计](Docs/footer-statistics.md)，重构过程见 [迁移记录](Docs/zensical-migration.md)。
 
+### CI 运行环境（2026-11-07）
+
+GitHub Actions 已明确采用 `ubuntu-26.04`（不是随时间变化的 `ubuntu-latest`），`actions/setup-python@v7` 设置 Python 3.12，`actions/setup-node@v7` 设置 Node.js 24。浏览器测试使用 Ubuntu 26.04 运行器预装的 Google Chrome 和固定版本的 Playwright 1.56.0，并校验操作系统与运行时版本。手动截图审查工作流可额外安装 Noto CJK 字体。
+
+Vercel 正式构建继续通过 `uv` 虚拟环境使用 Python 3.12；这是与 GitHub CI 分离的构建机器，不受 Actions Ubuntu 版本影响。`zensical==0.1.0` 仍锁定，不在同一次 OS 迁移中升级框架。
+
 ## 二、开发与预览
 
-建议 Python 3.12（CI 使用该版本），只需 Python 即可构建网站。Node.js 22 主要用于三个独立 HTML 工具的测试。
+建议 Python 3.12（CI 使用该版本），只需 Python 即可构建网站。Node.js 24 LTS 主要用于三个独立 HTML 工具及统计 API 的测试。
 
 ```powershell
 git clone https://github.com/stark1898y/stark1898y.github.io.git
