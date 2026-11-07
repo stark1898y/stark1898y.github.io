@@ -55,7 +55,7 @@ def main():
             ET.SubElement(el, f"{{{NS}}}loc").text = url
             locations.add(url)
     # Check key landing pages have useful crawl metadata, not only a sitemap entry.
-    landing_pages = ("index.html", "blog/index.html", "docs/intro/index.html", "dev-tools/index.html")
+    landing_pages = ("index.html", "blog/index.html", "docs/intro/index.html", "docs/hardware/index.html", "dev-tools/index.html", "open-source/index.html")
     for relative in landing_pages:
         file = SITE / relative
         if not file.is_file():
@@ -67,6 +67,8 @@ def main():
             raise SystemExit(f"Non-canonical SEO URL for {relative}: {meta.canonical!r}; expected {expected}")
         if len(meta.descriptions) != 1 or not (meta.descriptions[0] or "").strip():
             raise SystemExit(f"Missing or duplicate meta description: {relative}")
+        if relative != "index.html" and meta.descriptions[0] == CONFIG["project"]["site_description"]:
+            raise SystemExit(f"Page uses generic site description: {relative}")
         if any("noindex" in value.lower() for value in meta.robots):
             raise SystemExit(f"Unexpected noindex on SEO landing page: {relative}")
 
