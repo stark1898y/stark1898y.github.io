@@ -48,6 +48,22 @@ Pages CMS 修改 Markdown/图片后写入 GitHub；GitHub Actions 验证内容�
 
 `draft: true` 不发布文章，但公开 GitHub 源文件和媒体仍然可见。
 
+## 当前预览构建状态（2026-11-07）
+
+**存在真实阻塞：** GitHub Actions 对最新重构分支构建和测试已通过，但 GitHub 上的 Vercel 状态检查显示 **Deployment failed**。Vercel 的具体错误日志尚未取得，因此不能把它推断为 Python 缺失、构建命令错误或输出路径错误。
+
+- GitHub CI：<https://github.com/stark1898y/stark1898y.github.io/actions/runs/42328336481> （PASS）
+- Vercel 失败的 Preview：<https://vercel.com/stark1898ys-projects/stark1898y-github-io/D8V1va8o2ZrJ1n1gy3uEqM2B6pen>
+- 对应部署 ID：`dpl_D8V1va8o2ZrJ1n1gy3uEqM2B6pen`
+
+请在 Vercel **Deployments → 失败的 Preview → Build Logs** 查看第一条实际错误；也可在已登录 Vercel CLI 的环境执行：
+
+```powershell
+npx vercel inspect dpl_D8V1va8o2ZrJ1n1gy3uEqM2B6pen --logs
+```
+
+重点看是否是仓库 Root Directory、Install Command、Python/pip、Zensical 严格构建还是 Output Directory 引起。**未获取具体日志前不得盲目修改配置，也不能合并 PR #1。** Vercel Preview 成功且浏览器实测通过后再推进生产部署。
+
 ## 上线前备份
 
 迁移前 VitePress 主分支提交：
