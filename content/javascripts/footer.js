@@ -25,6 +25,35 @@
     document$.subscribe(renderSiteAge);
   }
 
+  // The public endpoint is read-only; only Vercel holds the Analytics token.
+  async function showStats() {
+    const elements = document.querySelectorAll("[data-stark-stats]");
+    if (!elements.length || location.hostname !== "www.stark1898y.cc") return;
+    try {
+      const response = await fetch("/api/site-stats");
+      if (!response.ok) return;
+      const data = await response.json();
+      if (!Number.isSafeInteger(data.visitors) || data.visitors < 0 ||
+          !Number.isSafeInteger(data.pageviews) || data.pageviews < 0 ||
+          data.periodDays !== 30) return;
+      const label = " · 近30天访客 " + data.visitors.toLocaleString("zh-CN") +
+        " 人 · 浏览 " + data.pageviews.toLocaleString("zh-CN") + " 次";
+      elements.forEach(function (element) {
+        element.textContent = label;
+        element.hidden = false;
+        element.title = "Vercel Web Analytics 最近 30 天统计，不是历史累计人数";
+      });
+    } catch (_) {
+      // Analytics not configured or temporarily unavailable: show no fake counts.
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", showStats, { once: true });
+  } else {
+    showStats();
+  }
+
   // Update the number if someone keeps a tab open across days.
   window.setInterval(renderSiteAge, 60 * 60 * 1000);
 })();
