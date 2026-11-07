@@ -17,7 +17,9 @@ function resolveSitePath(rawHref) {
   if (url.origin !== 'https://www.stark1898y.cc') return null
   const decoded = decodeURIComponent(url.pathname)
   const rel = decoded.replace(/^\/+/, '')
-  const target = path.resolve(SITE, rel.endsWith('/') || !path.extname(rel) ? rel + (rel.endsWith('/') ? '' : '/') + 'index.html' : rel)
+  const isDirectory = !rel || rel.endsWith('/') || !path.extname(rel)
+  const suffix = isDirectory ? (rel.endsWith('/') || !rel ? rel : rel + '/') + 'index.html' : rel
+  const target = path.resolve(SITE, suffix)
   assert.ok(target.startsWith(SITE + path.sep), 'Out-of-root link: ' + rawHref)
   return target
 }
