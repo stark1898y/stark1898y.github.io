@@ -1,6 +1,7 @@
 """Verify key pages, old article routes, local search, and draft privacy."""
 import json
 from pathlib import Path
+import yaml
 
 root = Path(__file__).resolve().parents[2] / "site"
 paths = [
@@ -36,8 +37,25 @@ all_text = "\n".join(str(x.get("title","")) + str(x.get("text","")) for x in ite
 for term in ("硬件设计", "STM32", "RTOS", "NTC"):
     if term not in all_text:
         raise SystemExit(f"Search index does not contain {term}")
-if "Zensical 网站迁移记录（草稿）" in all_text:
-    raise SystemExit("Private blog draft was indexed!")
+# Scan all current draft posts, including files created directly in Pages CMS.
+blog_landing = (root / "blog/index.html").read_text(encoding="utf-8")
+posts_dir = root.parent / "content/blog/posts"
+for source in posts_dir.rglob("*.md"):
+    raw = source.read_text(encoding="utf-8")
+    if not raw.startswith("---"):
+        continue
+    sections = raw.split("---", 2)
+    if len(sections) != 3:
+        continue
+    frontmatter = yaml.safe_load(sections[1]) or {}
+    if frontmatter.get("draft") is not True:
+        continue
+    title = frontmatter.get("title") or source.stem
+    slug = frontmatter.get("slug") or source.stem
+    if title in all_text or title in blog_landing:
+        raise SystemExit(f"Draft content leaked into search or blog list: {source}")
+    if any((root / "blog").rglob(f"{slug}/index.html")):
+        raise SystemExit(f"Draft URL was published: {source}")
 
 legacy = (root / "docs/rtos/comparison.html").read_text(encoding="utf-8")
 if "/docs/rtos/comparison/" not in legacy:
