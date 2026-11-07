@@ -31,6 +31,8 @@ jobs:
         run: python -m pip install -r requirements-site.txt
       - name: Verify awesome-nav auto-discovery
         run: python scripts/zensical/check_nav.py
+      - name: Verify CMS blog publish and media output
+        run: python scripts/zensical/check_blog_publish.py
       - name: Build site
         run: zensical build --clean --strict
       - name: Restore standalone browser tools
