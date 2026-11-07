@@ -26,11 +26,13 @@ zensical serve
 zensical build --clean --strict
 python scripts/zensical/restore_tools.py
 python scripts/zensical/restore_legacy_urls.py
+python scripts/zensical/finalize_seo.py
 python scripts/zensical/check_output.py
 python scripts/zensical/audit_site.py
+node --test tests/*.test.mjs  # 需要 Node.js 22（仅用于独立工具回归测试）
 ```
 
-GitHub PR 会自动执行临时文章发布、awesome-nav、浏览器工具及 Chrome 冒烟测试，产物保存在 Actions artifacts。部署工作流已经在重构分支预备，只有合并至 `main` 后才会替换旧的 VitePress 生产部署流程。
+GitHub PR 会自动执行临时文章发布、awesome-nav、Sitemap/SEO、浏览器工具 Node 回归及 Chrome 冒烟测试，产物保存在 Actions artifacts。部署工作流已经在重构分支预备，只有合并至 `main` 后才会替换旧的 VitePress 生产部署流程。
 
 ## 内容目录
 
@@ -56,7 +58,7 @@ GitHub PR 会自动执行临时文章发布、awesome-nav、浏览器工具及 C
 - 已发布文章的 `slug` 不要随意修改，以免旧 URL 失效。
 - 上传的资源在仓库中保存于 `content/assets/uploads/`，在网页中通过 `/assets/uploads/文件名` 访问。
 
-**验证状态**：2026-11-07 已成功使用 Pages CMS 创建 `content/blog/posts/pages-cms-test.md` 草稿，并通过构建。编辑已有文章和真实图片上传仍待完成；测试文章保持草稿，不应发布。
+**验证状态**：2026-11-07 已完成 Pages CMS 新建、修改文章和真实 PNG 上传测试，GitHub 提交及 Zensical 构建均通过。测试文章和图片已从重构分支清理，保留在 Git 提交历史中用于追溯；`content/blog/posts/` 与 `content/assets/uploads/` 通过 `.gitkeep` 保留以供后续新建。
 
 ## 写技术文档与目录
 
@@ -84,3 +86,25 @@ nav:
 - 生产切换前确认自定义域名、Sitemap、搜索、手机浏览器、旧 URL 和回滚方案。
 
 详细决策、已验证事项和剩余工作参见 [迁移记录](Docs/zensical-migration.md)。
+
+## 预览完整网站（包括独立 HTML 工具）
+
+`zensical serve` 能实时预览 Markdown，但三个独立工具会在正式构建后复制到 `site/`。需要完整测试时：
+
+```powershell
+zensical build --clean --strict
+python scripts/zensical/restore_tools.py
+python scripts/zensical/restore_legacy_urls.py
+python scripts/zensical/finalize_seo.py
+python -m http.server 8000 --directory site
+```
+
+然后打开 `http://localhost:8000/`。不要将测试时构建的 `site/` 提交到 Git。
+
+## 正式发布前检查
+
+1. 检查 [PR #1](https://github.com/stark1898y/stark1898y.github.io/pull/1) 全部测试通过。
+2. 核对 GitHub → Settings → Pages 中的自定义域名 `www.stark1898y.cc`、HTTPS 和发布来源为 GitHub Actions；不需要将 `CNAME` 文件复制进构建产物。
+3. 为原 VitePress 基线提交 `7126143f26514a3e3b4c45c7f52d84c51b46ac1d` 创建备份 Tag（命令见 [迁移记录](Docs/zensical-migration.md)），确认远端已推送。
+4. 只有在审核通过后才合并 PR，合并将由 `main` 的部署工作流自动切换为 Zensical。
+5. 上线后验证首页、知识库、博客、三个在线工具、Sitemap、robots.txt、历史文章 `.html` 地址及手机端。
