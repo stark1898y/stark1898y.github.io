@@ -115,25 +115,14 @@ def main():
             # Real browser search with a Chinese phrase and two common English terms.
             for term in ("硬件设计", "NTC", "FreeRTOS"):
                 visible[-1].fill(term)
-                page.wait_for_function(
-                    """() => {
-                        const list = document.querySelector('[role="listbox"][aria-label="Search results"]');
-                        return !!list && list.querySelectorAll('a').length > 0;
-                    }""",
-                    timeout=9000,
-                )
+                results.first.wait_for(state="visible", timeout=9000)
+                page.wait_for_timeout(300)
                 assert results.count() > 0, f"Search returned no selectable result for {term}"
                 print("PASS search query", term)
             page.screenshot(path=str(OUTPUT / "search-freertos.png"))
             # A deliberately unmatchable token should not leave stale results.
             visible[-1].fill("unlikelysearchtoken987654321abcdef")
-            page.wait_for_function(
-                """() => {
-                    const list = document.querySelector('[role="listbox"][aria-label="Search results"]');
-                    return !!list && list.querySelectorAll('a').length === 0;
-                }""",
-                timeout=9000,
-            )
+            page.wait_for_timeout(1300)
             assert results.count() == 0, "Unmatched search retained stale results"
             print("PASS search no-results state")
 
