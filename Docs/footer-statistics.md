@@ -2,7 +2,7 @@
 
 > **状态：** 页脚与只读 API 已在重构分支实现；**尚未配置 Vercel 生产环境 Token，也未验证真实统计响应**。主站 `main` 仍是旧版 VitePress。
 
-> **Vercel 项目授权已验证（2026-11-07）**：当前项目是 `stark1898y-github-io`（ID `prj_NHpAS595h6gZlU60aBGAEynp57fj`），团队 `stark1898ys-projects`（ID `team_84cDWsO47xX44itlhxVFiD1H`），Vercel 已验证 `www.stark1898y.cc`。已查询的项目环境变量列表为空（生产环境也没有隐藏的变量）。从 Vercel Web Analytics 官方 `visits/count` 接口查询 2026-10-08 至 2026-11-07 区间，返回 `visitors: 0`、`pageviews: 0`。这只能证明该区间没有已采集的事件，**不能单独证明 Analytics 功能已经启用，也不代表网站真实访问人数为零**。
+> **Vercel 项目授权已验证（2026-11-07）**：当前项目是 `stark1898y-github-io`（ID `prj_NHpAS595h6gZlU60aBGAEynp57fj`），团队 `stark1898ys-projects`（ID `team_84cDWsO47xX44itlhxVFiD1H`），Vercel 已验证 `www.stark1898y.cc`。截至 2026-11-07，**已确认三个 `VERCEL_STATS_*` 环境变量全部保存成功且仅应用于 Production**：`VERCEL_STATS_TOKEN` 为敏感类型，Project ID 和 Team ID 已保存；检查时未解密 Token。从 Vercel Web Analytics 官方 `visits/count` 接口查询 2026-10-08 至 2026-11-07 区间，返回 `visitors: 0`、`pageviews: 0`。这只能证明该区间没有已采集的事件，**不能单独证明 Analytics 功能已经启用，也不代表网站真实访问人数为零**。
 
 ## 显示形式
 
@@ -40,7 +40,7 @@
 
    **不要把 Token 发到聊天、提交到 GitHub、放在前端代码或 Preview 环境。** 项目 ID、团队 ID 不属于 API 凭据；可以按上述核实值填写。
 
-3. 保存配置后重新部署 **Production**。当统计开始收集数据时，访问 `https://www.stark1898y.cc/api/site-stats`，应返回类似下列格式（数值仅为示例）：
+3. 环境变量已保存。**待 PR #1 审核合并后，由 Vercel 部署新生产版本**（不要提前将旧 VitePress 重部署作为验收）。当统计开始收集数据时，访问 `https://www.stark1898y.cc/api/site-stats`，应返回类似下列格式（数值仅为示例）：
 
 ```json
 {"visitors": 29, "pageviews": 71, "periodDays": 30}
@@ -59,7 +59,8 @@
 - [ ] 最新 GitHub Actions 全链路构建通过。
 - [ ] Vercel Preview 包含 Function 且部署 Ready（Preview 没有生产环境统计 Token）。
 - [ ] Vercel Analytics 后台实际启用及正式站流量开始采集。
-- [ ] 用户将环境变量配置在 Production 并重新部署 `main`。
+- [x] 已确认三个环境变量仅在 Production 配置成功（尚未验证 Token 对 Analytics REST API 的实际权限）。
+- [ ] 在正式合并 PR、部署 Zensical 后验证生产 Function 使用新环境变量并返回有效统计数据。
 - [ ] 用真实的 API 响应验证字段格式、数据口径和页脚值。
 
 ## 不选择不蒜子等第三方计数器
