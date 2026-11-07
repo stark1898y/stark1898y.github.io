@@ -1,253 +1,86 @@
-# Stark1898y 的个人知识库
+# Stark1898y 个人技术网站
 
-基于 [VitePress](https://vitepress.dev/) 构建的个人知识库，记录嵌入式开发学习笔记和技术文档。
+网站：<https://www.stark1898y.cc/>
 
-## 本地开发
+以 **Zensical + awesome-nav + Pages CMS + GitHub Pages** 为目标架构，整理嵌入式软硬件技术文档、博客、开源项目与浏览器工具。
 
-### 已有仓库
+> **迁移中**：本分支 `refactor/zensical-pagescms-v1` 尚未上线。GitHub 默认 `main` 仍使用 VitePress，迁移进度与验收条件参见 [Docs/zensical-migration.md](Docs/zensical-migration.md)。
 
-```bash
-npm install
-npm run dev
-```
+## 环境与本地预览
 
-### 新电脑 / 首次克隆
-
-```bash
-git clone https://github.com/stark1898y/stark1898y.github.io.git
-cd stark1898y.github.io
-npm install      # 还原依赖（package-lock.json 保证版本一致）
-npm run dev      # 启动开发服务器
-```
-
-> `package-lock.json` 已纳入版本控制，`npm install` 会还原完全一致的依赖版本，不会出现环境差异问题。
-
-### 局域网访问（手机预览等）
-
-```bash
-npx vitepress dev --host 0.0.0.0
-```
-
-访问 http://localhost:5173 预览。
-
-## 项目结构
-
-```
-my_site/
-├── index.md                 # 首页
-├── docs/                    # 文档笔记（知识库内容）
-│   ├── intro.md             # 知识库简介
-│   ├── hardware/            # 硬件设计
-│   │   ├── _category_.json  #   分类配置（标签、排序）
-│   │   ├── tools.md         #   概述
-│   │   ├── power/           #   电源相关
-│   │   ├── interface/       #   接口协议
-│   │   ├── protection/      #   保护器件
-│   │   ├── component/       #   常用器件
-│   │   └── wireless/        #   无线通信
-│   ├── mcu/                 # MCU 开发
-│   │   ├── stm32/           #   STM32
-│   │   ├── ch32v/           #   WCH RISC-V
-│   │   └── ble/             #   BLE 蓝牙
-│   ├── software/            # 软件开发
-│   │   ├── framework/       #   框架与架构
-│   │   ├── component/       #   常用组件
-│   │   ├── storage/         #   存储相关
-│   │   ├── protocol/        #   通信协议
-│   │   └── upgrade/         #   升级方案
-│   ├── rtos/                # RTOS 系统
-│   ├── tools/               # 开发工具
-│   ├── linux/               # Linux 开发
-│   ├── ai-python/           # AI & Python
-│   └── resources/           # 学习资源
-├── open-source/             # 开源项目（独立于 docs）
-│   ├── index.md             #   项目概览
-│   ├── _category_.json      #   分类配置
-│   ├── power-calculator/    #   功耗计算器
-│   └── gas-converter/       #   气体浓度换算
-├── dev-tools/               # 在线开发工具分区（VitePress 页面）
-│   ├── index.md             #   工具集概览
-│   ├── _category_.json      #   分类配置
-│   └── timestamp-converter-guide/   #   时间戳教程（独立文档页）
-├── public/                  # 静态资源（图片、图标、工具页等）
-│   ├── dev-tools/           #   工具静态页（一个工具一个文件夹）
-│   │   ├── json-formatter/index.html
-│   │   ├── timestamp-converter/index.html
-│   │   └── base64/index.html
-│   ├── gas-converter.png
-│   ├── power-calc.png
-│   └── logo.svg
-├── .vitepress/              # VitePress 配置
-│   ├── config.mts           #   站点配置（导航、搜索、页脚等）
-│   ├── sidebar.ts           #   侧边栏自动生成脚本
-│   └── theme/               #   自定义主题
-│       ├── index.ts         #     主题入口
-│       ├── style.css        #     自定义样式
-│       └── Mermaid.vue      #     Mermaid 图表渲染组件
-├── package.json
-├── .gitignore
-└── README.md
-```
-
-## 如何添加新文档
-
-### 在已有分类下添加一篇新文章
-
-直接在对应目录下新建 `.md` 文件即可，侧边栏会自动更新。
-
-```bash
-# 例如在硬件设计 > 电源相关下添加一篇新文章
-echo "# 锂电池充电管理" > docs/hardware/power/battery-charger.md
-```
-
-- 文章标题会自动从 frontmatter `title` 或第一个 `# 标题` 提取
-- 侧边栏按文件名中文排序
-
-### 新建一个分类（新目录）
-
-1. 在 `docs/` 下新建目录
-2. 创建 `_category_.json` 指定分类名和排序
-
-```json
-{
-  "label": "分类名称",
-  "position": 10
-}
-```
-
-3. 放入 `.md` 文章文件
-
-`position` 控制分类在侧边栏中的顺序，数字越小越靠前。
-
-### 新建一个子分类（二级目录）
-
-同上，在父目录下创建子目录 + `_category_.json` 即可。
-
-```
-docs/新分类/
-├── _category_.json       # {"label": "新分类", "position": 10}
-├── overview.md           # 概览文章
-└── 子分类/
-    ├── _category_.json   # {"label": "子分类", "position": 1}
-    └── article.md
-```
-
-### 文章 frontmatter（可选）
-
-```markdown
----
-title: 文章标题          # 侧边栏显示的名称（优先级高于 # 标题）
-description: 简短描述     # SEO 描述
----
-```
-
-### 在文档中使用 Mermaid 图表
-
-已内置支持，直接使用 ````mermaid` 代码块即可：
-
-````markdown
-```mermaid
-graph TD
-    A[开始] --> B[结束]
-```
-````
-
-支持的图表类型：`graph`、`flowchart`、`sequenceDiagram`、`classDiagram`、`stateDiagram`、`gantt`、`pie` 等。
-
-## 构建部署
-
-### 本地验证
-
-```bash
-npm run build
-npm run preview
-```
-
-### 部署到 GitHub Pages
-
-推送 `main` 分支后，GitHub Actions 自动构建并部署（使用 Pages Actions 环境）。
-
-> 首次部署需要在仓库 Settings > Pages 中将 Source 设为 "GitHub Actions"。
-
-## 配置说明
-
-| 文件                  | 作用                                                 |
-| --------------------- | ---------------------------------------------------- |
-| `config.mts`        | 站点全局配置：标题、导航栏、搜索、页脚、编辑链接等   |
-| `sidebar.ts`        | 自动扫描`docs/` 和 `open-source/` 目录生成侧边栏 |
-| `theme/index.ts`    | 自定义主题入口，加载样式和组件                       |
-| `theme/style.css`   | 首页项目卡片、平台卡片等自定义样式                   |
-| `theme/Mermaid.vue` | Mermaid 图表客户端渲染组件                           |
-
-## 开发工具分区（dev-tools）路径约定
-
-> ⚠️ 这是 2026-08 路径归并后的最终约定，改动工具路径前务必阅读本节，避免再次出现 404。
-
-### 双目录职责划分
-
-开发工具分区由**两个目录配合**组成，构建后按路径合并进 `dist/`：
-
-| 目录                         | 职责                           | 构建产物                                         |
-| ---------------------------- | ------------------------------ | ------------------------------------------------ |
-| `dev-tools/*.md`           | VitePress 文档页（概览、教程） | `dist/dev-tools/*.html`（带主题）              |
-| `public/dev-tools/<tool>/` | 纯静态工具页（单文件 HTML）    | `dist/dev-tools/<tool>/index.html`（原样复制） |
-
-### 路径对照表
-
-| 访问路径                                  | 实际来源                                            |
-| ----------------------------------------- | --------------------------------------------------- |
-| `/dev-tools/`                           | `dev-tools/index.md`                              |
-| `/dev-tools/timestamp-converter/`       | `public/dev-tools/timestamp-converter/index.html` |
-| `/dev-tools/json-formatter/`            | `public/dev-tools/json-formatter/index.html`      |
-| `/dev-tools/base64/`                    | `public/dev-tools/base64/index.html`              |
-| `/dev-tools/timestamp-converter-guide/` | `dev-tools/timestamp-converter-guide/index.md`    |
-
-### 新增一个工具的步骤
-
-1. 在 `public/dev-tools/` 下创建 `<tool>/index.html`，单文件自包含（CSS/JS 内联）
-2. 工具页内保留：面包屑（`首页 / 开发工具 / <工具名>`）、`← 返回开发工具`（`/dev-tools/`）、相关工具卡片、GitHub 源码链接
-3. 在 `dev-tools/index.md` 概览页加入分类与入口链接
-4. 在 `.vitepress/config.mts` 导航的「开发工具」下拉中加一项
-5. 如需要面包屑高亮，在 `.vitepress/theme/Breadcrumb.vue` 的 `breadcrumbMap` 加条目
-6. **在 `.vitepress/theme/ForceFullNav.vue` 的 `STATIC_TOOL_PATHS` 中加入该路径**（否则点击入口会因 SPA 路由显示 404）
-7. 运行 `npm run build` 验证，确认 `dist/dev-tools/<tool>/index.html` 输出的是工具 HTML
-
-### 红线规则（避免 404）
-
-- **工具子目录下禁止出现 `.md` 文件**：若 `dev-tools/<tool>/`（源码）与 `public/dev-tools/<tool>/`（静态）同名，VitePress 页面会与静态 HTML 冲突覆盖
-- **工具文档页必须使用不同目录名**：如教程放 `dev-tools/timestamp-converter-guide/`，不能叫 `timestamp-converter/`
-- **`public/tools/` 已废弃**：旧路径 `/tools/<tool>/` 全部迁移到 `/dev-tools/<tool>/`，代码中不得再引用 `/tools/`
-- **删除工具时**：同时清理 `public/dev-tools/<tool>/`、`dev-tools/index.md` 入口、`config.mts` 导航项、`Breadcrumb.vue` 映射
-
-### 旧路径检查方法
-
-```bash
-# 搜索旧路径残留（应无输出或仅剩 /docs/tools/ 知识库页面）
-rg -n "public/tools|/tools/timestamp|/tools/json|/tools/base64" --glob "*.{md,ts,mts,json,vue,html}"
-```
-
-### 排查记录
-
-- **2026-08 工具页 `target="_blank"` 误报排查**：曾有一轮浏览器自动化报告「返回开发工具」链接缺失 `target="_blank"`。经三处验证（本地源码、线上原始 HTML `Invoke-WebRequest`、渲染后 DOM 无头 Chrome `--dump-dom`），该属性实际**均存在**，浏览器 agent 读取 click 事件后 DOM 导致误报。**结论：无需修复代码。** 排查方法记录如下：
+需要 Python 3.11+（CI 当前使用 Python 3.12）。
 
 ```powershell
-# 1. 检查本地源码
-Select-String -Path "public\dev-tools\*\index.html" -Pattern "返回开发工具"
-# 2. 检查线上原始 HTML
-$r = Invoke-WebRequest -Uri "https://www.stark1898y.cc/dev-tools/json-formatter/" -UseBasicParsing
-$r.Content.IndexOf('返回开发工具')
-# 3. 检查渲染后 DOM（以无头 Chrome 输出为准，勿依赖浏览器自动化工具的 DOM 快照）
-& "C:\Program Files\Google\Chrome\Application\chrome.exe" --headless=new --dump-dom "https://www.stark1898y.cc/dev-tools/json-formatter/"
+git clone https://github.com/stark1898y/stark1898y.github.io.git
+cd stark1898y.github.io
+git switch refactor/zensical-pagescms-v1
+python -m pip install -r requirements-site.txt
+zensical serve
 ```
 
-## 命令速查
+预览地址以 `zensical serve` 的控制台输出为准。编辑 Markdown 或 `.nav.yml` 后可实时预览。
 
-| 命令                | 作用           |
-| ------------------- | -------------- |
-| `npm run dev`     | 启动开发服务器 |
-| `npm run build`   | 生产构建       |
-| `npm run preview` | 预览生产构建   |
+发布前执行完整的静态检查：
 
-## 声明
+```powershell
+zensical build --clean --strict
+python scripts/zensical/restore_tools.py
+python scripts/zensical/restore_legacy_urls.py
+python scripts/zensical/check_output.py
+python scripts/zensical/audit_site.py
+```
 
-本知识库内容仅供学习参考，欢迎阅读和分享。
+GitHub PR 会自动执行临时文章发布、awesome-nav、浏览器工具及 Chrome 冒烟测试，产物保存在 Actions artifacts。部署工作流已经在重构分支预备，只有合并至 `main` 后才会替换旧的 VitePress 生产部署流程。
+
+## 内容目录
+
+| 路径 | 作用 |
+| --- | --- |
+| `content/index.md` | 首页技术门户 |
+| `content/docs/` | 嵌入式技术知识库 |
+| `content/blog/posts/` | 博客与开发日志 |
+| `content/open-source/` | 开源项目 |
+| `content/dev-tools/` | 浏览器工具说明 |
+| `content/assets/uploads/` | Pages CMS 上传图片和附件 |
+| `public/dev-tools/` | 原有 JSON、Base64、时间戳 HTML 工具源码 |
+| `content/stylesheets/` | 主题定制样式 |
+| `scripts/zensical/` | 构建、测试与兼容脚本 |
+
+## 写博客
+
+网页编辑：登录 <https://app.pagescms.org/> → 选择仓库 `stark1898y/stark1898y.github.io` → 选择目标分支 → **博客与开发日志**。
+
+- 新建文章填写中文标题、日期、唯一英文 `slug`；默认 `draft: true`，不会在正式网站公开。
+- 正文可通过富文本模式编辑，也可切换 Markdown 源码。推荐技术文章保留 Markdown 源码。
+- 如需发布，将 `draft` 改为 `false` 并保存；GitHub Actions 在正式分支上构建并部署。
+- 已发布文章的 `slug` 不要随意修改，以免旧 URL 失效。
+- 上传的资源在仓库中保存于 `content/assets/uploads/`，在网页中通过 `/assets/uploads/文件名` 访问。
+
+**验证状态**：2026-11-07 已成功使用 Pages CMS 创建 `content/blog/posts/pages-cms-test.md` 草稿，并通过构建。编辑已有文章和真实图片上传仍待完成；测试文章保持草稿，不应发布。
+
+## 写技术文档与目录
+
+技术文档放在 `content/docs/`，支持 Markdown、代码块、表格和 Mermaid。每个目录维护 `.nav.yml`：
+
+```yaml
+title: 软件开发
+nav:
+  - index.md
+  - framework
+  - component
+  - "*"
+```
+
+`"*"` 表示接收未显式列出的新增 Markdown；一般不必再修改全局导航。旧 `_category_.json` 和 `.vitepress/sidebar.ts` 已不参与 Zensical 构建。
+
+原有独立 HTML 工具仍保留固定 URL：`/dev-tools/json-formatter/`、`/dev-tools/base64/`、`/dev-tools/timestamp-converter/`。构建时通过复制脚本恢复到 `site/`，并兼容历史 VitePress `.html` 链接。
+
+## 项目维护与部署原则
+
+- 只在功能分支修改网站，PR 验证完成后再合并 `main`。
+- 生成文件 `site/` 和 `artifacts/` 不要提交到 Git。
+- GitHub Pages 不用数据库；不要提交密码、Token 或未公开的个人/公司资料。
+- 工具的小型源码、图片、文档可直接保存在仓库；较大的可下载发布包放对应项目的 GitHub Releases。
+- 生产切换前确认自定义域名、Sitemap、搜索、手机浏览器、旧 URL 和回滚方案。
+
+详细决策、已验证事项和剩余工作参见 [迁移记录](Docs/zensical-migration.md)。
