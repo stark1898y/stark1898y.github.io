@@ -1,206 +1,73 @@
-# 个人网站 Zensical + Pages CMS 迁移工作记录
+# Stark1898y 网站重构：迁移与验收记录
 
-> 状态：阶段五，Pages CMS 完整读写与媒体上传已验证，旧源码清理及 SEO 构建已完成；正式 main 仍为 VitePress，PR #1 保持 Draft。
+> 最新决策：**Zensical + 原生 awesome-nav + Pages CMS + Vercel 正式部署，GitHub Actions CI，GitHub Pages 手动备用**。
+> 截至 2026-11-07，本工作仍在 [PR #1](https://github.com/stark1898y/stark1898y.github.io/pull/1) Draft 分支，**未合并到 main、未切换生产**。
 
-## 技术决策
+## 一、迁移范围
 
-- 网站：Zensical（当前锁定 0.1.0）+ GitHub Pages。
-- 文章编辑：Pages CMS；复杂技术文档使用 Markdown 源码模式。
-- 博客：Zensical 内置 blog 插件，草稿不发布。
-- 导航：Zensical 原生 awesome-nav，每目录 `.nav.yml`，不用旧 `.vitepress/sidebar.ts` 或 `_category_.json`。
-- 工具：旧 `public/dev-tools/<tool>/index.html` 在构建后复制到 `site/dev-tools/<tool>/index.html`。
-- 原站：`main` 的 VitePress 工作流保持不变；测试通过后才替换。
+从 VitePress 迁移原知识库、项目说明和开发工具首页。73 篇 Markdown 与配套项目图片复制到 `content/`；按原有分类建立 29 份 `.nav.yml`。原 `.vitepress/`、TypeScript 侧边栏、旧副本和 `package.json` / `package-lock.json` 已从**重构分支**清理，但旧版本仍保留在 `main` 和 Git 历史中。
 
-## 内容目录
+### 当前目录
 
-- `content/docs/` 对应原 `docs/`。
-- `content/open-source/` 对应原 `open-source/`。
-- `content/dev-tools/` 对应原 `dev-tools/`。
-- `content/blog/posts/` 为新博客文章目录。
-- 旧 `_category_.json` 暂保留在旧目录，迁移后不再作为导航来源。
+- `content/index.md`：响应式主页。
+- `content/docs/`：硬件、MCU、RTOS、Linux、软件工具等文档。
+- `content/blog/posts/`：博客文章（由 Pages CMS 管理）。
+- `content/open-source/`：开源项目。
+- `content/dev-tools/`：工具说明。
+- `content/assets/uploads/`：CMS 媒体，使用 `/assets/uploads/` 地址。
+- `public/dev-tools/`：原三个 HTML 浏览器工具。
+- `scripts/zensical/`：构建、静态链接、SEO、测试。
+- `vercel.json`：Vercel 构建参数。
+- `.github/workflows/zensical-check.yml`：PR 校验。
+- `.github/workflows/deploy.yml`：GitHub Pages 手动备援。
 
-## 导航维护
+原目录 `_category_.json`、`.vitepress/sidebar.ts` 不再参与新站。新增 Markdown 由对应 `.nav.yml` 的 `"*"` 自动发现。
 
-每个目录的 `.nav.yml` 包含中文 `title` 与 `nav`。其中 `"*"` 自动匹配新增页面；新分类应在相应目录中增加一个 `.nav.yml`。
+## 二、已完成且有日志支持的验证
 
-根导航 `content/.nav.yml` 只列出主要栏目；别在 `zensical.toml` 中写重复的 `nav`。
+| 项目 | 结果 |
+| --- | --- |
+| Zensical 0.1.0 安装和 `--strict` 构建 | PASS |
+| awesome-nav 新建 Markdown 自动收录 | PASS |
+| 搜索索引中中文、STM32、RTOS、NTC 关键词 | PASS |
+| Chrome 浏览器桌面/手机、Mermaid、NTC 搜索 | PASS |
+| 三个独立 HTML 工具与 Node.js 20 项回归测试 | PASS |
+| VitePress 历史 `.html` 跳转 | PASS，构建自动生成兼容页 |
+| 网页导航及静态资源审计 | PASS，未解析本地引用为 0 |
+| Sitemap、robots.txt、404 和工具 canonical | PASS，主站 URL 为 `www.stark1898y.cc` |
+| Pages CMS 真实新建草稿和修改正文 | PASS，产生真实 GitHub 提交 |
+| Pages CMS 真实上传 PNG 图片 | PASS，两张 PNG 均进入构建产物 |
+| 草稿不进入博客首页及搜索 | PASS |
+| CMS 风格已发布文章、图片路径 CI 模拟 | PASS |
 
-## 本地验证
+相关历史构建：[迁移清理后完整成功构建](https://github.com/stark1898y/stark1898y.github.io/actions/runs/42325813717)。
 
-```powershell
-python -m pip install -r requirements-site.txt
-zensical serve
-zensical build --clean --strict
-python scripts/zensical/restore_tools.py
-python scripts/zensical/check_output.py
-python scripts/zensical/audit_site.py
-```
+Pages CMS 测试文章 `pages-cms-test.md`、`first-draft.md` 和两张 PNG 已从重构分支移除，保留 Git 历史供审计；`content/blog/posts/` 与 `content/assets/uploads/` 使用 `.gitkeep` 保留空目录。公开仓库中即使是 `draft: true` 的 Markdown/媒体，也不具备隐私保护。
 
-## 已知风险与上线门槛
+## 三、托管方案变更说明
 
-1. 旧 VitePress 特有 Frontmatter、HTML 容器、Mermaid 需测试实际渲染。旧首页使用 Vue/VitePress 的 `layout: home`，因此新首页单独编写。
-2. 旧文档 URL 与 Zensical 默认的目录 URL 是否完全一致尚未逐条验证；正式上线前需要 URL 对照清单及必要的重定向。
-3. Python Markdown 与 VitePress Markdown 的锚点规则可能不同，需检查站内锚点。
-4. Zensical 的 instant navigation 先不启用，以避免原有静态 HTML 工具被 SPA 路由拦截。
-5. Pages CMS 需要实际完成 GitHub 授权和文章读写验收；复杂 Markdown 不应直接用富文本模式覆盖原文。
-6. 已通过 GitHub Actions 实际安装 Zensical 并构建；浏览器测试还需要检查中文字体、工具交互以及 Pages CMS 的真实 GitHub 授权。
-7. `main` 原有 Pages 部署流程不得在 PR 验证前改动。
+原计划使用 GitHub Pages 作为生产托管，实际核对后发现现有网站与自定义域名已部署在 Vercel，而 GitHub Pages 报 `InvalidCNAMEError`。
 
-## 验收标准
+最终调整为：**保留 Vercel 正式托管、域名不迁移；GitHub Pages 自动部署改为手动备用**。这样保留 PR Preview、历史部署回滚、分析等 Vercel 特性，也避免一份站点同时在两个平台上争用正式域名。
 
-- 导航（含新增文件自动入导航）、博客、搜索、Mermaid、中文显示正常。
-- 原三个独立开发工具可用，旧常用 URL 仍能访问。
-- Pages CMS 可新建/编辑文章并上传图片；文章 Frontmatter 与正文无误。
-- 严格构建、站内链接与输出文件检查通过（已加入 CI）。
-- 桌面和移动端都能使用，检查 Sitemap 和域名。
-- 审核 PR 后单独切换部署；保留可回滚的 Git 基线。
+`vercel.json` 设置 `framework: null`、Python 安装、`site/` 产物目录及目录末尾斜杠。使用 `scripts/zensical/build_site.py` 与 GitHub Actions 共用生产构建流程。
 
-## 阶段二已实现（2026-11-06）
+**这只是已提交的配置；Vercel 真实 Preview 是否 Ready 需要另外查看部署日志才能确认。** 不应将 GitHub Actions 成功当作 Vercel 成功。
 
-- Pages CMS 使用独立博客文章集合（标题、slug、日期、草稿、分类、摘要、正文），新建文章默认草稿。
-- 技术知识库和开源项目在 CMS 中采用原始 Markdown 编辑器；禁用重命名和删除，避免意外破坏 URL。
-- 媒体上传目录为 `content/assets/uploads/`，公开路径为 `/assets/uploads/`。
-- 已转换知识库简介中的 VitePress 提示框语法；其它特殊格式继续抽查。
-- Zensical 官网原生 Emoji 扩展用于首页图标；根及主要子目录恢复 `"*"` 通配符以支持新增文章自动发现。
-- 已新增 `scripts/zensical/audit_site.py`：检查生成 HTML 的本地链接与资源引用，结果写入 `artifacts/site-audit.json`。
-- 已新增 `scripts/zensical/smoke_browser.py`：GitHub Actions 的 Chrome 自动打开首页、知识库、博客和项目页，测试手机端横向溢出及三个工具页面。
-- CI 通过 `actions/upload-artifact@v4` 上传预览压缩包、审计结果与桌面/手机截图；**不会发布到正式域名**。
+## 四、上线前检查和回滚
 
-### 已经观察到的真实测试结果
+主站旧 VitePress `main` 基线：`7126143f26514a3e3b4c45c7f52d84c51b46ac1d`。
 
-- GitHub Actions 构建成功，静态工具复制和关键输出检查通过。
-- 扫描 79 个 HTML 页面、7,103 个本地引用，未发现未解析链接。
-- Chrome 冒烟测试已通过 5 个主要路由、博客草稿不公开、移动端无横向溢出、Base64 转换和 JSON/时间戳工具加载。
-- 第一次 CI 截图的中文为方框，是 Runner 缺少 CJK 字体。已增加 Noto CJK 字体安装，需以最新一轮截图为准。
+上线前：先推送 Tag `site-vitepress-pre-zensical-20261107`（具体命令见 [Vercel 部署文档](hosting-vercel.md)）；再确认 Vercel Preview 中的所有关键页面和工具；最后审核合并 PR 并等待 Vercel `main` Production 部署成功。
 
-### 在线编辑验收（需账户持有人操作）
+- [x] 原始文章、图片、工具目录迁移并清理重复源码。
+- [x] 本地与 CI 构建、浏览器、搜索、Mermaid、Sitemap 等测试。
+- [x] CMS 实际在线编辑及图片上传。
+- [x] Vercel 构建配置与 GitHub Pages 手动备用配置已提交。
+- [ ] Vercel Preview 真实构建日志与页面访问验收。
+- [ ] Vercel Production Branch、根目录和域名配置核对。
+- [ ] 远端备份 Tag 已推送。
+- [ ] PR #1 审核后正式合并。
+- [ ] 正式域名上的旧文章、浏览器工具、SEO、Sitemap、404 复核。
 
-1. 访问 https://app.pagescms.org/ ，使用 GitHub 账户登录。
-2. 安装 Pages CMS GitHub App 时，**只授权当前 `stark1898y.github.io` 仓库**。
-3. 选择 `refactor/zensical-pagescms-v1` 分支（如果 UI 允许切换），先不要对正式 `main` 编辑。
-4. 在博客新建草稿，填写英文 `slug`、发布日期、中文标题，加入一段文字和一张上传图片。
-5. 保存后查看分支提交及生成的 Markdown。确认草稿不公开，再取消 `draft` 验证博客列表，最后清理测试文章。
-6. 不要用富文本编辑器保存现有复杂技术文章；对 Mermaid、HTML、代码块使用源码编辑与 Git Diff 审核。
-
-### 剩余问题
-
-- 真实浏览器中文搜索词与搜索高亮结果需要进一步测试。
-- CMS 授权和上传操作必须实际验收，不能仅凭配置文件视为成功。
-- 旧 URL 与导航锚点需逐项抽查；现阶段自动校验只能证明构建文件及普通链接存在。
-- 线上切换前应更新 Zensical `edit_uri` 为 `edit/main/content/`，准备回滚 Tag，然后由审核者合并草稿 PR。
-
-## 阶段三：迁移兼容、页面与搜索（2026-11-06）
-
-- 首页采用独立 `content/index.md` 和 `content/stylesheets/home.css`，保留技术知识库、博客、开源项目和浏览器工具入口；隐藏首页侧边目录以扩大阅读空间。
-- `zensical.toml` 新增 `extra_css`，首页 CSS 类以 `stark-` 为前缀，避免污染普通文档。
-- `.pages.yml` 已按官方文档将博客后台日期排序改成 `view.sort: [date, title]` 与 `view.default.sort/order`。
-- 迁移兼容脚本 `scripts/zensical/restore_legacy_urls.py` 为旧版非首页文章生成 `.html` 轻量重定向，保留 URL 查询参数和锚点，防止历史分享地址失效。
-- `scripts/zensical/check_output.py` 检查 `search.json` 是否索引硬件设计、STM32、RTOS、NTC 等术语，同时确保测试草稿未进入索引。
-- Chrome 冒烟测试新增旧 `.html` 跳转、Mermaid 动态图表转换以及浏览器搜索结果交互测试。
-- GitHub Actions 的普通 PR 测试不再反复安装中文字体；需要查看含中文字形的 CI 截图时，可以手动触发带 CJK 字体安装的工作流。
-- `scripts/zensical/restore_tools.py` 为静态 HTML 工具加入网站 SVG favicon 引用，避免旧站工具页面没有站点图标。
-- 测试采用自动化 PR 构建，不会发布到实际自定义域名，且所有正式部署控制仍归原 `main` 工作流。
-
-### 上线前仍然必须人工验收
-
-- [ ] 用本人 GitHub 登录 Pages CMS，确认能够切换到测试分支、新建草稿、修改正文和上传图片；检查 Git 差异是否保留代码块与 Markdown。
-- [ ] 浏览器验证搜索中文分词、结果链接点击和移动端搜索入口；静态 `search.json` 检查不能完全替代实测。
-- [ ] 验证已分享的站内旧 URL、`.html` 和锚点；当前生成的是静态跳转，不依赖服务器端 301。
-- [ ] 检查现有项目 iframe、引用图、复杂旧表格与 Mermaid 混排文档。
-- [ ] 正式部署之前锁定 Zensical 版本、验证 Sitemap、域名和回滚 Tag；改 `edit_uri` 为主分支。
-- [ ] 旧 VitePress 源目录在验收通过后再移除，不得提前清理。
-
-
-## 阶段四：Pages CMS 实际接入与生产构建预备（2026-11-07）
-
-### 已确认事项
-
-- **GitHub 在线编辑已真正成功：** 用户使用 Pages CMS 创建了 `content/blog/posts/pages-cms-test.md`，提交 `f95864f3d75e45b189c9ffadb6228c55108e3a54`，提交标题为 `Create content/blog/posts/pages-cms-test.md (via Pages CMS)`。
-- 文件 Frontmatter 含 `title`、`slug`、`date`、`draft: true`、`description`，格式与博客配置一致。
-- GitHub Actions `42323815842` 成功；下载的 Zensical 构建产物确认该草稿未进入博客首页和 `search.json`，也未生成独立文章页面。
-- 新增 `scripts/zensical/check_blog_publish.py`：在 CI 工作目录临时建立与 Pages CMS 相同格式的已发布文章和 SVG 图片，严格构建后核对博客列表、独立 URL、搜索索引、资源路径；临时文件不进入 Git 历史。
-- 新增动态草稿泄露检查：每次构建读取当前 `content/blog/posts/` 下全部 `draft: true` 文章，而非仅检查固定测试标题。
-- 固定文章 URL 为 `/blog/{slug}/`，不把发布日期编码到永久链接中；已有文章的 `slug` 仍应保持稳定。
-- `.github/workflows/deploy.yml` 已在本重构分支预先改为 Zensical 严格构建、兼容旧链接和 GitHub Pages 部署。由于 `main` 尚未合并本 PR，**正式站点没有切换**。
-- `README.md` 更新为迁移完成后的 Zensical 开发、构建、在线编辑和维护说明。
-
-### 草稿隐私提醒
-
-`draft: true` 仅表示**不进入网站发布与搜索索引**。本 GitHub 仓库为公开仓库，源 Markdown 仍可在 GitHub 上查看；任何公司内部资料、密码、Token 等敏感内容都不能保存到公共草稿。Pages CMS 的草稿字段帮助说明已明确提示。
-
-### 需要用户完成的最后一组 CMS 验收
-
-- [x] GitHub 授权后能在 **重构分支** 使用 Pages CMS 新建并保存博客草稿。
-- [x] GitHub 收到带有 `(via Pages CMS)` 的真实提交且触发 Zensical CI。
-- [x] 草稿从正式构建输出及搜索索引中排除。
-- [x] CI 使用 Pages CMS 文章结构临时验证“取消草稿后发布”和图片路径。
-- [x] **真实修改已有文章**：Pages CMS 已保存正文 `第二次编辑验证成功`，提交 `aa59d98b9476eef036985a78654104b88eb22566`，原 Frontmatter 和草稿状态均保留。
-- [x] **真实上传图片**：Pages CMS 先后上传 `image.png`（7,062 字节）和 `image-1.png`（11,828 字节）；文章引用 `/assets/uploads/image.png`，生成站点产物确认两张 PNG 均存在且格式正常。`image-1.png` 未被文章引用，最终清理测试文件时再处理。
-- [ ] 可选：将该测试文章在分支上切换为 `draft: false`，确认页面与搜索出现在**预览构建产物**中；随后改回 `draft: true` 或删除测试文章。
-- [ ] 清点所有历史 URL 和复杂文档效果，必要时处理额外跳转。
-- [ ] 经人工审阅后，创建正式版本回滚 Tag，再合并 PR #1 上线。
-
-### 本阶段相关链接
-
-- PR：<https://github.com/stark1898y/stark1898y.github.io/pull/1>
-- 实际 Pages CMS 写入提交：<https://github.com/stark1898y/stark1898y.github.io/commit/f95864f3d75e45b189c9ffadb6228c55108e3a54>
-- CMS 写入后的成功构建：<https://github.com/stark1898y/stark1898y.github.io/actions/runs/42323815842>
-
-### 2026-11-07 真实编辑与媒体上传验收
-
-- 2026-11-07 09:33（UTC+8），用户通过 Pages CMS 新增两张真实 PNG 并更新 `pages-cms-test.md`。
-- 对应提交：上传 `image.png`：`ef2bcfd2abcd2e02aa35b38611e38d18b2b989d4`；上传 `image-1.png`：`37d677c41e87a0caf8483e3e6eabedf000d5beef`；文章编辑：`aa59d98b9476eef036985a78654104b88eb22566`。
-- 文章仍为 `draft: true`，新增文字 `第二次编辑验证成功`，图片引用 `![image.png](/assets/uploads/image.png)`。
-- GitHub Actions 运行 `42324698247` 已通过全部构建、链接和浏览器测试。
-- 已下载检查 `zensical-preview-50` 构建产物：`site/assets/uploads/image.png` 和 `image-1.png` 都存在且有 PNG 文件头；搜索索引没有草稿标题，站点中未生成 `pages-cms-test` 文章页。
-- **隐私边界**：草稿隐藏仅作用于博客文章和搜索。上传到 `content/assets/uploads/` 的图片本身会进入静态网站产物，即使对应文章仍是草稿，也可能通过完整 URL 直接访问；公开仓库中的媒体文件更是对外可见。不要上传任何不打算公开的图片或数据。
-- 阶段四实际 CMS 验收已完成：授权、新建、再次编辑、上传媒体、构建和草稿排除。尚需生产上线前旧链接/复杂文档抽查、清理测试文章和无用图片、创建回滚 Tag 与域名确认。
-
-
-## 阶段五：旧架构清理、SEO 和正式部署预检查（2026-11-07）
-
-### 已执行
-
-- 将旧 `docs/`、`dev-tools/`、`open-source/` 的 73 篇 Markdown 及配套图片迁移到 `content/`，保留原文章内容和旧项目媒体。分类 `_category_.json` 由 29 份 `.nav.yml` 取代。
-- 清理仓库中已失效的 `.vitepress/`、旧目录、副本图片、根目录旧首页、旧 404 Markdown、VitePress 的 `package.json` / `package-lock.json`。共删除 133 个过渡文件及 CMS 测试资源；未删除 `public/dev-tools/` 下的三个 HTML 工具。
-- 清理 `pages-cms-test.md`、`first-draft.md`、`image.png`、`image-1.png`。保留目录中的 `.gitkeep` 以让 Pages CMS 空博客集合和媒体目录继续存在；测试提交仍可通过 Git 历史追踪。
-- 将项目页内旧的 VitePress CSS 变量改为 Zensical 支持的主题变量，避免两个 iframe 工具说明页按钮配色失效。
-- Node 20 项独立工具测试迁移到站点实际生成文件，不依赖 VitePress 构建；仍保留 `scripts/verify-persist.mjs` 供 Windows 本地验证浏览器持久化，输出目录改为 `site/`。
-- 添加 `content/robots.txt` 与 `scripts/zensical/finalize_seo.py`：检查 `https://www.stark1898y.cc/sitemap.xml`、404 页面，并将三个独立 HTML 工具纳入 Sitemap。三个 HTML 工具在复制后增加 canonical 链接和网站 favicon。
-- Zensical 的普通文章自带规范 URL；旧文章生成的 `.html` 兼容跳转页面使用 `noindex` 防止重复索引。
-- CI 和生产部署流程同时执行 Zensical 严格构建、工具复制、旧链接恢复、Sitemap/robots 规范检查、全站本地链接审计及 Node 工具测试。生产部署增加 `github.ref == 'refs/heads/main'` 防护。
-- 已从构建产物验证：Sitemap 共 78 个规范 URL（包含三个独立工具），主域名均为 `www.stark1898y.cc`；`robots.txt` 与 `404.html` 存在；CMS 测试文章和 PNG 均已从最新网站产物移除。
-- CI 清理后的构建检查和 Chrome 浏览器测试通过，可访问旧 `.html` 兼容页面、网站搜索、Mermaid 以及原三项工具。
-
-### 主分支回滚基线（正式上线前务必完成）
-
-迁移前旧 VitePress 正式站点的 `main` 提交：
-
-```text
-7126143f26514a3e3b4c45c7f52d84c51b46ac1d
-```
-
-建议在本地 Git 创建并推送永久 Tag：
-
-```powershell
-git fetch origin
-git tag -a site-vitepress-pre-zensical-20261107 7126143f26514a3e3b4c45c7f52d84c51b46ac1d -m "VitePress live site before Zensical migration"
-git push origin site-vitepress-pre-zensical-20261107
-git ls-remote --tags origin site-vitepress-pre-zensical-20261107
-```
-
-这项 Tag **目前只提供了命令，尚未替用户执行**。创建前不要合并 PR。GitHub 合并后可从该 Tag 恢复旧 `deploy.yml`、`package.json`、`docs/` 等完整源码，以 PR 方式恢复，避免在 `main` 上直接强制回退。
-
-### 必须在网页上复核的上线前检查
-
-- [x] CMS 创建、修改和上传 PNG 的真实 GitHub 提交。
-- [x] CMS 草稿不在文章页及搜索索引公开；上传图片的公开属性已说明。
-- [x] Zensical 严格构建，awesome-nav 自动发现与发布探针，SEO/Sitemap 与历史文章重定向。
-- [x] Node 工具测试、Chrome 冒烟、手机无横向溢出及 Mermaid、搜索结果。
-- [x] 删除 CMS 测试文章和无用图片，并保留空博客/媒体目录。
-- [ ] GitHub 远端确认已推送回滚 Tag。
-- [ ] 手工抽查复杂旧 Markdown、项目 iframe、特殊表格、中文标题与跳转页面的锚点。
-- [ ] GitHub Settings → Pages 核实自定义域名 `www.stark1898y.cc`、HTTPS 与部署来源为 Actions（当前连接不支持读取管理设置）。
-- [ ] 审核 PR #1 并决定切换时间。合并后检查 Pages 部署记录与实际网站，确保新版 `sitemap.xml`、`robots.txt`、404 和外部工具链接正常。
-
-**正式域名仍使用原 VitePress；不要把 PR 的自动构建通过误认为正式部署已完成。**
+**重要：** README 的 `main` 版本目前仍对应旧 VitePress 生产代码，这是正常的。只有 PR 合并后，`main/README.md` 才会同步更新为本次新架构说明。
