@@ -41,3 +41,6 @@ npm-debug.log*
 .venv/
 __pycache__/
 *.pyc
+
+# Vercel local configuration, may include account/project IDs
+.vercel/

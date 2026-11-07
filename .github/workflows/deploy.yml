@@ -1,8 +1,7 @@
-name: Deploy Zensical site to GitHub Pages
+# Vercel deploys GitHub main automatically. Run manually on main for emergency fallback only.
+name: Manual fallback - GitHub Pages (Vercel is production)
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:

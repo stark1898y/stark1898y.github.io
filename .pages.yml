@@ -1,4 +1,4 @@
-# Pages CMS (https://app.pagescms.org/) - GitHub authoring for the test branch
+# Pages CMS (https://app.pagescms.org/) - edit Markdown in GitHub; hosting is on Vercel.
 settings:
   content:
     merge: true

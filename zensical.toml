@@ -8,7 +8,7 @@ edit_uri = "edit/main/content/"
 docs_dir = "content"
 site_dir = "site"
 extra_css = ["stylesheets/home.css"]
-copyright = "Copyright © 2026-present Stark1898y · Powered by Zensical · GitHub Pages"
+copyright = "Copyright © 2026-present Stark1898y · Powered by Zensical · Vercel"
 
 [project.theme]
 language = "zh"
