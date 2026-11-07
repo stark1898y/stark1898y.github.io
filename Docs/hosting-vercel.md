@@ -22,6 +22,12 @@ GitHub Pages 如果不作为生产入口，不应要求 DNS 指向 `stark1898y.g
 
 GitHub Actions 不依赖操作系统默认的 Python 3.14 或 Node 24 预装路径，显式安装/选择目标版本。工作流会记录实际 OS/Python/Node/Chrome 版本并验证主版本，防止环境静默漂移。Vercel 自身的云运行环境与 GitHub Actions 不是同一台机器，不为升级 Ubuntu 而修改 Vercel 配置。
 
+### uv 硬链接告警处理（2026-11-07）
+
+Vercel 上安装依赖时可能出现 `Failed to hardlink files; falling back to full copy`。这是 uv 缓存与 `.venv` 文件系统不适合使用硬链接时的正常回退，**不会影响网站构建结果**。已经为 Vercel 的 `installCommand` 显式指定 `uv pip install --link-mode=copy`，避免先尝试硬链接而产生冗余告警。
+
+这一选项是指定复制模式，**并不保证加速安装**；继续使用 uv 的缓存，不使用 `--break-system-packages`，也不更改 GitHub CI 及 Python 版本。
+
 ## 构建配置
 
 根目录 `vercel.json` 已设置：
@@ -29,7 +35,7 @@ GitHub Actions 不依赖操作系统默认的 Python 3.14 或 Node 24 预装路�
 | 设置 | 值 |
 | --- | --- |
 | Framework Preset | `Other`（`framework: null`） |
-| Install Command | `uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python -r requirements-site.txt` |
+| Install Command | `uv venv --python 3.12 .venv && uv pip install --link-mode=copy --python .venv/bin/python -r requirements-site.txt` |
 | Build Command | `.venv/bin/python scripts/zensical/build_site.py` |
 | Output Directory | `site` |
 | Trailing Slash | `true` |
@@ -70,7 +76,7 @@ Pages CMS 修改 Markdown/图片后写入 GitHub；GitHub Actions 验证内容�
 
 ```json
 {
-  "installCommand": "uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python -r requirements-site.txt",
+  "installCommand": "uv venv --python 3.12 .venv && uv pip install --link-mode=copy --python .venv/bin/python -r requirements-site.txt",
   "buildCommand": ".venv/bin/python scripts/zensical/build_site.py",
   "outputDirectory": "site"
 }
