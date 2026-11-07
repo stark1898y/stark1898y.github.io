@@ -134,8 +134,8 @@ python scripts/zensical/audit_site.py
 - [x] GitHub 收到带有 `(via Pages CMS)` 的真实提交且触发 Zensical CI。
 - [x] 草稿从正式构建输出及搜索索引中排除。
 - [x] CI 使用 Pages CMS 文章结构临时验证“取消草稿后发布”和图片路径。
-- [ ] **真实修改已有文章**：在 Pages CMS 打开 `pages-cms-test.md`，在正文增加一句话保存；确认生成 `Update ... (via Pages CMS)` 提交且正文仍为规范 Markdown。
-- [ ] **真实上传图片**：从 CMS 富文本编辑器上传一张无隐私的小图，检查 `content/assets/uploads/` 出现文件，并确认正文图片链接正确。CI 临时图片测试无法代替网页上传测试。
+- [x] **真实修改已有文章**：Pages CMS 已保存正文 `第二次编辑验证成功`，提交 `aa59d98b9476eef036985a78654104b88eb22566`，原 Frontmatter 和草稿状态均保留。
+- [x] **真实上传图片**：Pages CMS 先后上传 `image.png`（7,062 字节）和 `image-1.png`（11,828 字节）；文章引用 `/assets/uploads/image.png`，生成站点产物确认两张 PNG 均存在且格式正常。`image-1.png` 未被文章引用，最终清理测试文件时再处理。
 - [ ] 可选：将该测试文章在分支上切换为 `draft: false`，确认页面与搜索出现在**预览构建产物**中；随后改回 `draft: true` 或删除测试文章。
 - [ ] 清点所有历史 URL 和复杂文档效果，必要时处理额外跳转。
 - [ ] 经人工审阅后，创建正式版本回滚 Tag，再合并 PR #1 上线。
@@ -145,3 +145,14 @@ python scripts/zensical/audit_site.py
 - PR：<https://github.com/stark1898y/stark1898y.github.io/pull/1>
 - 实际 Pages CMS 写入提交：<https://github.com/stark1898y/stark1898y.github.io/commit/f95864f3d75e45b189c9ffadb6228c55108e3a54>
 - CMS 写入后的成功构建：<https://github.com/stark1898y/stark1898y.github.io/actions/runs/42323815842>
+
+### 2026-11-07 真实编辑与媒体上传验收
+
+- 2026-11-07 09:33（UTC+8），用户通过 Pages CMS 新增两张真实 PNG 并更新 `pages-cms-test.md`。
+- 对应提交：上传 `image.png`：`ef2bcfd2abcd2e02aa35b38611e38d18b2b989d4`；上传 `image-1.png`：`37d677c41e87a0caf8483e3e6eabedf000d5beef`；文章编辑：`aa59d98b9476eef036985a78654104b88eb22566`。
+- 文章仍为 `draft: true`，新增文字 `第二次编辑验证成功`，图片引用 `![image.png](/assets/uploads/image.png)`。
+- GitHub Actions 运行 `42324698247` 已通过全部构建、链接和浏览器测试。
+- 已下载检查 `zensical-preview-50` 构建产物：`site/assets/uploads/image.png` 和 `image-1.png` 都存在且有 PNG 文件头；搜索索引没有草稿标题，站点中未生成 `pages-cms-test` 文章页。
+- **隐私边界**：草稿隐藏仅作用于博客文章和搜索。上传到 `content/assets/uploads/` 的图片本身会进入静态网站产物，即使对应文章仍是草稿，也可能通过完整 URL 直接访问；公开仓库中的媒体文件更是对外可见。不要上传任何不打算公开的图片或数据。
+- 阶段四实际 CMS 验收已完成：授权、新建、再次编辑、上传媒体、构建和草稿排除。尚需生产上线前旧链接/复杂文档抽查、清理测试文章和无用图片、创建回滚 Tag 与域名确认。
+
