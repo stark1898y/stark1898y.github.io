@@ -75,15 +75,23 @@ def main():
             # Verify the actual search interaction, not just the search icon.
             page.set_viewport_size({"width": 1365, "height": 900})
             page.goto(base, wait_until="load")
-            # Zensical's search trigger is responsive and may be hidden in DOM.
-            # The documented Ctrl+K shortcut works across desktop layouts.
-            page.keyboard.press("Control+k")
-            page.wait_for_timeout(350)
-            visible = [
-                control for control in page.locator("input").all()
-                if control.is_visible() and control.get_attribute("type") in (None, "text", "search")
-            ]
-            assert visible, "Search dialog has no visible input"
+            # The search dialog hydrates asynchronously. Retry the shortcut
+            # rather than failing the whole CI on a slow GitHub runner.
+            visible = []
+            for attempt in range(3):
+                page.keyboard.press("Escape")
+                page.wait_for_timeout(200)
+                page.keyboard.press("Control+k")
+                page.wait_for_timeout(1000)
+                visible = [
+                    control for control in page.locator("input").all()
+                    if control.is_visible() and control.get_attribute("type") in (None, "text", "search")
+                ]
+                if visible:
+                    break
+            if not visible:
+                page.screenshot(path=str(OUTPUT / "search-dialog-debug.png"), full_page=True)
+                raise AssertionError("Search dialog has no visible input after retries")
             visible[-1].fill("NTC")
             page.wait_for_timeout(1300)
             page.screenshot(path=str(OUTPUT / "search-ntc.png"))
