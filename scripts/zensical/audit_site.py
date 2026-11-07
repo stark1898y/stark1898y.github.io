@@ -86,7 +86,12 @@ def main():
 
     if os.environ.get("GITHUB_STEP_SUMMARY"):
         with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as out:
-            out.write(f"\n### Zensical link audit\nPages: {len(pages)}  \\nReferences: {references}  \\nUnresolved: {len(items)}\n")
+            out.write(
+                f"\n### Zensical link audit\n"
+                f"- HTML pages: {len(pages)}\n"
+                f"- References: {references}\n"
+                f"- Unresolved: {len(items)}\n"
+            )
     critical = [item for item in items if item["source"] in LANDING]
     if critical:
         raise SystemExit(f"FAIL: {len(critical)} broken landing page references")

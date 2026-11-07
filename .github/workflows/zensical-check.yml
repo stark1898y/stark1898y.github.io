@@ -27,10 +27,10 @@ concurrency:
 
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
       - name: Install Zensical
@@ -45,7 +45,7 @@ jobs:
           python -c "import json; d=json.load(open('vercel.json')); assert d['framework'] is None and d['outputDirectory'] == 'site' and d['buildCommand'] == '.venv/bin/python scripts/zensical/build_site.py' and 'uv venv --python 3.12 .venv' in d['installCommand']"
       - name: Build production static output (same script as Vercel)
         run: python scripts/zensical/build_site.py
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
       - name: Regression tests for standalone tools
@@ -64,7 +64,7 @@ jobs:
         run: python scripts/zensical/smoke_browser.py
       - name: Upload preview artifact and audit
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: zensical-preview-${{ github.run_number }}
           path: |
