@@ -90,6 +90,17 @@ def main():
             assert page.get_by_role("listbox", name="Search results").locator("a").count() > 0, "No selectable search results"
             print("PASS Chinese/English technical term search")
 
+            # Footer displays an actual calculated day count on every Zensical page.
+            page.goto(base + "/", wait_until="load")
+            age = page.locator(".stark-footer-running")
+            assert age.count() == 1, "Site age missing from homepage footer"
+            assert age.get_attribute("data-stark-site-since") == "2026-08-10T00:00:00+08:00"
+            assert "本站已运行" in age.inner_text() and "天" in age.inner_text()
+            assert age.inner_text().split(" ")[1].replace(",", "").isdigit(), "Site age is not numeric"
+            page.goto(base + "/docs/intro/", wait_until="load")
+            assert "本站已运行" in page.locator(".stark-footer-running").inner_text()
+            print("PASS site running days on homepage and documentation footer")
+
             browser.close()
     finally:
         server.shutdown()

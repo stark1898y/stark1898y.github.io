@@ -1,0 +1,10 @@
+/* Keep footer metadata legible without changing the Zensical footer layout. */
+.stark-footer-running {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 600px) {
+  .md-copyright {
+    line-height: 1.75;
+  }
+}
